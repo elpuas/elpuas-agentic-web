@@ -40,3 +40,16 @@
 ## Files changed (refinement)
 - `src/components/Welcome.astro`
 - `.context/2026-04-23-welcome-ui.md`
+
+## Accuracy correction (2026-04-23)
+- Per visual feedback, refined `Welcome.astro` again to align closer to Figma composition.
+- Adjustments made:
+  - Lowered hero block position in the content area to better match the design’s vertical placement over CLI.
+  - Applied fixed heading scale/weight for closer parity with Figma title emphasis.
+  - Added left inset on title row to match icon + heading horizontal alignment intent.
+  - Tightened body-copy rhythm and removed muted treatment from the third line for consistency with the Figma text tone.
+  - Kept mobile adaptations while preserving desktop fidelity.
+- Maintained constraints:
+  - No global shell/sidebar changes.
+  - No React, no UI libraries.
+  - Changes limited to `Welcome.astro` and this context log.
