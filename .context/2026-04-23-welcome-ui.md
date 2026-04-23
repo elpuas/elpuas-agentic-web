@@ -53,3 +53,12 @@
   - No global shell/sidebar changes.
   - No React, no UI libraries.
   - Changes limited to `Welcome.astro` and this context log.
+
+## Content and placement correction (2026-04-23)
+- Updated hero copy to match requested content exactly:
+  - Title: `Hi, I'm Alfredo Navas a Product Builder.`
+  - Body: `Welcome to my personal website! Here, I share my journey as a product builder, insights on technology, and my passion for creating innovative solutions. Ask me anything about my work or projects.`
+- Removed the extra third line so the structure now matches the Figma content model (title + paragraph).
+- Adjusted hero vertical behavior to sit just above the CLI area by:
+  - Using a bounded `main` min-height tied to viewport.
+  - Keeping bottom-aligned hero placement inside the content area.

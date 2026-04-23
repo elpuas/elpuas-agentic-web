@@ -7,12 +7,15 @@ import logo from '../assets/logo.svg';
 		<section id="hero">
 			<div class="hero-title">
 				<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
-				<h1>Hi, I’m Alfredo Navas.</h1>
+				<h1>Hi, I'm Alfredo Navas a Product Builder.</h1>
 			</div>
 
 			<div class="hero-copy">
-				<p>Ask me anything about my work or projects.</p>
-				<p class="muted">This site is powered by an AI agent.</p>
+				<p>
+					Welcome to my personal website! Here, I share my journey as a product builder, insights on
+					technology, and my passion for creating innovative solutions. Ask me anything about my work or
+					projects.
+				</p>
 			</div>
 		</section>
 	</main>
@@ -28,7 +31,8 @@ import logo from '../assets/logo.svg';
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
-		padding: var(--space-12) var(--space-8) 4.5rem;
+		min-height: clamp(20rem, 56vh, 36rem);
+		padding: var(--space-12) var(--space-8) var(--space-8);
 	}
 
 	#hero {
@@ -62,7 +66,7 @@ import logo from '../assets/logo.svg';
 	.hero-copy {
 		margin-top: 2.5625rem;
 		display: grid;
-		row-gap: var(--space-4);
+		row-gap: 0;
 	}
 
 	p {
@@ -72,13 +76,10 @@ import logo from '../assets/logo.svg';
 		font-weight: var(--font-weight-regular);
 	}
 
-	.muted {
-		color: var(--color-text);
-	}
-
 	@media (max-width: 48rem) {
 		main {
-			padding: var(--space-8) var(--space-4) var(--space-8);
+			min-height: clamp(16rem, 45vh, 26rem);
+			padding: var(--space-8) var(--space-4) var(--space-6);
 		}
 
 		.hero-title {
