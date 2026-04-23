@@ -1,0 +1,13 @@
+---
+import { frontmatter } from '../../content/about.mdx';
+import AboutContent from '../../content/about.mdx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+	title={frontmatter.title}
+	description={frontmatter.description}
+	activeNav="about"
+>
+	<AboutContent />
+</BaseLayout>

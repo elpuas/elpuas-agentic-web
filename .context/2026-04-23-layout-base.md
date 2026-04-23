@@ -2,18 +2,20 @@
 
 ## What was done
 
-- Created the base design token file at `src/styles/tokens.css`
-- Added global dark-theme styles and a minimal reset at `src/styles/global.css`
-- Extracted the initial palette, spacing cues, and typography scale from the Figma file `ELPuas-2026`
-- Kept the implementation limited to styles only, without adding UI components, React, or external UI libraries
+- Added `BaseLayout.astro` with a left sidebar, right content column, and an empty CLI container at the bottom.
+- Wired Astro MDX support so the about page can render content from `/content/about.mdx`.
+- Created the first content-backed page at `/about` and connected it to the new base layout.
+- Kept the implementation on the existing token layer from `src/styles` and avoided React or UI libraries.
 
-## Files changed
+## Files created or changed
 
-- `src/styles/tokens.css`
-- `src/styles/global.css`
+- `astro.config.mjs`
+- `content/about.mdx`
+- `src/layouts/BaseLayout.astro`
+- `src/layouts/Layout.astro`
+- `src/pages/about.astro`
 
 ## Next steps
 
-- Import `src/styles/global.css` from the main layout when layout file edits are allowed
-- Add font files under `public/fonts` if `Mona Sans VF` needs to be self-hosted
-- Build layout primitives and UI components on top of the token layer in follow-up tasks
+- Add `projects`, `blog`, and `contact` pages as MDX content files when those sections are ready.
+- Replace the empty CLI container with the local command interface in a follow-up task.
