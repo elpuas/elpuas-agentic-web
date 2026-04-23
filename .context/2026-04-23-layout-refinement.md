@@ -15,3 +15,14 @@
 - Wire real CLI interactivity and command handling in the refined UI.
 - Replace placeholder avatar glyph with final asset if needed.
 - Reuse this layout for `index` when homepage content is migrated from starter template.
+
+## Typography update (same day)
+- Loaded `Mona Sans VF` via `@font-face` in global styles using a variable-font WOFF2 external source.
+- Switched the primary font token to `"Mona Sans VF"` with system sans-serif fallbacks.
+- Applied the font globally to body and headings, and explicitly to sidebar and CLI regions.
+- Kept layout structure, spacing, and colors unchanged.
+
+### Additional files changed
+- `src/styles/global.css`
+- `src/styles/tokens.css`
+- `src/layouts/BaseLayout.astro`
