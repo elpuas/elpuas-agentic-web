@@ -17,3 +17,8 @@
 - The optional `page` field is accepted and forwarded from the CLI request body, but not yet used for scoped context filtering.
 - The endpoint currently loads the full combined context from the six required files.
 - If the model response is empty, the fallback text is `I don't know.`.
+
+## TypeScript fix update (2026-04-23)
+- Installed dev dependency: `@types/node`.
+- Updated `tsconfig.json` to include Node type definitions via `compilerOptions.types = ["node"]`.
+- Kept Node built-in import usage unchanged (`import { readFile } from 'node:fs/promises'`).
