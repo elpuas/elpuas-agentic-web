@@ -5,14 +5,102 @@ import logo from '../assets/logo.svg';
 <div id="container">
 	<main>
 		<section id="hero">
-			<a href="https://astro.build"
-				><img src={logo.src} width="115" height="48" alt="Astro Homepage" /></a
-			>
-			<h1>
-				Hi, I'm Alfredo Navas a Product Builder.
-			</h1>
-			<p>
-				Welcome to my personal website! Here, I share my journey as a product builder, insights on technology, and my passion for creating innovative solutions. Ask me anything about my work or projects.
+			<div class="hero-title">
+				<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
+				<h1>Hi, I'm Alfredo Navas a Product Builder.</h1>
+			</div>
+
+			<div class="hero-copy">
+				<p>
+					Welcome to my personal website! Here, I share my journey as a product builder, insights on
+					technology, and my passion for creating innovative solutions. Ask me anything about my work or
+					projects.
+				</p>
+			</div>
 		</section>
 	</main>
 </div>
+
+<style>
+	#container,
+	main {
+		height: 100%;
+	}
+
+	main {
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		min-height: clamp(20rem, 56vh, 36rem);
+		padding: var(--space-12) var(--space-8) var(--space-8);
+	}
+
+	#hero {
+		width: min(100%, 50rem);
+		display: flex;
+		flex-direction: column;
+		color: var(--color-text);
+	}
+
+	.hero-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		min-height: 3.9375rem;
+		padding-left: 1.0625rem;
+	}
+
+	.hero-title img {
+		flex: 0 0 auto;
+		width: 3.9375rem;
+		height: 3.9375rem;
+	}
+
+	h1 {
+		font-family: var(--font-family-sans);
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.hero-copy {
+		margin-top: 2.5625rem;
+		display: grid;
+		row-gap: 0;
+	}
+
+	p {
+		font-family: var(--font-family-sans);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+		font-weight: var(--font-weight-regular);
+	}
+
+	@media (max-width: 48rem) {
+		main {
+			min-height: clamp(16rem, 45vh, 26rem);
+			padding: var(--space-8) var(--space-4) var(--space-6);
+		}
+
+		.hero-title {
+			gap: var(--space-4);
+			min-height: 3rem;
+			padding-left: 0;
+		}
+
+		.hero-title img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		.hero-copy {
+			margin-top: var(--space-6);
+			row-gap: var(--space-4);
+		}
+
+		h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+	}
+</style>

@@ -1,0 +1,64 @@
+# Welcome UI Update
+
+## What was done
+- Created branch `feature/welcome-from-figma` from `main`.
+- Replaced the default Astro welcome content in `src/components/Welcome.astro` with a custom, minimal version based on Figma node `3:173`.
+- Implemented centered main-area layout with left-aligned text block, token-based spacing, and token-based colors.
+- Applied project typography tokens using `Mona Sans VF` via `--font-family-sans`.
+- Updated content to:
+  - Hi, I’m Alfredo Navas.
+  - Ask me anything about my work or projects.
+  - This site is powered by an AI agent.
+
+## Files changed
+- `src/components/Welcome.astro`
+- `.context/2026-04-23-welcome-ui.md`
+
+## Next steps
+- Run a local visual check in the browser to confirm alignment/spacing against the Figma frame.
+- If needed, fine-tune token-based spacing values while keeping this component minimal.
+
+## Refinement (2026-04-23)
+- Refined `src/components/Welcome.astro` to match Figma node `3:173` more closely.
+- Reused existing project asset `src/assets/logo.svg` and placed it to the left of the heading.
+- Matched heading row structure to Figma intent with:
+  - Icon size `63x63`
+  - Horizontal gap `20px`
+  - Aligned heading baseline/row
+- Kept required copy exactly:
+  - Hi, I’m Alfredo Navas.
+  - Ask me anything about my work or projects.
+  - This site is powered by an AI agent.
+- Improved spacing rhythm to align with Figma:
+  - Added larger separation between heading row and body copy
+  - Increased bottom padding in the local main area to better balance distance to CLI input
+- Kept design system consistency:
+  - Mona Sans VF via existing tokenized font family
+  - Existing tokens for color and most spacing/typography values
+  - Slight heading size adjustment using a responsive clamp to better approximate Figma scale
+
+## Files changed (refinement)
+- `src/components/Welcome.astro`
+- `.context/2026-04-23-welcome-ui.md`
+
+## Accuracy correction (2026-04-23)
+- Per visual feedback, refined `Welcome.astro` again to align closer to Figma composition.
+- Adjustments made:
+  - Lowered hero block position in the content area to better match the design’s vertical placement over CLI.
+  - Applied fixed heading scale/weight for closer parity with Figma title emphasis.
+  - Added left inset on title row to match icon + heading horizontal alignment intent.
+  - Tightened body-copy rhythm and removed muted treatment from the third line for consistency with the Figma text tone.
+  - Kept mobile adaptations while preserving desktop fidelity.
+- Maintained constraints:
+  - No global shell/sidebar changes.
+  - No React, no UI libraries.
+  - Changes limited to `Welcome.astro` and this context log.
+
+## Content and placement correction (2026-04-23)
+- Updated hero copy to match requested content exactly:
+  - Title: `Hi, I'm Alfredo Navas a Product Builder.`
+  - Body: `Welcome to my personal website! Here, I share my journey as a product builder, insights on technology, and my passion for creating innovative solutions. Ask me anything about my work or projects.`
+- Removed the extra third line so the structure now matches the Figma content model (title + paragraph).
+- Adjusted hero vertical behavior to sit just above the CLI area by:
+  - Using a bounded `main` min-height tied to viewport.
+  - Keeping bottom-aligned hero placement inside the content area.
