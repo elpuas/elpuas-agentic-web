@@ -1,18 +1,50 @@
----
-import logo from '../assets/logo.svg';
----
-
 <div id="container">
 	<main>
 		<section id="hero">
-			<a href="https://astro.build"
-				><img src={logo.src} width="115" height="48" alt="Astro Homepage" /></a
-			>
-			<h1>
-				Hi, I'm Alfredo Navas a Product Builder.
-			</h1>
-			<p>
-				Welcome to my personal website! Here, I share my journey as a product builder, insights on technology, and my passion for creating innovative solutions. Ask me anything about my work or projects.
+			<h1>Hi, I’m Alfredo Navas.</h1>
+			<p>Ask me anything about my work or projects.</p>
+			<p class="muted">This site is powered by an AI agent.</p>
 		</section>
 	</main>
 </div>
+
+<style>
+	#container,
+	main {
+		height: 100%;
+	}
+
+	main {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--space-12) var(--space-8);
+	}
+
+	#hero {
+		width: min(100%, 50rem);
+		display: grid;
+		row-gap: var(--space-8);
+		color: var(--color-text);
+	}
+
+	h1 {
+		font-family: var(--font-family-sans);
+		font-size: var(--font-size-lg);
+		line-height: var(--line-height-base);
+		font-weight: var(--font-weight-medium);
+	}
+
+	p {
+		font-family: var(--font-family-sans);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+		font-weight: var(--font-weight-regular);
+	}
+
+	.muted {
+		color: var(--color-text-muted);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+	}
+</style>
