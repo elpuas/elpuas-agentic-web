@@ -1,12 +1,21 @@
 @import "./tokens.css";
 
+@font-face {
+  font-family: "Mona Sans VF";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/mona-sans:vf@latest/latin-wght-normal.woff2")
+    format("woff2-variations");
+}
+
 :root {
   background-color: var(--color-canvas);
   color: var(--color-text);
   font-family: var(--font-family-sans);
   font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-sm);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -29,6 +38,17 @@ body {
   margin: 0;
   background-color: var(--color-canvas);
   color: var(--color-text);
+  font-family: var(--font-family-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-medium);
 }
 
 body,

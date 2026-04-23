@@ -27,37 +27,188 @@ const navigation = [
 		<link rel="icon" href="/favicon.ico" />
 		<title>{title}</title>
 	</head>
-	<body>
-		<div class="shell">
-			<aside class="sidebar" aria-label="Primary navigation">
-				<a class="brand" href="/">Alfredo Navas</a>
+		<body>
+			<div class="shell">
+				<aside class="sidebar" aria-label="Primary navigation">
+					<div class="search-wrap">
+						<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+							<path
+								d="m21 21-4.2-4.2m1.2-5.3a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</svg>
+						<input type="text" value="" placeholder="Search" aria-label="Search" readonly />
+					</div>
 
-				<nav>
-					<ul class="nav-list">
-						{navigation.map((item) => (
-							<li class="nav-item">
-								<a
-									class="nav-link"
+					<nav class="sidebar-nav">
+						<ul class="nav-list">
+							{navigation.map((item) => (
+								<li class="nav-item">
+									<a
+										class="nav-link"
 									href={item.href}
-									aria-current={activeNav === item.key ? 'page' : undefined}
-								>
-									{item.label}
-								</a>
-							</li>
-						))}
-					</ul>
-				</nav>
-			</aside>
+										aria-current={activeNav === item.key ? 'page' : undefined}
+									>
+										<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">
+											<use href={`#icon-${item.key}`} />
+										</svg>
+										<span>{item.label}</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</nav>
 
-			<div class="workspace">
-				<main class="content">
-					<slot />
-				</main>
+					<footer class="profile">
+						<div class="avatar" aria-hidden="true">
+							<div class="avatar-core">☠</div>
+						</div>
+						<div class="profile-copy">
+							<p class="profile-name">Alfredo Navas</p>
+							<p class="profile-role">Product Builder</p>
+						</div>
+					</footer>
+				</aside>
 
-				<section class="cli" aria-label="Command line interface" />
+				<div class="workspace">
+					<main class="content">
+						<div class="content-inner">
+							<slot />
+						</div>
+					</main>
+
+					<section class="cli" aria-label="Command line interface">
+						<div class="cli-panel">
+							<div class="cli-box">
+								<div class="cli-row">
+									<button class="cli-btn" type="button" aria-label="New command" disabled>
+										<svg viewBox="0 0 24 24" aria-hidden="true">
+											<path
+												d="M12 5v14M5 12h14"
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-width="1.8"
+											/>
+										</svg>
+									</button>
+									<p class="cli-placeholder">Ask me anything...</p>
+									<div class="cli-actions">
+										<button class="cli-btn" type="button" aria-label="Web" disabled>
+											<svg viewBox="0 0 24 24">
+												<use href="#icon-web" />
+											</svg>
+										</button>
+										<button class="cli-btn" type="button" aria-label="Mic" disabled>
+											<svg viewBox="0 0 24 24">
+												<use href="#icon-mic" />
+											</svg>
+										</button>
+										<button class="cli-btn cli-btn-send" type="button" aria-label="Send" disabled>
+											<svg viewBox="0 0 24 24">
+												<use href="#icon-send" />
+											</svg>
+										</button>
+									</div>
+								</div>
+							</div>
+							<p class="cli-hint">
+								Try: <span>about</span>, <span>projects</span>, <span>experience</span>
+							</p>
+						</div>
+					</section>
+				</div>
+
+				<svg class="icon-defs" aria-hidden="true" focusable="false">
+					<defs>
+						<symbol id="icon-home" viewBox="0 0 24 24">
+							<path
+								d="M4 11.2 12 5l8 6.2V20a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1v-8.8Z"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-about" viewBox="0 0 24 24">
+							<path
+								d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-projects" viewBox="0 0 24 24">
+							<path
+								d="M8 4h8l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3Zm4 0v4h4"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-blog" viewBox="0 0 24 24">
+							<path
+								d="M7 3h8l5 5v13H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm8 0v5h5M9 13h6M9 17h6"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-contact" viewBox="0 0 24 24">
+							<path
+								d="M4 6h16v12H4zM4 7l8 6 8-6"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-web" viewBox="0 0 24 24">
+							<path
+								d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M4.8 7.5h14.4M4.8 16.5h14.4"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-mic" viewBox="0 0 24 24">
+							<path
+								d="M12 3a3 3 0 0 1 3 3v6a3 3 0 1 1-6 0V6a3 3 0 0 1 3-3Zm0 14v4m-5-7a5 5 0 0 0 10 0"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+						<symbol id="icon-send" viewBox="0 0 24 24">
+							<path
+								d="m12 5 7 7m-7-7-7 7m7-7v14"
+								fill="none"
+								stroke="currentColor"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="1.8"
+							/>
+						</symbol>
+					</defs>
+				</svg>
 			</div>
-		</div>
-	</body>
+		</body>
 </html>
 
 <style>
@@ -71,47 +222,139 @@ const navigation = [
 	.sidebar {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-8);
-		padding: var(--space-8);
-		border-right: var(--space-px) solid var(--color-border);
 		background: var(--color-surface);
+		border-right: var(--space-px) solid var(--color-border);
+		padding-top: var(--space-4);
+		min-width: 0;
+		font-family: var(--font-family-sans);
 	}
 
-	.brand {
-		font-size: var(--font-size-xs);
-		font-weight: var(--font-weight-medium);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--color-text);
+	.search-wrap {
+		position: relative;
+		margin: 0 var(--space-4);
+	}
+
+	.search-wrap input {
+		width: 100%;
+		height: 2.375rem;
+		border-radius: var(--radius-lg);
+		border: var(--space-px) solid var(--color-border);
+		background: var(--color-canvas);
+		padding: var(--space-2) var(--space-3) var(--space-2) 2.25rem;
+		color: var(--color-text-placeholder);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+		letter-spacing: 0;
+	}
+
+	.search-wrap input::placeholder {
+		color: var(--color-text-placeholder);
+	}
+
+	.search-icon {
+		position: absolute;
+		top: 0.6875rem;
+		left: 0.75rem;
+		width: 1rem;
+		height: 1rem;
+		color: var(--color-text-placeholder);
+		pointer-events: none;
+	}
+
+	.sidebar-nav {
+		margin-top: var(--space-4);
+		padding: 0 var(--space-3);
 	}
 
 	.nav-list {
 		display: grid;
-		gap: var(--space-2);
+		gap: 0;
 		padding: 0;
 		margin: 0;
 		list-style: none;
 	}
 
 	.nav-link {
-		display: block;
-		padding: var(--space-3) var(--space-4);
-		border-radius: var(--radius-md);
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		height: 2.5rem;
+		padding: var(--space-2) var(--space-3);
+		border-radius: var(--radius-lg);
 		color: var(--color-text-muted);
+		font-size: var(--font-size-sm);
+		line-height: 1.25rem;
+		font-weight: var(--font-weight-medium);
 		transition:
 			color 120ms ease,
 			background-color 120ms ease;
+	}
+
+	.nav-icon {
+		width: 1rem;
+		height: 1rem;
+		flex: 0 0 auto;
 	}
 
 	.nav-link:hover,
 	.nav-link:focus-visible {
 		color: var(--color-text);
 		background: rgba(255, 255, 255, 0.03);
+		outline: none;
 	}
 
 	.nav-link[aria-current='page'] {
-		color: var(--color-text);
+		color: var(--color-accent);
 		background: var(--color-accent-soft);
+	}
+
+	.profile {
+		margin-top: auto;
+		height: 4.5625rem;
+		border-top: var(--space-px) solid var(--color-border);
+		padding: 1.0625rem var(--space-4);
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 999px;
+		padding: 0.125rem;
+		background:
+			radial-gradient(circle at 40% 30%, #d8ff00 0%, #00bc7d 75%),
+			transparent;
+		box-shadow: 0 0 0 2px rgba(0, 188, 125, 0.3);
+	}
+
+	.avatar-core {
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		background: #27272a;
+		color: var(--color-accent);
+		display: grid;
+		place-items: center;
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	.profile-copy {
+		min-width: 0;
+	}
+
+	.profile-name {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+	}
+
+	.profile-role {
+		color: var(--color-text-subtle);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-xs);
 	}
 
 	.workspace {
@@ -122,13 +365,94 @@ const navigation = [
 
 	.content {
 		flex: 1;
-		padding: clamp(var(--space-4), 4vw, var(--space-8));
+		padding: var(--space-8) var(--space-8) var(--space-12);
+	}
+
+	.content-inner {
+		width: min(100%, 64rem);
+		margin: 0 auto;
 	}
 
 	.cli {
-		min-height: 4.5rem;
-		border-top: var(--space-px) solid var(--color-border);
-		background: rgba(255, 255, 255, 0.02);
+		padding: 0 var(--space-8) var(--space-24);
+		font-family: var(--font-family-sans);
+	}
+
+	.cli-panel {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+	}
+
+	.cli-box {
+		background: var(--color-surface);
+		border: var(--space-px) solid var(--color-border);
+		border-radius: 1rem;
+		padding: var(--space-px);
+		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+	}
+
+	.cli-row {
+		height: 3.75rem;
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		padding: var(--space-3) var(--space-4);
+	}
+
+	.cli-btn {
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: var(--radius-lg);
+		color: var(--color-text-muted);
+		display: grid;
+		place-items: center;
+	}
+
+	.cli-btn svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
+	.cli-btn:disabled {
+		cursor: default;
+	}
+
+	.cli-placeholder {
+		flex: 1 1 auto;
+		color: var(--color-text-placeholder);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+	}
+
+	.cli-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+
+	.cli-btn-send {
+		background: var(--color-accent-soft);
+		color: var(--color-accent);
+		opacity: 0.4;
+	}
+
+	.cli-hint {
+		margin-top: var(--space-4);
+		text-align: center;
+		color: var(--color-text-placeholder);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-xs);
+	}
+
+	.cli-hint span {
+		color: var(--color-accent);
+	}
+
+	.icon-defs {
+		position: absolute;
+		width: 0;
+		height: 0;
+		overflow: hidden;
 	}
 
 	@media (max-width: 48rem) {
@@ -139,6 +463,18 @@ const navigation = [
 		.sidebar {
 			border-right: 0;
 			border-bottom: var(--space-px) solid var(--color-border);
+		}
+
+		.profile {
+			margin-top: var(--space-4);
+		}
+
+		.content {
+			padding: var(--space-6) var(--space-4);
+		}
+
+		.cli {
+			padding: 0 var(--space-4) var(--space-8);
 		}
 	}
 </style>
