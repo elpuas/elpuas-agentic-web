@@ -6,6 +6,7 @@ const {
 	description = 'Alfredo Navas personal website.',
 	activeNav = 'home',
 } = Astro.props;
+const currentPage = Astro.url.pathname;
 
 const navigation = [
 	{ href: '/', label: 'Home', key: 'home' },
@@ -81,10 +82,11 @@ const navigation = [
 						</div>
 					</main>
 
-					<section class="cli" aria-label="Command line interface">
+					<section class="cli" aria-label="Command line interface" data-page={currentPage}>
 						<div class="cli-panel">
 							<div class="cli-box">
-								<div class="cli-row">
+								<div class="cli-messages" id="cli-messages"></div>
+								<form class="cli-row" id="cli-form">
 									<button class="cli-btn" type="button" aria-label="New command" disabled>
 										<svg viewBox="0 0 24 24" aria-hidden="true">
 											<path
@@ -96,7 +98,16 @@ const navigation = [
 											/>
 										</svg>
 									</button>
-									<p class="cli-placeholder">Ask me anything...</p>
+									<input
+										class="cli-input"
+										id="cli-input"
+										name="question"
+										type="text"
+										placeholder="Ask me anything..."
+										aria-label="Ask me anything"
+										autocomplete="off"
+										required
+									/>
 									<div class="cli-actions">
 										<button class="cli-btn" type="button" aria-label="Web" disabled>
 											<svg viewBox="0 0 24 24">
@@ -108,13 +119,13 @@ const navigation = [
 												<use href="#icon-mic" />
 											</svg>
 										</button>
-										<button class="cli-btn cli-btn-send" type="button" aria-label="Send" disabled>
+										<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
 											<svg viewBox="0 0 24 24">
 												<use href="#icon-send" />
 											</svg>
 										</button>
 									</div>
-								</div>
+								</form>
 							</div>
 							<p class="cli-hint">
 								Try: <span>about</span>, <span>projects</span>, <span>experience</span>
@@ -208,6 +219,54 @@ const navigation = [
 					</defs>
 				</svg>
 			</div>
+			<script>
+				const form = document.querySelector('#cli-form');
+				const input = document.querySelector('#cli-input');
+				const messages = document.querySelector('#cli-messages');
+				const page = document.querySelector('.cli')?.dataset.page ?? '/';
+				const submitButton = form?.querySelector('.cli-btn-send');
+
+				if (form && input && messages && submitButton) {
+					const appendMessage = (role, text) => {
+						const item = document.createElement('p');
+						item.className = `cli-message cli-message-${role}`;
+						item.textContent = text;
+						messages.append(item);
+						messages.scrollTop = messages.scrollHeight;
+					};
+
+					form.addEventListener('submit', async (event) => {
+						event.preventDefault();
+						const question = input.value.trim();
+
+						if (!question) {
+							return;
+						}
+
+						appendMessage('user', question);
+						input.value = '';
+						input.disabled = true;
+						submitButton.disabled = true;
+
+						try {
+							const response = await fetch('/api/ask', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ question, page }),
+							});
+							const payload = await response.json();
+							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";
+							appendMessage('assistant', text);
+						} catch {
+							appendMessage('assistant', 'Something went wrong. Please try again.');
+						} finally {
+							input.disabled = false;
+							submitButton.disabled = false;
+							input.focus();
+						}
+					});
+				}
+			</script>
 		</body>
 </html>
 
@@ -391,6 +450,27 @@ const navigation = [
 		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
 	}
 
+	.cli-messages {
+		max-height: 13rem;
+		overflow: auto;
+		padding: var(--space-4) var(--space-4) 0;
+	}
+
+	.cli-message {
+		margin: 0;
+		padding-bottom: var(--space-3);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+	}
+
+	.cli-message-user {
+		color: var(--color-text);
+	}
+
+	.cli-message-assistant {
+		color: var(--color-text-subtle);
+	}
+
 	.cli-row {
 		height: 3.75rem;
 		display: flex;
@@ -417,11 +497,27 @@ const navigation = [
 		cursor: default;
 	}
 
-	.cli-placeholder {
+	.cli-input {
 		flex: 1 1 auto;
-		color: var(--color-text-placeholder);
+		min-width: 0;
+		color: var(--color-text);
 		font-size: var(--font-size-base);
 		line-height: var(--line-height-base);
+		background: transparent;
+		border: 0;
+		padding: 0;
+	}
+
+	.cli-input::placeholder {
+		color: var(--color-text-placeholder);
+	}
+
+	.cli-input:focus {
+		outline: none;
+	}
+
+	.cli-input:disabled {
+		opacity: 0.65;
 	}
 
 	.cli-actions {
@@ -433,6 +529,9 @@ const navigation = [
 	.cli-btn-send {
 		background: var(--color-accent-soft);
 		color: var(--color-accent);
+	}
+
+	.cli-btn-send:disabled {
 		opacity: 0.4;
 	}
 
