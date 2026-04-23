@@ -1,0 +1,18 @@
+model = "gpt-5.4-medium"
+model_reasoning_effort = "high"
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[sandbox_workspace_write]
+network_access = true
+
+sqlite_home = ".codex/db"
+
+[mcp_servers.astro-docs]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.docs.astro.build/mcp"]
+
+[mcp_servers.chrome]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp"]
