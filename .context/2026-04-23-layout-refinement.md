@@ -26,3 +26,15 @@
 - `src/styles/global.css`
 - `src/styles/tokens.css`
 - `src/layouts/BaseLayout.astro`
+
+## Typography scale normalization (same day)
+- Normalized type scale tokens to enforce a 14px minimum and 18px base body size.
+- Updated global root typography to use base size and base line-height.
+- Added `--font-size-lg` token for larger headings and future consistency.
+- Updated remaining homepage paragraph copy to 18px for readable body text.
+- Kept layout structure, spacing, and colors unchanged.
+
+### Additional files changed
+- `src/styles/tokens.css`
+- `src/styles/global.css`
+- `src/components/Welcome.astro`

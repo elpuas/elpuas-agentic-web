@@ -14,8 +14,8 @@
   color: var(--color-text);
   font-family: var(--font-family-sans);
   font-weight: var(--font-weight-regular);
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-sm);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
