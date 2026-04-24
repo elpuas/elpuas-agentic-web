@@ -24,9 +24,8 @@ import profileImage from '../assets/alfredo-navas.webp';
 
 			<div class="about-copy">
 				<p>
-					Senior WordPress & Full Stack Developer with 15+ years of experience building web platforms.
+					Senior WordPress & Full Stack Developer with 15+ years of experience building web platforms. Founder of <a href="https://elpuasdigitalcrafts.com" target="_blank" rel="noopener noreferrer">ElPuas Digital Crafts</a> and active member of the WordPress community.
 				</p>
-				<p>Founder of ElPuas Digital Crafts and active member of the WordPress community.</p>
 
 				<h2>Ask me</h2>
 				<p>You can ask me about:</p>
@@ -81,15 +80,19 @@ import profileImage from '../assets/alfredo-navas.webp';
 		width: 13.625rem;
 		height: 13.625rem;
 		object-fit: cover;
-		border-radius: 0.625rem;
-		box-shadow:
-			0 0 0 1px var(--color-border),
-			0 14px 36px rgba(0, 0, 0, 0.35);
+		border-radius: 9999px;
 	}
 
 	.about-copy {
 		font-size: var(--font-size-base);
 		line-height: var(--line-height-base);
+
+		a {
+			color: var(--color-accent);
+			text-decoration: underline;
+			text-decoration-thickness: 1.5px;
+			text-underline-offset: 3px;
+		}
 	}
 
 	.about-copy p,
