@@ -6,6 +6,7 @@ const {
 	title = 'Alfredo Navas',
 	description = 'Alfredo Navas personal website.',
 	activeNav = 'home',
+	pageContext = '',
 } = Astro.props;
 const currentPage = Astro.url.pathname;
 
@@ -74,6 +75,7 @@ const navigation = [
 						</div>
 					</main>
 
+					<template id="cli-page-context">{pageContext}</template>
 					<section class="cli" aria-label="Command line interface" data-page={currentPage}>
 						<div class="cli-panel">
 							<div class="cli-box">
@@ -215,6 +217,7 @@ const navigation = [
 				const form = document.querySelector('#cli-form');
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
+				const pageContext = document.querySelector('#cli-page-context')?.textContent?.trim() ?? '';
 				const page = document.querySelector('.cli')?.dataset.page ?? '/';
 				const submitButton = form?.querySelector('.cli-btn-send');
 
@@ -329,10 +332,11 @@ const navigation = [
 						submitButton.disabled = true;
 
 						try {
+							const requestBody = pageContext ? { question, page, pageContext } : { question, page };
 							const response = await fetch('/api/ask', {
 								method: 'POST',
 								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify({ question, page }),
+								body: JSON.stringify(requestBody),
 							});
 							const payload = await response.json();
 							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";

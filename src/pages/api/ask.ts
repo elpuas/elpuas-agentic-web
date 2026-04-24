@@ -16,7 +16,11 @@ export const POST: APIRoute = async ({ request }) => {
 		});
 	}
 
-	const { question } = (payload ?? {}) as { question?: unknown; page?: unknown };
+	const { question, pageContext } = (payload ?? {}) as {
+		question?: unknown;
+		page?: unknown;
+		pageContext?: unknown;
+	};
 
 	if (typeof question !== 'string' || question.trim().length === 0) {
 		return new Response(JSON.stringify({ error: 'Question is required' }), {
@@ -25,7 +29,9 @@ export const POST: APIRoute = async ({ request }) => {
 		});
 	}
 
-	const context = await loadContext();
+	const context = await loadContext({
+		pageContext: typeof pageContext === 'string' ? pageContext : undefined,
+	});
 	const text = await askAI({
 		question: question.trim(),
 		context,
