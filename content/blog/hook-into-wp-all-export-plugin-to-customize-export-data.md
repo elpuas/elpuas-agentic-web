@@ -1,0 +1,388 @@
+WordPressCode
+
+# Hook into WP All Export Plugin to Customize Export Data
+
+El Puas 07/23/2024
+
+WP All Export is a powerful plugin that allows you to easily export WordPress data. However, there are times when you may need to customize the export process to suit your specific needs. After looking for a plugin that could export some custom repeater fields, I found that WP All Export was the tool I needed, mostly because I could hook into the plugin’s actions and customize the export. This use case involves a very nested repeater field, requiring additional logic. In this blog post, we’ll explore how to hook into WP All Export and customize the data before it’s exported. We will use a generic custom post type with a repeater field.
+
+This is an example of what the repeater looks like:
+
+```
+Array
+(
+    [0] => Array
+        (
+            [project_name] => Project One
+            [project_id] => 123
+            [milestones] => Array
+                (
+                    [0] => Array
+                        (
+                            [milestone_name] => Milestone One
+                            [milestone_date] => 2024-06-01
+                            [assigned_to] => John Doe
+                            [status] => Completed
+                        )
+
+                    [1] => Array
+                        (
+                            [milestone_name] => Milestone Two
+                            [milestone_date] => 2024-07-01
+                            [assigned_to] => Jane Smith
+                            [status] => In Progress
+                        )
+
+                )
+
+        )
+
+    [1] => Array
+        (
+            [project_name] => Project Two
+            [project_id] => 456
+            [milestones] => Array
+                (
+                    [0] => Array
+                        (
+                            [milestone_name] => Milestone A
+                            [milestone_date] => 2024-05-01
+                            [assigned_to] => Alice Johnson
+                            [status] => Not Started
+                        )
+
+                    [1] => Array
+                        (
+                            [milestone_name] => Milestone B
+                            [milestone_date] => 2024-08-01
+                            [assigned_to] => Bob Brown
+                            [status] => In Progress
+                        )
+
+                )
+
+        )
+
+)
+```
+
+## **The pmxe\_after\_export Hook**
+
+To customize the export process, in this case, we need to hook into the `pmxe_after_export` action provided by WP All Export. The `pmxe_after_export` action is used to run code after the export process has been completed. This hook provides the export ID and an object containing stats, settings, data, and other information related to the export.
+
+The `pmxe_after_export` hook provides two parameters:  
+**\- $export\_id** (int): The ID of the export that has just completed.  
+**\- $exportObj** (object): An object containing information about the export, including stats, settings, and data.
+
+**Usage**
+
+To better understand the structure and content of the `$exportObj`, you can log it for debugging purposes, Here is an example of how to use the `pmxe_after_export` hook:
+
+```
+function wp_all_export_after_export( $export_id, $exportObj ) {
+    // Run for export 5 only
+    if ( '5' === $export_id) {
+        // Log the export object for debugging purposes
+        error_log( print_r( $exportObj, true ) );
+    }
+}
+add_action( 'pmxe_after_export', 'wp_all_export_after_export', 10, 2 );
+```
+
+For more details, you can refer to the [WP All Export Action Reference](https://www.wpallimport.com/documentation/action-reference/).
+
+## **The Process**
+
+After some trial and error, I discovered that to achieve the desired export, I only need to export the post IDs using the WP All Export editor. By capturing these IDs from the exportObject, I can then use them to extract the post data, particularly from the repeater fields.
+
+ 
+
+**Steps to Follow:**
+
+**Configure WP All Export:** In the WP All Export editor, set up the export to include only the post IDs. This simplifies the initial export and makes it easier to handle the data in subsequent steps.
+
+**Capture Post IDs:** Use the `pmxe_after_export` hook to capture the post IDs from the `exportObject` once the export is complete. The `exportObject` provides access to the exported data, including the post IDs.
+
+**Extract Repeater Field Data:** With the captured post IDs, query the respective posts to retrieve the nested repeater field data. This allows you to gather and format the data according to your specific requirements.
+
+### **The Issue with the exportObject**
+
+I encountered an issue where I couldn’t find the post IDs within the `exportObject`, despite multiple attempts and debugging. This was crucial for extracting repeater field data, and I reached a dead end.
+
+**Querying the Database**
+
+To solve this, I realized that WP All Export saves export data in the database. By querying the database using the export ID, I could retrieve the necessary post IDs.
+
+Let’s take a look at the code:
+
+```
+add_action( 'pmxe_after_export', 'custom_wp_all_export_after_export', 10, 2 );
+
+function custom_wp_all_export_after_export( $export_id, $exportObject ) {
+     // Fetch the exported post IDs from the database
+    global $wpdb;
+    $exported_post_ids = $wpdb->get_col( $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->prefix}pmxe_posts WHERE export_id = %d",
+        $export_id
+    ) );
+
+    // Log the exported post IDs for debugging purposes
+    error_log( 'Exported Post IDs: ' . print_r( $exported_post_ids, true ) );
+}
+```
+
+**Hook into the Export Process:**
+
+The `custom_wp_all_export_after_export` function is hooked into the `pmxe_after_export` action, which triggers after the export process is complete.
+
+**Fetch Exported Post IDs:**
+
+A database query is executed to fetch the post IDs associated with the given export ID. The post IDs are retrieved from the `pmxe_posts` table where WP All Export stores its data.
+
+## **Gathering and Formatting Repeater Field Data**
+
+Once you have the post IDs, you can create a function to iterate over this data, extract the repeater field values, and format them as needed. We will create a function called `gather_and_format_data` that takes a post ID, retrieves the repeater field data, and formats it into an array of CSV rows.
+
+```
+function gather_and_format_data( $post_id ) {
+    // Retrieve the repeater field data for the post
+    $project_data = get_field( 'project', $post_id );
+    $output = [];
+
+    // Check if there is any project data
+    if ( ! $project_data || ! isset( $project_data['milestones'] ) ) {
+        return $output; // Return empty if no data is found
+    }
+
+    $project_name    = $project_data['project_name'];
+    $project_id      = $project_data['project_id'];
+    $milestones_data = $project_data['milestones'];
+
+    // Iterate over each milestone and format the data
+    foreach ($milestones_data as $milestone) {
+        $milestone_name = $milestone['milestone_name'];
+        $milestone_date = $milestone['milestone_date'];
+        $assigned_to    = $milestone['assigned_to'];
+        $status         = $milestone['status'];
+
+        // Format each row as an array
+        $row = [
+            'project_name'   => $project_name,
+            'project_id'     => $project_id,
+            'milestone_name' => $milestone_name,
+            'milestone_date' => $milestone_date,
+            'assigned_to'    => $assigned_to,
+            'status'         => $status,
+        ];
+
+        // Add the formatted row to the output array
+        $output[] = $row;
+    }
+
+    return $output;
+}
+```
+
+The `gather_and_format_data` function retrieves the nested repeater field data for each post ID. The function iterates over the repeater field entries, extracting the relevant fields ( project\_name, project\_id, milestone\_name, milestone\_date, assigned\_to, status ). It formats the data into an array of rows suitable for CSV export.
+
+So far we have done the following to customize the WP All Export plugin, we first hooked into the `pmxe_after_export` action to capture the post IDs from the completed export.
+
+Despite multiple attempts, the exportObject did not contain the post IDs directly, leading us to perform a database query to fetch these IDs from the `pmxe_posts` table using the export ID.
+
+Once we had the post IDs, we created a function to gather and format the nested repeater field data associated with each post. This function iterates over the repeater field entries, extracting the necessary fields (project\_name, project\_id, milestone\_name, milestone\_date, assigned\_to, status), and formats the data into an array of rows suitable for CSV export.
+
+## **Processing and Formatting the Data**
+
+With the exported post IDs captured, the next step is to process these IDs, gather the necessary data, and format it into CSV rows. Here’s what I did:
+
+```
+if ( ! empty( $exported_post_ids ) ) {
+    $csv_rows = [];
+
+    // Add the header row
+    $header     = ['project_name', 'project_id', 'milestone_name', 'milestone_date', 'assigned_to', 'status'];
+    $csv_rows[] = implode(',', $header);
+
+    foreach ( $exported_post_ids as $post_id ) {
+        // Call function to gather and format data for each post ID
+        $data = gather_and_format_data( $post_id );
+
+        foreach ( $data as $row ) {
+            // Add each formatted row to the CSV rows array
+            $csv_rows[] = implode( ',', $row );
+        }
+    }
+
+    // Join all rows into a single string with newline characters to form the CSV content
+    $csv_content = implode( "\n", $csv_rows );
+} else {
+    // Handle the case where no post IDs are found
+    error_log( 'No exported post IDs found.' );
+}
+```
+
+**Check for Post IDs:** Ensures that there are post IDs to process. If the array of post IDs is empty, the code inside the block is skipped, and we can handle the absence of post IDs in the other block.
+
+**Initialize CSV Rows Array:** Initialize an empty array to hold the CSV rows.
+
+**Add the Header Row:** Defines the column headers for the CSV file and adds the header row to the `csv_rows` array, converting the array of headers into a comma-separated string.
+
+**Iterate Over Post IDs:** Loops through each post ID in the `exported_post_ids` array.
+
+**Gather and Format Data:** Calls the `gather_and_format_data` function to retrieve and format the data for each post ID.
+
+Loops through each row of formatted data returned by the `gather_and_format_data` function.
+
+Adds each row of formatted data to the `csv_rows` array, converting the array of values into a comma-separated string.
+
+**Create CSV Content:** Joins all the rows in the csv\_rows array into a single string, with each row separated by a newline character. This forms the complete CSV content ready for export.
+
+### **Getting the Export File Path and Writing the CSV Content**
+
+After constructing the CSV content, the next step is to determine the file path where the export will be saved and write the CSV content to this file. Here’s how we do it:
+
+```
+// Get the export file path
+$is_secure_export = PMXE_Plugin::getInstance()->getOption('secure');
+if ( ! $is_secure_export ) {
+    $filepath = get_attached_file( $exportObject->attch_id );
+} else {
+    $filepath = wp_all_export_get_absolute_path( $exportObject->options['filepath'] );
+}
+
+// Write the formatted CSV content to the export file
+file_put_contents( $filepath, $csv_content );
+```
+
+**Determine the Export File Path:** `is_secure_export = PMXE_Plugin::getInstance()->getOption('secure');` This line checks if the export is set to be secure. WP All Export has the option to secure the export files, which changes where the files are stored. `if (!$is_secure_export) { ... } else { ... }`Depending on whether the export is secure or not, we retrieve the file path differently.
+
+**Non-Secure Export:** `if (!$is_secure_export) { $filepath = get_attached_file($exportObject->attch_id); }` If the export is not secure, we use the `get_attached_file` function to get the path of the file associated with the export. The `attch_id` property of the `exportObject` gives us the attachment ID of the export file.
+
+**Secure Export:** `else { $filepath = wp_all_export_get_absolute_path($exportObject->options['filepath']); }` If the export is secure, we use the `wp_all_export_get_absolute_path` function to get the absolute path to the file. The `filepath` option of the `exportObject` gives us the relative path to the export file.
+
+**Write the CSV Content to the File:** `file_put_contents($filepath, $csv_content);`This line writes the CSV content we constructed earlier to the file at the determined file path. The `file_put_contents` function takes the file path and the content to be written as arguments.
+
+This code ensures that the CSV content is correctly saved to the export file, handling both secure and non-secure exports appropriately by determining the correct file path based on the export settings and writing the constructed CSV content to the specified file location.
+
+Here’s the complete export function including capturing post IDs, gathering and formatting the data, and writing the CSV content to the export file:
+
+```
+add_action( 'pmxe_after_export', 'custom_wp_all_export_after_export', 10, 2);
+
+function custom_wp_all_export_after_export($export_id, $exportObject) {
+    // Log the export object for debugging purposes
+    error_log( print_r( $exportObject, true ) );
+
+    // Fetch the exported post IDs from the database
+    global $wpdb;
+    $exported_post_ids = $wpdb->get_col( $wpdb->prepare(
+        "SELECT post_id FROM {$wpdb->prefix}pmxe_posts WHERE export_id = %d",
+        $export_id
+    ) );
+
+    // Log the exported post IDs for debugging purposes
+    error_log( 'Exported Post IDs: ' . print_r( $exported_post_ids, true ) );
+
+    if ( ! empty( $exported_post_ids ) ) {
+        $csv_rows = [];
+
+        // Add the header row
+        $header = ['project_name', 'project_id', 'milestone_name', 'milestone_date', 'assigned_to', 'status'];
+        $csv_rows[] = implode(',', $header);
+
+        foreach ( $exported_post_ids as $post_id ) {
+            // Call function to gather and format data for each post ID
+            $data = gather_and_format_data($post_id);
+
+            foreach ( $data as $row ) {
+                // Add each formatted row to the CSV rows array
+                $csv_rows[] = implode( ',', $row );
+            }
+        }
+
+        // Join all rows into a single string with newline characters to form the CSV content
+        $csv_content = implode( "\n", $csv_rows );
+
+        // Get the export file path
+        $is_secure_export = PMXE_Plugin::getInstance()->getOption('secure');
+        if ( ! $is_secure_export ) {
+            $filepath = get_attached_file( $exportObject->attch_id );
+        } else {
+            $filepath = wp_all_export_get_absolute_path( $exportObject->options['filepath'] );
+        }
+
+        // Write the formatted CSV content to the export file
+        file_put_contents( $filepath, $csv_content );
+    } else {
+        // Handle the case where no post IDs are found
+        error_log( 'No exported post IDs found.' );
+    }
+}
+```
+
+With the above code and the example repeater field data, the resulting CSV will look like this:
+
+```
+project_name,project_id,milestone_name,milestone_date,assigned_to,status
+Project One,123,Milestone One,2024-06-01,John Doe,Completed
+Project One,123,Milestone Two,2024-07-01,Jane Smith,In Progress
+Project Two,456,Milestone A,2024-05-01,Alice Johnson,Not Started
+Project Two,456,Milestone B,2024-08-01,Bob Brown,In Progress
+```
+
+This example demonstrates how you can use WP All Export and custom functions to export complex data. The approach shown here is very opinionated and tailored to fit an exclusive need. The final step in my function is to decide whether to run it always or only on specific exports. Since WP All Export saves all our exports, I can extract the ID of my export and add it to my function. This allows for more control over when the custom export logic is applied.
+
+**Conditional Execution**
+
+To ensure the custom export function runs only for specific exports, you can add a condition to check the export ID. Here are a couple of ways to do it:
+
+```
+// On a single export.
+if ( $export_id === '5' ) {
+    // Do something
+}
+
+// On multiple exports
+$allowed_export_ids = [ 7, 8 ];
+
+if ( ! in_array( $export_id, $allowed_export_ids ) ) {
+    error_log( "Skipping export ID $export_id" );
+    return;
+}
+```
+
+**Conclusion**
+
+This post is based on my experience and how I solved specific challenges using WP All Export and custom functions. If you found this post helpful or think it could benefit someone else, please don’t hesitate to share it. Sharing is caring! Happy coding!
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/&text=Based on my experience, how I customize WP All Export to handle nested repeater fields in WordPress with detailed steps and examples.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhook-into-wp-all-export-plugin-to-customize-export-data%2F&title=Customizing WP All Export for Nested Repeater Fields>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

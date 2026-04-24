@@ -1,0 +1,113 @@
+WordPress
+
+# A Year with the WordPress Community
+
+El Puas 11/03/2025
+
+2025 has been one of the best and busiest years of my life in the WordPress community.
+
+From the first event in February to the last one in November, I had the chance to travel, teach, and share great moments with amazing people.
+
+It was a year full of learning, new friends, and memories I will never forget.
+
+## **WP DevDay – February**
+
+The year started with WP DevDay, where I was invited by Giancarlo Villalobos to give a workshop about how to build your own portfolio using WordPress.
+
+It was the perfect moment to introduce WordPress Playground, since many people had trouble setting up WordPress locally.
+
+Instead of installing Local or WP Studio, everyone used Playground right in their browsers and followed the entire session without any problems.
+
+It worked perfectly and showed how easy it is to start building with WordPress today.
+
+## **WordCamp US – Portland, August**
+
+In August, our Costa Rican team was invited to WordCamp US 2025 in Portland to share the story of our Campus Connect initiative.
+
+This was the first Campus Connect in Latin America and only the second in the world.
+
+We talked about how the project started, what we learned, and how universities can connect students with the WordPress community.
+
+It was also a very special trip. For many of my teammates, it was their first time traveling abroad, and seeing them live that experience made it unforgettable.
+
+You can read the full post about my experience at WordCamp Portland [here](https://elpuas.com/blog/wordcamp-us-2025-portland-oregon/).
+
+## **WP YouthDay – Nicaragua**
+
+Later in the year, I was invited by Lua Salazar to join the WP YouthDay in Nicaragua.
+
+I gave a workshop on how to create a portfolio using the WordPress block editor, and it was great to see so many kids and teenagers interested in technology.
+
+The organizers did an amazing job, and the event was completely sold out.
+
+The excitement and curiosity of the young audience made the experience really special.
+
+## **WordCamp Guatemala**
+
+Then came WordCamp Guatemala, where I gave a talk about the latest technologies WordPress is using with artificial intelligence.
+
+I introduced the Abilities API, the AI SDK, and the MCP Adapter.
+
+As the final surprise, I also showed Telex, an Automattic tool that everyone loved.
+
+It was a great trip. My wife joined me for the first time, and she got very interested in being part of the WordPress community too.
+
+That made the whole experience even better.
+
+## **WordCamp San José – Lead Organizer**
+
+After a full year of planning, WordCamp San José 2025 finally became a reality.
+
+I can’t thank enough the amazing team of organizers who supported me from day one. Without them, this event would not have been possible. The event was a total success. We sold out and counted more than 380 attendees, even though we had space for 300.
+
+Local and global sponsors were full of energy and support, and we received very positive feedback from everyone. It was a proud moment for all of us.
+
+## **GDG Pura Vida – DevFest 2025**
+
+The last big event of the year was GDG Pura Vida – DevFest 2025.
+
+It was a beautiful event, a bit different from the WordPress world but full of great people.
+
+I gave a small workshop about how to create your own agentic flow using open source technologies, something I really enjoy teaching.
+
+It was the perfect way to close the year.
+
+And as a small spoiler, I’ll give one more talk at the end of the month about the WordPress block editor.
+
+Let’s see what next year brings.
+
+Every event this year was different, but they all had something in common: the power of community. WordPress is not just software. It is people who help each other, learn together, and build things that make a difference.
+
+2025 reminded me why I love this community and why I will keep being part of it.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/a-year-with-the-wordpress-community/&text=From DevDay to WordCamp San José and DevFest, this was a year full of travel, talks, and amazing people in the WordPress community.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/a-year-with-the-wordpress-community/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/a-year-with-the-wordpress-community/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fa-year-with-the-wordpress-community%2F&title=A Year with the WordPress Community 2025>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)[
+
+##### Taking Playground Further: Meet Blueprints!
+
+El Puas
+
+WordPress
+
+](/blog/taking-playground-further-meet-blueprints)

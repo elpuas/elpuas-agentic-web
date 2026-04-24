@@ -1,0 +1,171 @@
+CodeWordPress
+
+# Dynamically Create Reusable Blocks
+
+El Puas 03/01/2023
+
+Reusable blocks in WordPress can be a fantastic time-saver when creating content. They allow you to create a block once and reuse it multiple times throughout your website. However, creating reusable blocks manually can be a tedious and time-consuming process. In this post, we'll explore how to dynamically create reusable blocks in WordPress.
+
+## About WordPress Reusable Blocks
+
+WordPress reusable blocks are a type of block that can be saved and reused throughout your website. Once created, you can insert them into any page or post using the block editor. Reusable blocks are a great way to save time and maintain consistency across your website.
+
+At their core, reusable blocks are essentially posts within a custom post type called `wp_block` . When you create a reusable block, WordPress adds that content to a new post within the wp\_block post type, making it readily accessible for future use.
+
+## **The Scenario**
+
+While working on a project, I encountered a situation where I needed to create a template containing two blocks that were already in use elsewhere on the site. The content of these blocks remained constant, and initially, I thought of creating a pattern for them. However, I soon realized that reusable blocks would be a more appropriate solution for this scenario.
+
+The tricky part was that these reusable blocks needed to be dynamic. As reusable blocks are essentially custom post types, they come with an ID. But since I was working across different environments, I didn't want to create them manually each time for every environment. Additionally, I wanted these reusable blocks to be seamlessly integrated into my template.
+
+I began by researching how reusable blocks function and exploring methods for creating them dynamically. Unfortunately, I found limited information on this topic.
+
+## The Solution
+
+Again been a post-type makes thing better, we can use WP core functions and work as a regular post, so the first thing is create a variable for the block title, and check if the block exists.
+
+```
+$block_title = 'My Block';
+
+// Check if the block already exists.
+$block_exist = get_posts(
+  [
+    'post_type'      => 'wp_block',
+    'post_title'     => $block_title,
+    'posts_per_page' => 1,
+  ]
+);
+```
+
+Next, we verify if the block exists; if it does, we return early.
+
+```
+if ( $block_exist ) {
+  return;
+} else {
+  ...
+}
+```
+
+Next we are going to create a new post object, and insert it into the database.
+
+I’m using the **`wp_insert_post()`** function, which is a WordPress function designed to create a new post or update an existing one in the database.
+
+```
+} else {
+// Create a new post object.
+  $new_block_post = [
+    'post_type'    => 'wp_block',
+    'post_title'   => $block_title,
+    'post_content' => include get_stylesheet_directory() . '/template-parts/blocks/block-name/my-block-content.php',
+    'post_status'  => 'publish',
+  ];
+
+  // Insert the post into the database.
+  $new_block = wp_insert_post( $new_block_post );
+```
+
+To generate the post content, I first constructed my block within the editor. Then, I simply selected the `Copy Block` option to access the block markup. In order to keep my content organized, I created a separate file to house the block content. As an example, I copied the core paragraph block and incorporated it into this file:
+
+```
+<?php
+/**
+ * Reusable Block Content
+ *
+ * @package ElPuas
+ * @since 1.0.0
+ */
+
+return <<<EOD
+<!-- wp:paragraph -->
+<p>This is a Block Content</p>
+<!-- /wp:paragraph -->
+EOD;
+```
+
+Finally I’m ensuring that the newly created post becomes a reusable block by setting its post type to `wp_block`. first check if `$new_block` is valid and not an instance of `WP_Error`. If the condition is met, I use the `wp_set_post_terms()` function to set the post\_type term for the new post.
+
+```
+// Make the new post a reusable block.
+  if ( 0 !== $new_block && ! is_wp_error( $new_block ) ) {
+    $saved = wp_set_post_terms( $new_block, 'wp_block', 'post_type' );
+  }
+```
+
+Now that we've successfully created a reusable block dynamically, you can see a new tab for reusable blocks in your block library when you open the editor.
+
+Before incorporating this reusable block into your template, let's explore how to manage and edit reusable blocks. To do this, click on the options button located at the top right of the editor. From there, look for the Manage Reusable Blocks link. Clicking on this link will open the reusable block editor, where you can manage and modify your reusable blocks.
+
+## Incorporate the reusable block
+
+To incorporate the reusable block into my template, the first step is to retrieve the block using the following code
+
+```
+$new_block = get_page_by_path( 'my-block', OBJECT, 'wp_block' );
+```
+
+In my code, I’m using the `get_page_by_path()` function, which is a WordPress function that retrieves a page or post by its path. The function accepts three parameters: the path (slug) of the desired page or post ( 'my-block' ), the output type ( OBJECT, which means the function will return a complete post object ), and the post type ('wp\_block', indicating that you're searching for a reusable block).
+
+By using this function, I’m able to retrieve the reusable block with the specified slug ('my-block') and store it in the `$new_block` variable as a post object.
+
+In this final part of my post, I show how to display the content of the retrieved reusable block in the template.
+
+```
+$my_block_id = $new_block->ID;
+
+if ( $my_block_id ) {
+  $get_block = get_post( $my_block_id );
+  $my_block_content = apply_filters( 'the_content', $get_block->post_content );
+  echo $my_block_content;
+}
+```
+
+So First, I access the `ID` property of the `$new_block` object and assign it to the `$my_block_id` variable.
+
+Next, I check if `$my_block_id` exists. If it does, I proceed with the following steps:
+
+I use the `get_post()` function to retrieve the post object associated with the `$my_block_id`, access the `post_content` property of the `$get_block` object, and apply the `the_content` filter using the `apply_filters()` function.
+
+This ensures that the content is processed and formatted correctly for display. The result is stored in the `$my_block_content` variable.
+
+Finally, I use the `echo` statement to output the `$my_block_content` variable, displaying the reusable block's content in the template.
+
+## Conclusion
+
+Throughout this post, I have demonstrated how to create a reusable block dynamically, manage and edit reusable blocks, and incorporate them into a template.
+
+By following these steps, I can efficiently utilize reusable blocks in my WordPress projects, allowing for more organized and maintainable content.
+
+With this knowledge, I am able to harness the full potential of reusable blocks to enhance my website-building experience.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/dynamically-create-reusable-blocks/&text=Dive into my personal strategy for harnessing the power of dynamic reusable blocks in WordPress. >) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/dynamically-create-reusable-blocks/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/dynamically-create-reusable-blocks/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fdynamically-create-reusable-blocks%2F&title=Create and Use Dynamic Reusable Blocks in WordPress>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

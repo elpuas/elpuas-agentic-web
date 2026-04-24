@@ -1,0 +1,171 @@
+CodeAI - Artificial Intelligence
+
+# How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding
+
+El Puas 05/02/2025
+
+My wife runs a small web development boutique, and we team up on most projects. From day one, we’ve wanted to do things differently, work fast, stay sharp, and build with the latest tools. But our old website didn’t show that. It worked, but it felt outdated. It didn’t reflect the kind of work we do or how we approach it.
+
+So we scrapped it and started fresh, but with a catch: I only had about **two hours a day after work**, plus some time on the weekend. That constraint pushed us to stay laser-focused and rely heavily on our AI-assisted workflow to move fast without losing quality.
+
+The goal: launch a new site in just one week, in three languages (Spanish, English, and Italian), with a clean, professional look, and built with tools we enjoy using.
+
+Instead of going the slow route, mockups, long cycles, and endless revisions. I used **Vibe Coding** with **Cursor**, backed by a prompt-driven flow using **ChatGPT**. The result? A faster, clearer site that finally shows what we’re about. All done in seven focused days.
+
+### **Why Astro, and How Research Shaped the Redesign**
+
+We weren’t just looking for a redesign, we wanted better performance, scalability, and UX with intent. That’s why we picked **Astro**. Its island architecture lets us keep JavaScript to a minimum while still using interactive components where it counts.
+
+Before writing any code, we set a few clear content and UX rules. These came from a research phase and were baked into the first prompt I gave the AI agent. We focused on things that actually work for digital agencies and SaaS sites:
+
+*   What do users expect to see when they land on a homepage like this?
+    
+*   What actually boosts conversions?
+    
+*   How do you build trust quickly without overwhelming people?
+    
+
+With that, we reshaped the entire site around user intent:
+
+*   A fast-loading hero with action verbs that say what we do
+    
+*   Value props up top, paired with strong CTAs
+    
+*   A Services page built around real search intent, not just a feature dump
+    
+*   An FAQ section optimized for search and clarity
+    
+*   Clean layout with Vanilla CSS and accessible components
+    
+
+Each section tied back to a user goal. If it didn’t serve a purpose, it didn’t cut.
+
+**Clarity first, action second. No fluff.**
+
+### **Prompt Engineering and Agent Rules: Coding With Context**
+
+AI wasn’t just assisting, it was part of the workflow. To make that work, I gave it structure.
+
+I wrote a set of simple rules for the agent, saved in an `agent-rules.md` file in the repo. That doc set the tone for every prompt: what to do, what to avoid, and how to format responses.
+
+You can check them out here: [Agent Rules Gist](https://gist.github.com/elpuas#general-cursor-rules)
+
+I worked exclusively with **Claude Sonnet 4** inside **Cursor**. After trying a few models, Claude was the one that consistently gave the best results, especially for handling multilingual content and keeping things well-structured.
+
+To keep the context tight, I added a logs/ folder. At the end of each task, the agent would drop a summary of what it did. Those logs helped in two ways:
+
+*   I could track what had been done without switching tools
+    
+*   The agent could refer back to them as live context for future prompts
+    
+
+It felt almost like pair programming. I didn’t have to repeat myself, the agent remembered where we were.
+
+### **From Research to Prompt: A Step-by-Step Workflow**
+
+Here’s how I turned research into prompts, and prompts into working code:
+
+**1\. Start with research**
+
+I dug through real agency and SaaS sites, looking not for inspiration but **structure**, what content blocks worked, how trust was built, and what actually helped users take action.
+
+**2\. Write the first prompt**
+
+After the research, I’d write a rough prompt describing the block I needed. For example:
+
+> “Create a hero section for a digital agency homepage using Astro and Vanilla CSS and JS. It should include a strong H1, a one-line subheading, a clear CTA, and must be responsive. Keep HTML clean and make all text easily replaceable for multilingual support.”
+
+**3\. Refine the prompt with ChatGPT**
+
+I’d then ask ChatGPT to rewrite the prompt in a way that was **agent-friendly**, with clear steps, format expectations, and no vagueness.
+
+This made the agent way more effective.
+
+**4\. Review and push to Git**
+
+Once the agent wrote the code, I reviewed it, then opened a PR. I’d use **Copilot** to:
+
+*   Summarize the PR
+    
+*   Review it
+    
+*   Suggest any fixes or improvements
+    
+
+If it pointed something out, I’d take it right back to the agent to clean it up.
+
+**5\. Keep logs for memory**
+
+Each finished task left behind a `.md log`. These weren’t just notes, they were **active memory** for the agent. Super useful when you’re coding fast and need to keep context alive.
+
+### **A Week of Agentic Coding: Cost-Effective by Design**
+
+A site like this, multilingual, content-heavy, custom structure, would normally take weeks with a small team. Between design, dev, translations, and QA, it stacks up.
+
+But with a tight brief and prompt-based development, we wrapped it up in **one week( I only had around two hours a day after work, plus some weekend time )**, without skipping quality.
+
+No meetings. No long back-and-forths. Just clear tasks, fast feedback, and a coding assistant that stayed focused.
+
+If we’d done this the old-school way, it would’ve cost **3–4x more** in time and coordination.
+
+Instead, we built it ourselves, with better flow and way less friction.
+
+That’s the real power of **Agentic Coding**: **it simplifies complexity without inflating cost.**
+
+### **Final Thoughts**
+
+Working this way — with Cursor, Claude, ChatGPT, and a clear agentic structure — turned what could’ve been a slow, fragmented project into something fast, focused, and surprisingly creative.
+
+This workflow isn’t just about AI writing code. It’s about creating the space to move between UX strategy, prompt design, and implementation without breaking flow. Cursor stops being “just an editor” — it becomes a multitasking partner.
+
+From deep UX research to multilingual layouts and AI-powered iteration, everything stayed aligned.
+
+No context-switching. No chaos. Just clear steps.
+
+So, is this good or bad? Honestly, it depends. But for small teams, freelancers, or boutique agencies like **hers**, it’s a massive upgrade.
+
+It doesn’t replace what we do — it **expands** it.
+
+It raises the bar of what she can offer, how fast she can deliver, and the quality she can maintain along the way.
+
+### **Check It Out**
+
+The new site is live here:
+
+[https://elpuasdigitalcrafts.com](https://elpuasdigitalcrafts.com)
+
+The source code is open here:
+
+[https://github.com/elpuas/epdc](https://github.com/elpuas/epdc)
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding/&text=How we rebuilt a modern, multilingual website in one week using Astro, ChatGPT, Claude, and Cursor in a fast, prompt-driven development flow.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhow-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding%2F&title=Rebuilding a Multilingual Site in 1 Week with AI & Cursor>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### Building My Own Image Optimizer with Electron, Node.js, and Sharp
+
+El Puas
+
+CodeAI - Artificial Intelligence
+
+](/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp)[
+
+##### You Might Not Need a Custom Block: The Block Variations API
+
+El Puas
+
+WordPressCode
+
+](/blog/you-might-not-need-a-custom-block-the-block-variations-api)

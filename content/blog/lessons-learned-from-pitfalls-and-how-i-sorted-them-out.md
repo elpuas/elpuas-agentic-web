@@ -1,0 +1,81 @@
+CodeWordPress
+
+# Lessons Learned from Pitfalls and How I Sorted Them Out
+
+El Puas 12/05/2023
+
+When working as a contractor or freelancer, the primary learning curve often involves a lot of observation and trial and error. The initial challenges may include determining how much to charge and setting up contracts, but there are other factors that can impact our work. I'm going to share some examples from my career as a contractor.
+
+## The Great API Tragedy: Lessons from a Crash Landing
+
+At the start of the year, I undertook a WordPress project to promote a series of talks. It seemed straightforward, given my experience with large corporate websites. The task was clear: attendees needed to register for these talks, and their data had to seamlessly integrate with a CRM.
+
+The initial plan appeared simple: create a custom theme using the block editor, develop the necessary blocks according to the design, and employ plugins as needed. However, complications arose when it came to managing CRM data. The information about speakers, sponsors, and talk details was spread across different databases, intricately interconnected.
+
+Then came an unexpected challenge. The person designated to edit the theme had never worked with Gutenberg before, and my plan to use ACF for block creation became more complex. To make matters worse, the designer resigned, leaving me with minimal design elements to work with. I improvised, but time was slipping away, and the pressure was mounting.
+
+Despite successfully aligning the CRM logic with the project's requirements, teaching the editor to navigate Gutenberg, and crafting some design elements, the final product fell short of expectations. The client expressed dissatisfaction, and, ultimately, the contract was not renewed.
+
+**Lessons Learned:**
+
+**Stick to the Plan:** Despite completing the project, there were early red flags that, if addressed promptly, could have yielded a different outcome. One major lesson is the importance of adhering to the project plan. When unexpected design requirements emerged, creating a new project plan with an adjusted timeline could have helped manage the situation more effectively.
+
+**Know Your Client:** It's crucial to understand your client's familiarity with the tools and features you're implementing. Don't take things for granted. What may seem simple to you may not be so for others. Effective communication and client education are essential.
+
+**Be Thorough with Information:** Had I thoroughly understood how data was managed and the CRM developer's expectations from the outset, the solution would have been significantly different. In fact, for this part of the project, WordPress was not the ideal choice.
+
+## A Simple Project Gone Wild
+
+The project came to me through a friend who mentioned that due to time constraints, they couldn't take it on, and it was supposed to be a piece of cake. It involved creating pages with some custom fields, and it seemed straightforward. The project had already been estimated based on an initial look at the website, and at that moment, I accepted the challenge.
+
+I met with the client, reviewed the pages, and everything looked good to go. I began the project with a project plan in hand, set up a Trello board to manage timelines, and even hired someone to start migrating content. It seemed like smooth sailing initially, but then the "extra" requirements started to pour in. The client wanted product filters, and between understanding the functionality and the client's specific requests, the project timeline began to slip. We managed to address that issue, but by then, 30 days had already passed, and the project, initially estimated at 2 months, was entering its third month.
+
+Then came the client's request for several backend functions that weren't native to WordPress and required custom plugins and logic—adding another 3 weeks to the timeline.
+
+Following that, a very specific functionality related to the industry in question emerged. It involved [reading an API](https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/) and performing a series of steps. This process took 30 days, from selecting the right API to creating the necessary logic, testing, and debugging.
+
+Just when it seemed like we were on the verge of completion, the client introduced a new request. This time, I paused and pointed out that it wasn't part of the original plan. I made the decision not to continue with the project because, at that point, what was estimated as a 2-month project had stretched to over 6 months. This client became the only one I had to part ways with.
+
+**Lessons Learned:**
+
+**Stick to the Plan:** This project highlighted the importance of thoroughly examining every aspect of a project before accepting it. It's crucial to assess all variables and potential challenges, ensuring that the initial plan aligns with the actual scope.
+
+**Seek Professional Help:** For large and potentially complex projects like this one, having a project manager can make a significant difference. They provide essential guidance in managing timelines, scope changes, and overall project coordination.
+
+**Moral of the Story:**
+
+In the world of web development, every project brings its own unique set of challenges. What I've learned from these tales of unexpected twists and turns is this: meticulous planning, clear communication, and the ability to adapt are your most potent tools. Never underestimate the power of knowing when to say 'no' and when to seek help.
+
+If you found these stories and lessons insightful, consider sharing them with your fellow developers.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/lessons-learned-from-pitfalls-and-how-i-sorted-them-out/&text=Explore web development pitfalls and practical solutions in this insightful post, gaining valuable insights from real-life projects.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/lessons-learned-from-pitfalls-and-how-i-sorted-them-out/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/lessons-learned-from-pitfalls-and-how-i-sorted-them-out/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Flessons-learned-from-pitfalls-and-how-i-sorted-them-out%2F&title=Client Projects: Pitfalls & Solutions>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)
