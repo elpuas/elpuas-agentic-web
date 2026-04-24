@@ -43,3 +43,9 @@
 
 - Migrate existing files from `/content/blog` into collection-ready frontmatter format.
 - Optionally connect `loadBlogContext()` to the AI context pipeline once routing/content behavior is fully validated.
+
+## Consolidation update (2026-04-24)
+
+- Removed duplicate blog content previously created in `/src/content/blog`.
+- Moved source blog files from `/content/blog` to `/src/content/blog`.
+- Preserved file extensions and content exactly as-is during the move (`.md` and `.mdx` unchanged).
