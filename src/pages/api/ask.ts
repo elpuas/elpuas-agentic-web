@@ -32,6 +32,16 @@ export const POST: APIRoute = async ({ request }) => {
 	const context = await loadContext({
 		pageContext: typeof pageContext === 'string' ? pageContext : undefined,
 	});
+
+	if (import.meta.env.DEV) {
+		console.log('[api/ask] payload debug', {
+			question: question.trim(),
+			hasPageContext: typeof pageContext === 'string' && pageContext.trim().length > 0,
+			pageContextPreview:
+				typeof pageContext === 'string' ? pageContext.trim().slice(0, 240) : '',
+		});
+	}
+
 	const text = await askAI({
 		question: question.trim(),
 		context,

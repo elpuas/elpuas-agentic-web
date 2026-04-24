@@ -75,8 +75,12 @@ const navigation = [
 						</div>
 					</main>
 
-					<template id="cli-page-context">{pageContext}</template>
-					<section class="cli" aria-label="Command line interface" data-page={currentPage}>
+					<section
+						class="cli"
+						aria-label="Command line interface"
+						data-page={currentPage}
+						data-page-context={encodeURIComponent(pageContext)}
+					>
 						<div class="cli-panel">
 							<div class="cli-box">
 								<div class="cli-messages" id="cli-messages"></div>
@@ -217,8 +221,19 @@ const navigation = [
 				const form = document.querySelector('#cli-form');
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
-				const pageContext = document.querySelector('#cli-page-context')?.textContent?.trim() ?? '';
-				const page = document.querySelector('.cli')?.dataset.page ?? '/';
+				const cliRoot = document.querySelector('.cli');
+				const page = cliRoot?.dataset.page ?? '/';
+				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
+				let pageContext = '';
+
+				if (encodedPageContext) {
+					try {
+						pageContext = decodeURIComponent(encodedPageContext);
+					} catch {
+						pageContext = '';
+					}
+				}
+
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
@@ -333,6 +348,14 @@ const navigation = [
 
 						try {
 							const requestBody = pageContext ? { question, page, pageContext } : { question, page };
+							if (import.meta.env.DEV) {
+								console.debug('[cli] /api/ask payload', {
+									question,
+									page,
+									pageContextPreview: pageContext.slice(0, 240),
+								});
+							}
+
 							const response = await fetch('/api/ask', {
 								method: 'POST',
 								headers: { 'Content-Type': 'application/json' },

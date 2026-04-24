@@ -44,10 +44,34 @@
 - Added rule to use broader knowledge for unrelated questions.
 - Added rule not to assume every question is page-related.
 
-## Next steps
-- Manual browser validation on a blog post page for:
-  - "summarize this post"
-  - "what is this article about?"
-  - "explain this section"
-  - "what tools do you use?"
-  - "who are you?"
+## Debug follow-up (same day)
+
+### Root cause found
+- `pageContext` was being injected in a fragile way via a hidden template node and read using `.textContent`.
+- For rich MDX body content, that approach was easier to mis-handle and harder to validate reliably at runtime.
+- Result: contextual prompts could fall back to broader/global context more often than expected.
+
+### Files adjusted
+- `src/layouts/BaseLayout.astro`
+- `src/pages/api/ask.ts`
+- `src/lib/context.ts`
+- `src/lib/ai.ts`
+
+### Payload validation notes
+- Confirmed rendered `/blog/a-year-with-the-wordpress-community/` now exposes `data-page-context` directly on the `.cli` root and includes:
+  - `Current Blog Title: A Year with the WordPress Community`
+  - Full post body with the WP DevDay section.
+- Added temporary dev logs:
+  - Client logs outgoing payload preview before `/api/ask`.
+  - API logs received payload preview (`hasPageContext`, title/slug preview).
+- Verified requests for:
+  - `summarize this post`
+  - `what happened at WP DevDay?`
+  - `what is this article about?`
+  Returned answers grounded in the WordPress community post.
+
+### Confirmed correct pageContext source
+- `pageContext` source remains the current entry in `src/pages/blog/[slug].astro`:
+  - metadata from `post.data`
+  - full article body from `post.body`
+- No About/knowledge-page content is injected into `pageContext` at source.

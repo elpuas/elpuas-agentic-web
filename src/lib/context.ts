@@ -26,7 +26,10 @@ export async function loadContext({
 	const blogIndexContext = await getBlogIndexContext();
 	const normalizedPageContext = pageContext?.trim();
 
-	const contextParts = [knowledgeContext, `## Blog Discovery Context\n${blogIndexContext}`];
+	const contextParts = [
+		`## Global Knowledge Context\n${knowledgeContext}`,
+		`## Blog Discovery Context\n${blogIndexContext}`,
+	];
 
 	if (normalizedPageContext) {
 		contextParts.push(`## Current Page Context\n${normalizedPageContext}`);
