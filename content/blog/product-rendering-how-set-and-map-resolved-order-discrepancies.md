@@ -1,0 +1,156 @@
+Code
+
+# Product Rendering: How Set and Map Resolved Order Discrepancies
+
+El Puas 11/29/2023
+
+In development, precision is non-negotiable. You have an App that efficiently displays products based on a server-side render. It's all working smoothly until you introduce a "Clear Selections" button that should fetch the same products—only to find out that they're not in the expected order.
+
+This post addresses two crucial questions:
+
+**The Challenge:** Why does the order of products differ between the server-side render and the client-side fetch call?
+
+**Set and Map:** What are these essential tools that helped us solve this issue?
+
+Let's get straight to the heart of the matter. We'll explore the challenge and explain Set and Map in the context of resolving order discrepancies in product rendering.
+
+**The Challenge:Server-Side vs. Client-Side Rendering**
+
+You've developed a web page that efficiently renders products on the server side, following a well-structured query. However, the introduction of a "Clear Selections" button triggers a client-side fetch call to fetch the same products, but they end up in a different order.
+
+This discrepancy arises due to the inherent differences between server-side and client-side rendering processes. Server-side rendering is often deterministic, while client-side rendering can introduce asynchrony, resulting in products appearing out of order.
+
+**Set and Map:**
+
+In JavaScript, **Set** is a data structure that stores a collection of unique values, ensuring there are no duplicates. You can learn more about Set on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set).
+
+On the other hand, **Map** is a data structure that allows you to store key-value pairs, providing efficient look-up and retrieval. Find detailed information about Map on [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
+
+**A Set and Map Solution**
+
+After pondering on how to resolve the order discrepancy between server-side and client-side rendering, a lightbulb moment struck. I recalled an article discussing the prowess of JavaScript's Set and Map data structures, and I decided to put them to the test.
+
+Here's how I tackled the issue, presented through a simplified example:
+
+```
+// Step 1: Create an empty Set and Map
+const productSet = new Set();
+const serverRenderedOrder = new Map();
+
+// Step 2: Populate the Set and Map during server-side rendering
+function serverSideRender() {
+    const products = fetchProductsFromServer(); // Fetch products from the server
+    products.forEach((product, index) => {
+        productSet.add(product.id); // Add product IDs to the Set
+        serverRenderedOrder.set(product.id, index); // Store the original order in the Map
+    });
+}
+
+// Step 3: During client-side rendering, use Set and Map to maintain order
+function clientSideRender() {
+    const products = fetchProductsFromClient(); // Fetch products on the client side
+    const sortedProducts = [];
+    products.forEach((product) => {
+        const productId = product.id;
+        const originalOrder = serverRenderedOrder.get(productId);
+        if (originalOrder !== undefined) {
+            sortedProducts[originalOrder] = product; // Sort products based on original order
+        }
+    });
+    return sortedProducts;
+}
+```
+
+**Explaining the Code**
+
+To resolve the order discrepancy challenge between server-side and client-side rendering, we implemented a solution utilizing JavaScript's Set and Map data structures. Here's a breakdown of the code:
+
+**Step 1: Create an Empty Set and Map**
+
+```
+const productSet = new Set();
+const serverRenderedOrder = new Map();
+```
+
+In this step, we initialize two crucial data structures.
+
+`productSet` is a Set that stores unique product IDs. `serverRenderedOrder` is a Map that preserves the original order of products during server-side rendering.
+
+**Step 2: Populate the Set and Map during Server-Side Rendering**
+
+```
+function serverSideRender() {
+    const products = fetchProductsFromServer(); // Fetch products from the server
+    products.forEach((product, index) => {
+        productSet.add(product.id); // Add product IDs to the Set
+        serverRenderedOrder.set(product.id, index); // Store the original order in the Map
+    });
+}
+```
+
+During server-side rendering, we fetch the products and iterate through them. For each product, we:
+
+Add its unique ID to the productSet to ensure no duplicates. Use the `serverRenderedOrder` Map to store the product's ID along with its original order index.
+
+**Step 3: Maintain Order during Client-Side Rendering**
+
+```
+function clientSideRender() {
+    const products = fetchProductsFromClient(); // Fetch products on the client side
+    const sortedProducts = [];
+    products.forEach((product) => {
+        const productId = product.id;
+        const originalOrder = serverRenderedOrder.get(productId);
+        if (originalOrder !== undefined) {
+            sortedProducts[originalOrder] = product; // Sort products based on original order
+        }
+    });
+    return sortedProducts;
+}
+```
+
+During client-side rendering, we fetch products and create an array called `sortedProducts` to maintain the correct order. For each product:
+
+We retrieve its original order index from the `serverRenderedOrder` Map.If the `originalOrder` is defined (i.e., it exists in the server-rendered order), we place the product in the corresponding position in `sortedProducts`.
+
+In summary, this code utilizes Set and Map to bridge the gap between server-side and client-side rendering, ensuring that products are displayed in the correct order, ultimately resolving the order discrepancy challenge.
+
+**Conclusion: Set and Map - My Order-Fixing Allies**
+
+In my web development career, I encountered a common challenge: maintaining precise product order during rendering. Server-side and client-side rendering often disagreed.
+
+The solution? I turned to JavaScript's Set and Map. They proved to be reliable allies, ensuring client-side products matched the server-side order.
+
+If you found this post helpful or think it could benefit a fellow developer, please consider sharing it.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/product-rendering-how-set-and-map-resolved-order-discrepancies/&text=Learn how Set and Map data structures solve order discrepancies in web development, ensuring precise rendering.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/product-rendering-how-set-and-map-resolved-order-discrepancies/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/product-rendering-how-set-and-map-resolved-order-discrepancies/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fproduct-rendering-how-set-and-map-resolved-order-discrepancies%2F&title=Resolve Order Discrepancy with Set and Map>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### Building My Own Image Optimizer with Electron, Node.js, and Sharp
+
+El Puas
+
+CodeAI - Artificial Intelligence
+
+](/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp)[
+
+##### How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding
+
+El Puas
+
+CodeAI - Artificial Intelligence
+
+](/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding)

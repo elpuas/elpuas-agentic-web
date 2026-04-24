@@ -1,0 +1,356 @@
+---
+import logo from "../assets/logo.svg";
+
+const profile = {
+  name: "Alfredo Navas",
+  role: "Product Builder",
+  email: "elpuas@gmail.com",
+  github: "github.com/elpuas",
+  wordpressLabel: "wordpress.org/elpuas",
+  wordpressUrl: "https://profiles.wordpress.org/elpuas/",
+};
+---
+
+<div class="profile-panel" data-profile-panel data-open="false">
+  <div
+    class="profile-popover"
+    id="sidebar-profile-panel"
+    role="dialog"
+    aria-label="Profile details"
+    aria-hidden="true"
+  >
+    <div class="profile-links">
+      <a href={`mailto:${profile.email}`} class="profile-link">
+        <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M4 7h16v10H4zM4 8l8 6 8-6"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.8"></path>
+        </svg>
+        <span>{profile.email}</span>
+      </a>
+      <a
+        href="https://github.com/elpuas"
+        class="profile-link"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M12 3.5a8.5 8.5 0 0 0-2.69 16.56c.43.07.58-.18.58-.4v-1.53c-2.35.5-2.85-1.12-2.85-1.12-.4-.99-.97-1.25-.97-1.25-.8-.54.06-.53.06-.53.88.06 1.34.9 1.34.9.79 1.33 2.06.94 2.56.72.08-.56.31-.94.56-1.15-1.88-.21-3.84-.93-3.84-4.14 0-.92.33-1.67.88-2.27-.09-.22-.38-1.09.08-2.28 0 0 .71-.23 2.34.87a8.2 8.2 0 0 1 4.26 0c1.62-1.1 2.33-.87 2.33-.87.47 1.2.18 2.06.09 2.28.54.6.87 1.35.87 2.27 0 3.22-1.96 3.93-3.84 4.14.31.27.58.79.58 1.58v2.34c0 .22.15.47.59.4A8.5 8.5 0 0 0 12 3.5Z"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"></path>
+        </svg>
+        <span>{profile.github}</span>
+      </a>
+      <a
+        href={profile.wordpressUrl}
+        class="profile-link"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <g clip-path="url(#clip0_24_36)">
+            <path
+              d="M9.5 9H12.5"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M4 9H6.5"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M11 9L14 20L18 11"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M5.5 9L9 20L12 13"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M18 11C18.177 10.472 19 9.636 19 8.5C19 6.72 18.224 6 17.125 6C16.227 6 16 6.812 16 7.429C16 9.259 18 9.487 18 11Z"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+            <path
+              d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 10.8181 20.7672 9.64778 20.3149 8.55585C19.8626 7.46392 19.1997 6.47177 18.364 5.63604C17.5282 4.80031 16.5361 4.13738 15.4442 3.68508C14.3522 3.23279 13.1819 3 12 3C10.8181 3 9.64778 3.23279 8.55585 3.68508C7.46392 4.13738 6.47177 4.80031 5.63604 5.63604C4.80031 6.47177 4.13738 7.46392 3.68508 8.55585C3.23279 9.64778 3 10.8181 3 12Z"
+              stroke="#D8FF00"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_24_36">
+              <rect width="24" height="24" fill="white"></rect>
+            </clipPath>
+          </defs>
+        </svg>
+        <span>{profile.wordpressLabel}</span>
+      </a>
+    </div>
+  </div>
+
+  <button
+    class="profile-trigger"
+    type="button"
+    aria-haspopup="dialog"
+    aria-controls="sidebar-profile-panel"
+    aria-expanded="false"
+    data-profile-trigger
+  >
+    <div class="avatar" aria-hidden="true">
+      <div class="avatar-core">
+        <img class="avatar-logo" src={logo.src} alt="" />
+      </div>
+    </div>
+    <div class="profile-copy">
+      <p class="profile-name">{profile.name}</p>
+      <p class="profile-role">{profile.role}</p>
+    </div>
+  </button>
+</div>
+
+<script>
+  const closeProfilePanel = (root) => {
+    root.dataset.open = "false";
+    const trigger = root.querySelector("[data-profile-trigger]");
+    const popover = root.querySelector(".profile-popover");
+
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    if (popover) {
+      popover.setAttribute("aria-hidden", "true");
+    }
+  };
+
+  const toggleProfilePanel = (root) => {
+    const nextOpen = root.dataset.open !== "true";
+    const trigger = root.querySelector("[data-profile-trigger]");
+    const popover = root.querySelector(".profile-popover");
+    root.dataset.open = nextOpen ? "true" : "false";
+
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+    }
+
+    if (popover) {
+      popover.setAttribute("aria-hidden", nextOpen ? "false" : "true");
+    }
+  };
+
+  const mountProfilePanel = () => {
+    const roots = document.querySelectorAll("[data-profile-panel]");
+
+    roots.forEach((root) => {
+      if (root.dataset.bound === "true") {
+        return;
+      }
+
+      root.dataset.bound = "true";
+      const trigger = root.querySelector("[data-profile-trigger]");
+
+      trigger?.addEventListener("click", () => {
+        toggleProfilePanel(root);
+      });
+
+      document.addEventListener("pointerdown", (event) => {
+        if (root.dataset.open !== "true") {
+          return;
+        }
+
+        if (!root.contains(event.target)) {
+          closeProfilePanel(root);
+        }
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && root.dataset.open === "true") {
+          closeProfilePanel(root);
+        }
+      });
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountProfilePanel, {
+      once: true,
+    });
+  } else {
+    mountProfilePanel();
+  }
+</script>
+
+<style>
+  .profile-panel {
+    position: relative;
+    margin-top: auto;
+    padding: 0 var(--space-4) var(--space-4);
+  }
+
+  .profile-trigger {
+    width: 100%;
+    height: 4.5625rem;
+    border-top: var(--space-px) solid var(--color-border);
+    padding-top: 1.0625rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .profile-trigger:focus-visible {
+    outline: var(--space-px) solid var(--color-accent);
+    outline-offset: 0.2rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .profile-popover {
+    position: absolute;
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: calc(100% + 0.65rem);
+    background: #2a2a2a;
+    border: var(--space-px) solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.875rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(0.35rem);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 0ms linear 180ms;
+  }
+
+  .profile-popover::after {
+    content: "";
+    position: absolute;
+    left: 1.5rem;
+    bottom: -0.38rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background: #2a2a2a;
+    border-right: var(--space-px) solid rgba(255, 255, 255, 0.06);
+    border-bottom: var(--space-px) solid rgba(255, 255, 255, 0.06);
+    transform: rotate(45deg);
+  }
+
+  .profile-panel[data-open="true"] .profile-popover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0ms;
+  }
+
+  .profile-links {
+    padding: 0.25rem 0;
+  }
+
+  .profile-link + .profile-link {
+    border-top: var(--space-px) solid rgba(255, 255, 255, 0.07);
+  }
+
+  .profile-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.5rem 0.85rem;
+    min-height: 2.25rem;
+    color: #f4f4f5;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: var(--font-weight-regular);
+    transition:
+      background-color 140ms ease,
+      color 140ms ease;
+  }
+
+  .profile-link:hover,
+  .profile-link:focus-visible {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text);
+    outline: none;
+  }
+
+  .profile-link-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 auto;
+    color: var(--color-accent);
+  }
+
+  .avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    padding: 0.125rem;
+    background:
+      radial-gradient(circle at 40% 30%, #d8ff00 0%, #00bc7d 75%), transparent;
+    box-shadow: 0 0 0 2px rgba(0, 188, 125, 0.3);
+  }
+
+  .avatar-core {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: #27272a;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .avatar-logo {
+    width: 74%;
+    height: 74%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .profile-copy {
+    min-width: 0;
+  }
+
+  .profile-name {
+    color: var(--color-text);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+  }
+
+  .profile-role {
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-xs);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .profile-popover {
+      transition: none;
+    }
+  }
+</style>

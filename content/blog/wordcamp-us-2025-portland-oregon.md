@@ -1,0 +1,78 @@
+WordPress
+
+# WordCamp US 2025 – Portland, Oregon
+
+El Puas 09/01/2025
+
+This year I had the opportunity to attend WordCamp US in Portland, Oregon, thanks to the invitation from Automattic and WordPress.com. A group of six of us traveled from Costa Rica, excited to live the experience and connect with the global WordPress community.
+
+The trip started with a layover in San Francisco, and I arrived at the hotel in Portland late at night, tired but full of anticipation for what was to come.
+
+## **Contributor Day**
+
+The first day was **Contributor Day**. It was not only a chance to collaborate, but also the perfect moment to reconnect with friends from the WordPress community. We even had the opportunity to chat with [Matt Mullenweg](https://x.com/photomatt) and take the classic group photo.
+
+I spent most of the day working with **Playground**. Even though I didn’t manage to resolve any tickets, I got the chance to dive deeper into how Playground works and learn more about its possibilities. (If you haven’t heard of it before, check it out here: [WordPress Playground](https://wordpress.org/playground/)).
+
+In the afternoon, we wrapped up the day by walking around Downtown Portland a bit, enjoying the city after a full day of contributions and conversations.
+
+## **Showcase Day**
+
+  
+The second day started with **Showcase Day**, where some of my Costa Rican colleagues participated in **WordPress Campus Connect**, sharing their insights. My company also gave a talk about the project with the **Jim Joseph Foundation**, explaining how we used the [Theme Switcher Pro](https://themeswitcher.com/).
+
+That day was also about meeting people: I had great conversations with the Spanish community and ran into folks I’ve followed on Twitter for years, like [Nick Diego](https://x.com/nickmdiego), [Jonathan Bossenger](https://x.com/jon_bossenger)**,** and [Brian Coords](https://x.com/briancoords) to mention a few. I also got to meet [Ryan Welcher](https://x.com/ryanwelcher), someone I’ve been following on Twitch and YouTube for a while. Meeting him in person was a highlight.
+
+## **Sessions and Parties**
+
+On the third day I attended several sessions, especially those about **Artificial Intelligence**. During one of the panels I asked a question to the speakers about how we are constantly evolving as developers and which tools they believe we should be focusing on for the future. I also caught up with colleagues and former coworkers.
+
+At night some sponsors organized parties. We went first to the Pantheon party and then to the Elementor and Kinsta party. Both were great with a fun atmosphere. There was karaoke and my friend Jason even got up to sing a song in Spanish. It was hilarious and memorable. After that a couple of us kept exploring the streets of Portland late into the night.
+
+## **The Closing and the Question**
+
+The last day of the camp was very special. Even though I missed a meeting I had scheduled with Ryan Welcher (sorry, Ryan), I managed to attend more sessions and enjoy lunch with my teammates.
+
+The most important moment was the **Q&A with Matt Mullenweg**. I stood up and asked a question about why Latin America doesn’t get the same focus as WordCamp US, Asia, or Europe. I suggested the idea of a Latin American WordCamp, and the question seemed to resonate. A few participants from the Hispanic community told me afterward that they thought it was a good idea.
+
+The intention was to remind sponsors that we are more than 300 million Latin Americans using their products, and that it’s time to look our way too.
+
+The closing took place at the **World Forestry Museum**, with food trucks, live music, and a festive atmosphere. A perfect way to end the event.
+
+## **Final Reflection**
+
+WordCamp US 2025 was an enriching experience in every sense. Although I felt there were fewer sponsors and attendees compared to past years, the quality of the event was excellent. I met so many people, had deep conversations about code and WordPress, and most importantly, strengthened friendships with my travel companions, some of whom were attending their very first WordCamp and loved it.
+
+I came back home with the feeling that the WordPress community remains one of the most open, collaborative, and human spaces in the tech world.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/wordcamp-us-2025-portland-oregon/&text=Sharing my journey at WordCamp US 2025 in Portland. Highlights, insights, and the value of connecting with the global WordPress community.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/wordcamp-us-2025-portland-oregon/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/wordcamp-us-2025-portland-oregon/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fwordcamp-us-2025-portland-oregon%2F&title=WordCamp US 2025 – My Experience in Portland>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### Taking Playground Further: Meet Blueprints!
+
+El Puas
+
+WordPress
+
+](/blog/taking-playground-further-meet-blueprints)

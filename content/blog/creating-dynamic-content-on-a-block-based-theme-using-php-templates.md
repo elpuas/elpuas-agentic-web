@@ -1,0 +1,167 @@
+CodeWordPress
+
+# Creating Dynamic Content on a Block-Based Theme Using PHP Templates
+
+El Puas 10/03/2023
+
+Given the task of integrating custom fields into a custom post type (CPT) template within a Block-Based Theme, I approached this challenge methodically to find practical solutions.
+
+The challenge was clear—to create a dynamic template for individual content items, relying solely on custom fields while avoiding the conventional approach of using blocks. This challenge was amplified by the unique Site Editor environment, predominantly composed of HTML files.
+
+My motivation for tackling this task was driven by practicality and hands-on experience. This is the result of that effort, crafted to provide insights into using PHP templates to leverage custom fields in Block-Based themes, all without resorting to traditional block-based methods.
+
+Before we continue into using PHP templates within the Site Editor, let's take a moment to understand some considerations.
+
+**1\. Non-Editable PHP Templates**: First up, it's important to note that PHP template files don't offer the same level of editability within the Site Editor or template editor as HTML templates do. Be prepared for a slightly different workflow.
+
+**2\. WordPress Hooks and Markup**: We'll also discuss the significance of including the right WordPress hooks and fundamental **`<HTML>`** and **`<body>`** markup in your PHP templates. Unlike HTML templates, these elements need explicit attention.
+
+**3\. Template Parts**: a method of utilizing existing template parts for headers and footers. This approach provides users with the ability to manage navigation within the header via direct edits to template parts, offering a pragmatic approach to enhance flexibility.
+
+### **Creating the PHP Template**
+
+In the following example, we'll explore a standard PHP template structure designed for use within a block-based theme. This template lays the foundation for creating dynamic pages, and it includes essential WordPress hooks.
+
+💡 WordPress theme developers should use `wp_head()`, `wp_body_open()` and `wp_footer()` functions in their themes
+
+```
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo( 'charset' ); ?>">
+    <?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+    <?php wp_body_open(); ?>
+    <div class="wp-site-blocks">
+        <header class="wp-block-template-part site-header">
+            <?php block_header_area(); ?>
+        </header>
+          
+        <footer class="wp-block-template-part site-footer">
+            <?php block_footer_area(); ?>
+        </footer>
+    </div>
+    <?php wp_footer(); ?>
+</body>
+```
+
+This PHP template follows a standard structure used to create dynamic movie pages within the theme. Here's what it includes:
+
+**<!doctype html>** and **<html>** attributes: These ensure proper rendering of your page.  
+**<head>** section: It contains essential metadata and WordPress functions triggered by **wp\_head()**.  
+**<body>** tag: We utilize **body\_class()** and **wp\_body\_open()** for styling and functionality.  
+A wrapping **<div>** with the CSS class **wp-site-blocks**: This maintains consistency with HTML templates used in your theme.  
+An encapsulating function known as **block\_header\_area()**, is designed to output the 'header' template part. Similarly, there's an enclosing function named [**block\_footer\_area()**](https://developer.wordpress.org/reference/functions/block_footer_area/), responsible for rendering the 'footer' template part.
+
+### **Working with Block Content**
+
+In the Site Editor, the content comes in the form of blocks, while my specific challenge may revolve around custom fields, it's worth noting how block content can be managed.
+
+To properly render block markup as blocks, as opposed to displaying them as HTML comments, we rely on a fundamental PHP function called [**`do_blocks()`**](https://developer.wordpress.org/reference/functions/do_blocks/).
+
+```
+<head>
+  <meta charset="<?php bloginfo( 'charset' ); ?>">
+  <?php
+  $the_content = do_blocks( '
+    <!-- wp:group {"layout":{"type":"constrained"}} -->
+    <div class="wp-block-group">
+      <!-- wp:post-content /-->
+    </div>
+    <!-- /wp:group -->'
+   );
+   ?>
+  <?php wp_head(); ?>
+</head>
+```
+
+Here's a breakdown of how **`do_blocks()`** functions:
+
+**Parameter Usage**: **do\_blocks()** accepts a single parameter, which is a string containing the block content you want to parse. This content string can encompass one or more blocks, allowing you to render a combination of blocks in the same call.  
+**Block Consistency**: It's essential to remember that you cannot split blocks across multiple **do\_blocks()** function calls. The opening and closing tags of a block must remain within the same function call.
+
+Understanding how block content can be handled with **`do_blocks()`** provides a comprehensive view of the Site Editor capabilities.
+
+### **Incorporating Custom Fields**
+
+The next step is integrating custom fields. These fields allow us to inject dynamic data into our templates, providing a richer and more personalized user experience.
+
+In my example, I have four custom fields: title, year, genre, and synopsis.
+
+```
+$title    = get_field( 'title', get_the_ID() );
+$year     = get_field( 'year', get_the_ID() );
+$genre    = get_field( 'genre', get_the_ID() );
+$synopsis = get_field( 'synopsis', get_the_ID() );
+```
+
+To create these custom fields, I use Advanced Custom Fields (ACF). Once the fields are set up and associated with our custom post type, we can incorporate them into our PHP template, as demonstrated in the code above.
+
+```
+<div class="wp-block-group">
+    <!-- container -->
+    <div class="container-hero">
+        <div class="row">
+            <?php if ($genre) : ?>
+                <div class="genre">
+                    <p><span class="subtitle">Genre: </span><?php echo esc_html($genre); ?></p>
+                </div>
+            <?php endif; ?>
+            <?php if ($title) : ?>
+                <div class="entry-title">
+                    <h1 class="fonograma-title"><?php echo esc_html($title); ?></h1>
+                </div>
+            <?php endif; ?>
+            <?php if ($year) : ?>
+                <div class="year">
+                    <p><span class="subtitle">Year: </span><?php echo esc_html($year); ?></p>
+                </div>
+            <?php endif; ?>
+            <?php if ($synopsis) : ?>
+                <div class="synopsis">
+                    <p><span class="subtitle">Synopsis: </span><?php echo esc_html($synopsis); ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+```
+
+I completed the process by seamlessly incorporating custom fields into my template. These custom fields are neatly organized within div elements, maintaining a consistent appearance with WordPress classes.
+
+### **In Conclusion**
+
+In this guide, we explored the practical application of PHP templates within a Block-Based Theme and the Site Editor. We gained insights into setting up templates, adding content, and integrating custom fields.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/creating-dynamic-content-on-a-block-based-theme-using-php-templates/&text=Learn to use PHP templates for dynamic content in block-based WordPress themes.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/creating-dynamic-content-on-a-block-based-theme-using-php-templates/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/creating-dynamic-content-on-a-block-based-theme-using-php-templates/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fcreating-dynamic-content-on-a-block-based-theme-using-php-templates%2F&title=Dynamic Content with PHP Templates in Block Themes>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

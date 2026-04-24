@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ProfilePanel from '../components/ProfilePanel.astro';
 
 const {
 	title = 'Alfredo Navas',
@@ -63,15 +64,7 @@ const navigation = [
 						</ul>
 					</nav>
 
-					<footer class="profile">
-						<div class="avatar" aria-hidden="true">
-							<div class="avatar-core">☠</div>
-						</div>
-						<div class="profile-copy">
-							<p class="profile-name">Alfredo Navas</p>
-							<p class="profile-role">Product Builder</p>
-						</div>
-					</footer>
+					<ProfilePanel />
 				</aside>
 
 				<div class="workspace">
@@ -226,6 +219,50 @@ const navigation = [
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
+					const assistantUrlPattern = /https?:\/\/[^\s<>"']+/g;
+					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
+
+					const appendAssistantTextWithLinks = (container, paragraph) => {
+						let lastIndex = 0;
+
+						for (const match of paragraph.matchAll(assistantUrlPattern)) {
+							const index = match.index ?? 0;
+							const rawUrl = match[0];
+
+							if (index > lastIndex) {
+								container.append(document.createTextNode(paragraph.slice(lastIndex, index)));
+							}
+
+							let href = rawUrl;
+							let trailing = '';
+							const trailingMatch = rawUrl.match(trailingPunctuationPattern);
+
+							if (trailingMatch) {
+								trailing = trailingMatch[0];
+								href = rawUrl.slice(0, -trailing.length);
+							}
+
+							if (href) {
+								const link = document.createElement('a');
+								link.href = href;
+								link.target = '_blank';
+								link.rel = 'noopener noreferrer';
+								link.textContent = href;
+								container.append(link);
+							}
+
+							if (trailing) {
+								container.append(document.createTextNode(trailing));
+							}
+
+							lastIndex = index + rawUrl.length;
+						}
+
+						if (lastIndex < paragraph.length) {
+							container.append(document.createTextNode(paragraph.slice(lastIndex)));
+						}
+					};
+
 					const scrollMessages = () => {
 						messages.scrollTop = messages.scrollHeight;
 					};
@@ -257,7 +294,13 @@ const navigation = [
 						paragraphs.forEach((paragraph) => {
 							const block = document.createElement('p');
 							block.className = 'cli-message-paragraph';
-							block.textContent = paragraph;
+
+							if (role === 'assistant') {
+								appendAssistantTextWithLinks(block, paragraph);
+							} else {
+								block.textContent = paragraph;
+							}
+
 							item.append(block);
 						});
 					};
@@ -410,55 +453,6 @@ const navigation = [
 		background: var(--color-accent-soft);
 	}
 
-	.profile {
-		margin-top: auto;
-		height: 4.5625rem;
-		border-top: var(--space-px) solid var(--color-border);
-		padding: 1.0625rem var(--space-4);
-		display: flex;
-		align-items: center;
-		gap: var(--space-3);
-	}
-
-	.avatar {
-		width: 2.5rem;
-		height: 2.5rem;
-		border-radius: 999px;
-		padding: 0.125rem;
-		background:
-			radial-gradient(circle at 40% 30%, #d8ff00 0%, #00bc7d 75%),
-			transparent;
-		box-shadow: 0 0 0 2px rgba(0, 188, 125, 0.3);
-	}
-
-	.avatar-core {
-		width: 100%;
-		height: 100%;
-		border-radius: inherit;
-		background: #27272a;
-		color: var(--color-accent);
-		display: grid;
-		place-items: center;
-		font-size: 1rem;
-		line-height: 1;
-	}
-
-	.profile-copy {
-		min-width: 0;
-	}
-
-	.profile-name {
-		color: var(--color-text);
-		font-size: var(--font-size-sm);
-		line-height: var(--line-height-sm);
-	}
-
-	.profile-role {
-		color: var(--color-text-subtle);
-		font-size: var(--font-size-xs);
-		line-height: var(--line-height-xs);
-	}
-
 	.workspace {
 		display: flex;
 		flex-direction: column;
@@ -530,6 +524,22 @@ const navigation = [
 	.cli-message-assistant {
 		color: var(--color-text-subtle);
 		border-color: var(--color-border);
+	}
+
+	:global(.cli-message-assistant a) {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-decoration-color: rgba(216, 255, 0, 0.55);
+		text-underline-offset: 0.14em;
+		transition:
+			filter 120ms ease,
+			text-decoration-color 120ms ease;
+	}
+
+	:global(.cli-message-assistant a:hover),
+	:global(.cli-message-assistant a:focus-visible) {
+		filter: brightness(1.12);
+		text-decoration-color: currentColor;
 	}
 
 	:global(.cli-loader) {
@@ -669,10 +679,6 @@ const navigation = [
 		.sidebar {
 			border-right: 0;
 			border-bottom: var(--space-px) solid var(--color-border);
-		}
-
-		.profile {
-			margin-top: var(--space-4);
 		}
 
 		.content {

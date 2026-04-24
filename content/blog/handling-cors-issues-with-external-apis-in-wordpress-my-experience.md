@@ -1,0 +1,228 @@
+CodeWordPress
+
+# Handling CORS Issues with External APIs in WordPress: My Experience
+
+El Puas 08/09/2023
+
+If you’re into web development, you might have encountered CORS (Cross-Origin Resource Sharing) problems. Especially challenging when dealing with external APIs, these issues can create unexpected roadblocks. While WordPress often simplifies website creation, it's not immune to CORS complexities. In this article, I'll walk you through my journey, might offer some insights for your own projects... or, who knows, maybe I've been doing it all wrong!
+
+## **The Task Unveiled**
+
+The task was to establish an API connection, a seemingly straightforward objective. However, the layers of this task soon revealed themselves. I needed to **Connect to an External API**. This was the foundational step, akin to establishing a handshake with another server.
+
+Next, get the **JWT Token**. For those unfamiliar, a JWT (JSON Web Token) functions as a unique identifier, allowing for the secure transmission of data between parties. Once I had the JWT Token, I need to incorporate it into the body of my calls, signaling to the server the authorization to access the desired data.
+
+Given the depth of information needed, each request, authenticated with the JWT, brought forth new pieces of data, further enriching my site's content. Finally, get the desired data, a vital piece that completed my informational matrix.
+
+## **The CORS Conundrum**
+
+As I embarked on my journey to fetch the JWT token, I decided to use the tried-and-true method of a simple JavaScript call. However, the familiar and often frustrating CORS error soon reared its head.
+
+For those unacquainted, here's a brief example of the POST call I attempted:
+
+```
+fetch('https://api.example.com/auth/login', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        apiKey: 'EXAMPLE_API_KEY',
+        apiSecret: 'EXAMPLE_API_SECRET'
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log('Success:', data);
+})
+.catch((error) => {
+    console.error('Error:', error);
+});
+```
+
+No sooner had I executed the call than I was met with the dreaded and all-too-familiar CORS error. For those who might be new to the concept, CORS (Cross-Origin Resource Sharing) is a security feature implemented by web browsers. It ensures that web pages make requests to the same domain they originated from, preventing potentially harmful cross-site requests. there's an [**excellent discussion on Stack Overflow**](https://stackoverflow.com/questions/35553500/xmlhttprequest-cannot-load-xxx-no-access-control-allow-origin-header) that sheds light on the topic.
+
+Facing the CORS error was an unexpected challenge, but it set the stage for a deeper dive into understanding and resolving such issues in WordPress.
+
+## **The Server-Side Solution**
+
+As I grappled with the CORS obstacle, it became clear that a shift in approach was needed. Instead of making client-side requests directly from the browser, I pivoted to server-side requests. Why did this make a difference?
+
+In essence, while browsers enforce strict security protocols like CORS to safeguard users, server-side requests aren't bound by these same constraints. Browsers are inherently protective, ensuring that external requests don't compromise user data. Servers, on the other hand, operate without this layer of protective scrutiny, allowing for more flexibility in the kind of requests they make.
+
+## **Storing the JWT as a Cookie**
+
+Once the CORS issue was circumvented, the next step was to obtain the JWT and store it securely for easy access. I chose to use cookies for this purpose, and here's how I went about it:
+
+```
+// Function to fetch and store JWT
+function fetch_and_store_jwt() {
+
+    // Check if JWT is already in the cookies and validate its expiration
+    if (isset($_COOKIE['jwt'])) {
+        $jwt = $_COOKIE['jwt'];
+        $decoded_data = base64_decode(explode('.', $jwt)[1]);
+        $payload = json_decode($decoded_data, true);
+
+        // If the token is valid, return it
+        if (isset($payload['exp']) && time() < $payload['exp']) {
+            return $jwt;
+        }
+    }
+
+    // If not, request a new JWT from the external API
+    $url = 'https://api.example.com/auth/login';
+    $credentials = [
+        'api_key' => 'EXAMPLE_API_KEY',
+        'api_secret' => 'EXAMPLE_API_SECRET'
+    ];
+
+    $response = wp_remote_post($url, [
+        'headers' => ['Content-Type' => 'application/json; charset=utf-8'],
+        'body' => wp_json_encode($credentials),
+        'method' => 'POST'
+    ]);
+
+    if (!is_wp_error($response)) {
+        $jwt = wp_remote_retrieve_body($response);
+
+        // Store the JWT as a cookie
+        setcookie('jwt', $jwt, time() + 3600, '/', $_SERVER['HTTP_HOST'], is_ssl(), true);
+
+        return $jwt;
+    }
+
+    return null;
+}
+
+// Example usage
+$jwt = fetch_and_store_jwt();
+```
+
+This method ensures that every time I need the JWT, I first check if it's available and still valid. If not, a fresh one is obtained and stored for subsequent use. By using cookies, I could efficiently manage the token's lifecycle, ensuring seamless interactions with the external API.
+
+Let's briefly touch upon some WordPress functions I utilized in the solution.
+
+**wp\_remote\_post() -** This WordPress function sends an HTTP POST request to a specified URL. It's part of the WordPress HTTP API and can return the response or a **`WP_Error`** object on failure. [**Read more in the WordPress Codex**](https://developer.wordpress.org/reference/functions/wp_remote_post/)
+
+**wp\_remote\_retrieve\_body() -** After obtaining a response using functions like **`wp_remote_post()`**, **`wp_remote_retrieve_body()`** is used to extract the main body content from that response. [**Read more in the WordPress Codex**](https://developer.wordpress.org/reference/functions/wp_remote_retrieve_body/)
+
+**wp\_json\_encode() -** This function is WordPress's take on the PHP **`json_encode()`**, converting a PHP value into a JSON-formatted string. It ensures compatibility across different hosting environments. [**Read more in the WordPress Codex**](https://developer.wordpress.org/reference/functions/wp_json_encode/)
+
+## **Registering Custom REST Endpoints**
+
+After obtaining the JWT and storing it securely as a cookie, I encountered another challenge: I still faced CORS errors on my GET calls. To tackle this, I decided to create custom REST API endpoints in WordPress that would act as intermediaries between the client-side requests and the external API.
+
+Here's a conceptual example solution:
+
+```
+// Register a custom endpoint to retrieve make data
+function register_custom_api_endpoints() {
+    register_rest_route('customapi/v1', '/make', [
+        'methods'  => 'GET',
+        'callback' => 'fetch_make_data',
+        'args'     => [
+            'year' => [
+                'required' => true,
+            ],
+        ],
+    ]);
+}
+
+add_action('rest_api_init', 'register_custom_api_endpoints');
+
+// Callback function to handle the request and fetch data
+function fetch_make_data($request) {
+    $jwt_token = isset($_COOKIE['jwt']) ? $_COOKIE['jwt'] : '';
+    $selected_year = $request->get_param('year');
+
+    // Make the server-side call to the external API
+    $response = wp_remote_get('https://api.example.com/make', [
+        'headers' => [
+            'Authorization' => 'Bearer ' . $jwt_token,
+        ],
+    ]);
+
+    if (!is_wp_error($response)) {
+        $data = wp_remote_retrieve_body($response);
+        return json_decode($data, true);
+    }
+    
+    return new WP_Error('api_error', 'Failed to fetch data from the external API.');
+}
+```
+
+In this example:
+
+A custom endpoint, **/make**, is registered under the **customapi/v1** namespace.The **fetch\_make\_data** function handles the request. It retrieves the JWT from the cookie and uses it to authenticate the server-side call to the external API.The data fetched from the external API is then returned as the response to the original REST request.
+
+This approach allowed me to bypass the CORS restrictions by using WordPress as a proxy between the client and the external API. The client-side now makes requests to the WordPress custom endpoints, which in turn, fetch the required data from the external API.
+
+## **Revisiting JavaScript Fetch**
+
+With the server-side solution in place, I circled back to the original plan: using JavaScript's **`fetch`** to get the data. This time, instead of directly querying the external API, I targeted the custom endpoints I had set up in WordPress.
+
+Here's a conceptual example:
+
+```
+// Fetch the make data for a specific year
+function getMake(year) {
+    fetch(`/wp-json/customapi/v1/make?year=${year}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Use the data to populate fields, display results, etc.
+        console.log(data);
+    })
+    .catch(error => {
+        console.log('Fetch error:', error);
+    });
+}
+
+// Example usage:
+getMake(2023);
+```
+
+By targeting the custom WordPress endpoints, I could retrieve the data I needed without any CORS complications. All the complexities of authentication and server-side processing were abstracted away, allowing for simple and direct data retrieval on the client side.
+
+## **Conclusion**
+
+Web development often feels like navigating through a maze, full of unexpected twists and turns. My solution to the CORS challenge with the WordPress REST API was no different. Through trial and error, and a lot of learning in the process, I devised a strategy using custom endpoints and server-side requests.
+
+Remember, while this approach worked for me (and yes, it does work on my computer!), it's not the only path. Each challenge is an opportunity for learning and growth. If my journey has offered any insights or sparked a chuckle, please share this post and stay connected for more adventures in code.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/&text=Join me as I navigate CORS errors in WordPress, turning challenges into solutions with custom API endpoints. Dive into my real-world journey and insights!>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhandling-cors-issues-with-external-apis-in-wordpress-my-experience%2F&title=WordPress & CORS: How I Tackled Tricky API Errors>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

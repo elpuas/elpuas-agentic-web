@@ -1,0 +1,269 @@
+WordPress
+
+# You Might Not Need a Custom Block: The Block Bindings API
+
+El Puas 11/04/2024
+
+Welcome to the latest chapter of our series, **“You Might Not Need a Custom Block: ”**. If you’ve been following along, we’ve already explored how to leverage existing WordPress functionality without creating custom blocks. In our previous posts, we covered:
+
+*   [**The Block Styles API**](https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-styles-api/): Where we showed how to add custom styles to blocks using the Block Styles API.
+    
+*   [**The Block Variations API**](https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-variations-api/): How to create powerful block variations that give you flexibility without needing a full custom block.
+    
+
+Now, let's explore an exciting feature that debuted in WordPress 6.5: [**The Block Bindings API**](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/). This API significantly reduces the amount of custom code needed to integrate different kinds of data into blocks. Instead of manually coding complex integrations, the Block Bindings API allows you to link block attributes to external data sources, like post metadata or custom PHP logic.
+
+## **How Block Bindings Work**
+
+The **Block Bindings API** allows block attributes to be linked to external data sources, such as post metadata or custom fields. Initially, only a few core blocks and attributes are supported (like Image, Paragraph, and Button), but this already covers many use cases.
+
+When an attribute is bound to a data source, it becomes **read-only** in the editor, and visual indicators highlight the binding. Currently, bindings need to be added manually via the **Code Editor**, with future plans to expand the interface and block compatibility.
+
+For more details, refer to the [official Block Bindings API documentation](https://make.wordpress.org/core/2024/03/06/new-feature-the-block-bindings-api/).
+
+## **Registering a Custom Source**
+
+One of the features that truly stands out is `register_block_bindings_source()`. This function allows us to register custom sources for block attributes, enabling dynamic content without creating a custom block.
+
+### **How it Works:**
+
+To register a custom source, we use the function:
+
+```
+register_block_bindings_source( string $source_name, array $source_properties );
+```
+
+It accepts two parameters:
+
+*   **$source\_name**: A unique name for your source in the format namespace/slug.
+    
+*   **$source\_properties**: An array defining the source:
+    
+    *   **label**: A human-readable label for the source.
+        
+    *   **get\_value\_callback**: The function that fetches the value for the block’s attribute.
+        
+    *   **uses\_context** _(optional)_: Allows you to pass contextual information like post ID or user data.
+        
+
+When WordPress encounters the source, it runs the `get_value_callback` function, which looks like this:
+
+```
+function projectslug_bindings_callback( array $source_args, WP_Block $block_instance, string $attribute_name ) {
+  // Custom logic to fetch data
+}
+```
+
+## **Creating a Block Variation with Custom Data**
+
+In this example, we’ll demonstrate how to use **block bindings** and **block variations** to create a dynamic block that fetches character data from the **Star Wars API**. By using `register_block_bindings_source()`, we’ll connect the block’s content to the API, allowing it to retrieve data such as character names, heights, and more. We’ll also create a block variation, making it easy to select different characters within the block editor and display their information dynamically.
+
+## **Defining the Callback**
+
+The first step in creating our block variation is defining the callback function that will fetch data from the **Star Wars API**. Here’s the code for our callback:
+
+```
+function get_star_wars_character( array $source_args, $block_instance, string $attribute_name ) {
+    // Get the character ID or name from source_args.
+    $character_id = isset( $source_args['character_id'] ) ? $source_args['character_id'] : 1;
+    $response = wp_remote_get( "<https://swapi.dev/api/people/{$character_id}/>" );
+
+    if ( is_wp_error( $response ) ) {
+        return 'Error fetching character data';
+    }
+
+    $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+    // Return the character information.
+    if ( isset( $data['name'] ) ) {
+        return "Character: " . $data['name'] . ", Height: " . $data['height'] . "cm, Gender: " . $data['gender'];
+    }
+
+    return 'Character data not available';
+}
+```
+
+### **Understanding the Callback: Fetching and Displaying Star Wars Data**
+
+1.  **Fetches the Character Data**: The function makes a request to the **Star Wars API** using `wp_remote_get()`. It retrieves information about a specific character, determined by the `character_id` passed in the `$source_args`.
+    
+2.  **Handles API Errors**: If there is an error fetching the data (e.g., network issues), it returns a message saying "Error fetching character data".
+    
+3.  **Parses the Response**: The API response is decoded from JSON into a PHP array using `json_decode()`.
+    
+4.  **Returns Character Information**: If the data contains valid character information, it returns a string with the character’s name, height, and gender. If no valid data is returned, it defaults to "Character data not available".
+    
+
+### **Key Points:**
+
+*   The `$source_args` array allows us to pass in a character ID, which is used to fetch different Star Wars characters.
+    
+*   The **callback** returns formatted information about the character, which will be displayed in the block’s content.
+    
+
+### **Registering the Source**
+
+Now that we’ve defined our callback to fetch Star Wars character data, the next step is to register our custom source using `register_block_bindings_source()`. Here’s the code:
+
+```
+function register_star_wars_source() {
+    register_block_bindings_source( 'sandbox/star-wars-character', array(
+        'label'              => __( 'Star Wars Character', 'metasandbox' ),
+        'get_value_callback' => 'get_star_wars_character',
+    ) );
+}
+
+add_action( 'init', 'register_star_wars_source' );
+```
+
+### **Breaking Down the Star Wars Source Registration**
+
+*   **Source Name**: We register a unique source with the name 'sandbox/star-wars-character'. This name will be used to reference the source in our block bindings.
+    
+*   **Callback Assignment**: The get\_value\_callback parameter connects our Star Wars API function get\_star\_wars\_character to the source. This tells WordPress to execute this function whenever this source is used in a block binding.
+    
+*   **Adding it During Initialization**: The source is registered during the init hook, ensuring that it’s available whenever WordPress initializes.
+    
+
+This setup allows the block to fetch and display dynamic data from the Star Wars API when bound to this source.
+
+### So far, we’ve:
+
+1.  Defined a **callback** to fetch Star Wars character data from the API.
+    
+2.  Registered a **custom source** using `register_block_bindings_source()`, which allows us to link the fetched data to block attributes.
+    
+
+Now that we’ve set up the foundation, it’s time to take it one step further by creating a **block variation**. If you’re new to block variations, check out our previous post on the [Block Variations API](https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-variations-api/) to get a deeper understanding.
+
+## **Creating the Block Variation**
+
+Now that we have our custom source set up, let’s create a **block variation** for the paragraph block that fetches Star Wars character data. Here’s the code:
+
+```
+function star_wars_block_variations( $variations, $block_type ) {
+	if ( 'core/paragraph' === $block_type->name ) {
+		$variations[] = array(
+            'name'      => 'star-wars-character',
+            'title'     => __( 'Star Wars Character', 'metasandbox' ),
+            'isDefault' => false,
+            'icon'      => 'star-filled',
+            'attributes' => array(
+                'metadata' => array(
+                    'bindings' => array(
+                        'content' => array(
+                            'source' => 'sandbox/star-wars-character',
+                            'args' => array(
+                                'character_id' => 1,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+	}
+
+	return $variations;
+}
+
+add_filter( 'get_block_type_variations', 'star_wars_block_variations', 10, 2 );
+```
+
+**What is this doing?**
+
+1.  **Targeting the Paragraph Block**: The variation is applied to the core/paragraph block. This means that when you add a paragraph block, this variation will be available as an option.
+    
+2.  **Naming and Styling the Variation**:
+    
+    1.  **Name**: The variation is named 'star-wars-character'.
+        
+    2.  **Title**: In the editor, it will appear as “Star Wars Character.”
+        
+    3.  **Icon**: A star icon is used to represent this variation.
+        
+3.  **Binding to the Star Wars Source**:
+    
+    1.  The content of the paragraph block is dynamically bound to the **Star Wars API** source, 'sandbox/star-wars-character'.
+        
+    2.  args: We pass a `character_id` of 1 by default, which corresponds to Luke Skywalker. This ID can be changed to fetch data for different characters.
+        
+4.  **Registering the Variation**: The variation is registered using the `get_block_type_variations` filter, ensuring it’s available in the block editor for the paragraph block.
+    
+
+This variation allows users to select a predefined block that fetches and displays Star Wars character data dynamically, making it an easy and powerful tool.
+
+## **Testing the Star Wars Character Block**
+
+To test our block variation, we first go to the block library in the editor and select the new **‘Star Wars Character’** block. Once added to the editor, you’ll notice the block is in a read-only state, showing the fallback text.
+
+This fallback text is a placeholder indicating that the block is ready to fetch data from the Star Wars API once rendered. The block’s content will be dynamically updated with character information like the name, height, and gender, based on the character\_id argument we set in the variation.
+
+ 
+
+At this stage, we’re verifying that:
+
+1.  The block variation appears correctly in the block library.
+    
+2.  The block is correctly bound to the Star Wars API source.
+    
+3.  The read-only state and fallback text are displayed as expected in the editor.
+    
+
+In the screenshot, we can see that the Star Wars block variation is working correctly on the front end. The block displays character data dynamically fetched from the **Star Wars API**, showing details for **Luke Skywalker** such as:
+
+*   **Character**: Luke Skywalker
+    
+*   **Height**: 172 cm
+    
+*   **Gender**: male
+    
+
+This confirms that the block binding and API connection are functioning as expected, successfully pulling in the correct data based on the character ID. The character information is displayed directly in the block content, demonstrating how dynamic content can be easily integrated using the Block Bindings API.
+
+In this example, we have registered a **block variation** for the Star Wars Character, but one key point to note is that the **Block Bindings API** doesn’t yet provide a UI for manipulating the source directly, as we might have with custom fields.
+
+However, you can easily create multiple block variations to manage different data sources, or if you prefer, use the **Code Editor** to adjust the arguments manually.
+
+As shown in the image, we have used the code editor to change the character\_id argument directly within the block’s markup. This flexibility allows you to pull in different data dynamically without creating new blocks from scratch, simply by altering the binding source arguments in the block’s metadata.
+
+## Conclusion
+
+In this post, we walked through how to create a **Star Wars Character block variation** using the **Block Bindings API**. This variation allows you to dynamically pull in character data from the Star Wars API, making your WordPress blocks more dynamic and flexible.
+
+While we focused on fetching character names, heights, and genders, you can do so much more! For example, you could extend this by fetching the character’s image and using a custom **Image Block Variation** to display it alongside the text. This opens up endless possibilities for dynamic content on your site.
+
+Block variations like these save time and make your WordPress site more consistent. If you want to streamline your content-building process, try the Block Bindings API!
+
+You can find the complete code for this Star Wars variation [here](https://github.com/elpuas/block-bindings-experiments). If you found this post helpful, please share it. Sharing is caring. Happy coding!
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-bindings-api/&text=Learn how to use the WordPress Block Bindings API to create dynamic blocks, including a Star Wars character block example, with custom data fetching.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-bindings-api/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-bindings-api/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fyou-might-not-need-a-custom-block-the-block-bindings-api%2F&title=Dynamic WordPress Blocks with the Block Bindings API>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

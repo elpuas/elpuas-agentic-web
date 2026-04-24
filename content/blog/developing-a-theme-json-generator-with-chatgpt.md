@@ -1,0 +1,127 @@
+CodeWordPressAI - Artificial Intelligence
+
+# Developing a theme.json Generator with ChatGPT
+
+El Puas 06/06/2023
+
+## **A Collaborative Journey**
+
+Throughout my journey as a developer, I have discovered the incredible potential of leveraging AI to expedite and enhance my development process. Today, I like to introduce you to my collaboration partner, ChatGPT.
+
+Together, we will collaborate to create a customizable theme.json generator. In this post, I will guide you through the process of getting ChatGPT to help me build this npm package. We will go through the prompts I used to achieve the desired results.
+
+## The First Prompt
+
+```
+In WordPress, I'm working with Node and ES6 to create a node npm package.
+This package aims to generate a theme.json file based on user prompts. 
+To ensure compatibility, I'll be using the official JSON schema provided 
+by WordPress Gutenberg, which can be found here: 
+[https://raw.githubusercontent.com/WordPress/gutenberg/trunk/schemas/json/theme.json]. 
+Could you assist me in the process to create a robust and user-friendly npm package?
+```
+
+Let's analyze this prompt:
+
+**Goal:** My goal is to create a Node npm package for WordPress development using Node and ES6. The package's purpose is to generate a theme.json file based on user prompts, enabling seamless customization.
+
+**Technologies:** I mention that I’m working with Node and ES6, indicating the tech stack I’m using for the npm package development.
+
+**Compatibility:** To ensure compatibility and adherence to WordPress standards, I state that I'll be utilizing the official JSON schema provided by WordPress Gutenberg, with a link to the schema.
+
+**Request for Assistance:** I seek guidance and assistance in navigating the process of creating a robust and user-friendly npm package. I’m specifically interested in ChatGPT's capabilities to help achieve my goal.
+
+Now that we have gone through the initial prompt and established the goal, technologies, compatibility, and request for assistance, we can move forward with the project. ChatGPT is now ready to begin the next phase of the collaboration and build the npm package to generate a theme.json file based on user prompts.
+
+At this point in the project, ChatGPT is confident and prepared to start with all the previous points completed. It has all the information it needs to proceed with the development process, and we can expect a successful outcome.
+
+## Personalize the Output
+
+Although ChatGPT provided me with all the necessary code, contrary to what everyone believed, the code was far from complete. However, to be honest, it is in a good state from start to finish, so now it's time to improve and personalize it.
+
+For my next prompt was super simple, I want to improve my `package.json`. I ask ChatGPT for a good description and some keywords for my package.
+
+```
+what a good description and keywords for this package could be?
+```
+
+## Hands on Code
+
+After reviewing the code, I have determined that it is in pretty good shape. However, I believe that separating it into functions and importing it into the main entry file would be beneficial. This would help to simplify the code and make it more modular, which would make it easier to maintain and update in the future.
+
+```
+I've set up all the necessary files and dependencies for my project. 
+Should my next step be to create an index.js file as the main entry point?
+Also, considering the size and complexity of the project, do you think 
+it would be a good idea to structure the code across different files or 
+modules to enhance readability and ease of maintenance?
+```
+
+## Setting theme.json questions/answers
+
+After completing the initial chat, I move on to working exclusively on the theme.json with ChatGPT. This is an essential step in the process as it allows me to fine-tune the specific details of the chatbot's conversation flow.
+
+With ChatGPT's advanced capabilities, I can ensure that the chatbot's responses are not only relevant but also engaging for the user. Moreover, I can incorporate features such as personalized greetings and follow-up questions that enhance the user's overall experience.
+
+```
+I'm currently developing an npm package that generates a theme.json file 
+for use with WordPress. Before we proceed, I would like you to examine 
+the JSON schema available at this URL: 
+[https://raw.githubusercontent.com/WordPress/gutenberg/trunk/schemas/json/theme.json]. 
+I believe this will provide a solid understanding of the structure and 
+requirements of the theme.json file we're aiming to create.
+```
+
+As I begin to review each section, I take note of the ChatGPT responses and consider how I can create relevant and engaging questions and prompts.
+
+It is important to ensure that the prompts are clear and concise, yet also provide enough information to stimulate thought-provoking conversations. For example, this prompt was to work on the theme.json `Appearance Tools` section.
+
+```
+I'm in the process of developing my theme.json file and integrating 
+Inquirer into my npm package. I need assistance in creating prompts for 
+each section based on the schema. 
+Let's start with the 'appearance' tools. 
+Could you assist me in formulating these user prompts?
+```
+
+ 
+
+## The Result
+
+Now that I have gone through each section and developed my npm package, I am ready to test if everything actually works.
+
+It works! It's not totally finished, but it took me less than an hour to get to this point. Now I need to work more on my prompts and do some more testing before publishing this package. If you want to try it locally, you can find my repository at [https://github.com/elpuas/theme-json-generator](https://github.com/elpuas/theme-json-generator).
+
+This post demonstrates how you can use AI to help you build amazing things. It may seem like magic, but the secret lies in how well-defined your prompts are. If you like this post, please share and follow me. and yes ChatGPT also helps me write this post.
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/developing-a-theme-json-generator-with-chatgpt/&text=Innovative collaboration: Building a customizable theme.json npm package alongside ChatGPT.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/developing-a-theme-json-generator-with-chatgpt/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/developing-a-theme-json-generator-with-chatgpt/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fdeveloping-a-theme-json-generator-with-chatgpt%2F&title=A Collaborative Journey with ChatGPT>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

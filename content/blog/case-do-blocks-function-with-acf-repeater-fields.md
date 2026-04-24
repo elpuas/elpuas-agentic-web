@@ -1,0 +1,89 @@
+CodeWordPress
+
+# Case: do\_blocks Function with ACF Repeater Fields
+
+El Puas 10/17/2023
+
+In a [previous post](https://elpuas.com/blog/creating-dynamic-content-on-a-block-based-theme-using-php-templates/), we explored leveraging PHP Templates in the Site Editor. I briefly touched on the `do_blocks()` function, a WordPress feature for rendering dynamic blocks within posts. Let’s dive into a real-world scenario where `do_blocks()` handle Advanced Custom Fields (ACF) Repeater Fields for a dynamic audio block rendering.  
+  
+I was working with a page dynamically generated through [Gravity Forms](https://www.gravityforms.com/)' [Advanced Post Creation](https://www.gravityforms.com/add-ons/advanced-post-creation/) add-on. Users could upload audio files via a form, which would then populate an [ACF](https://www.advancedcustomfields.com/) repeater field on the generated post. However, I wanted to step beyond merely listing links to these audio files. I aimed for a more engaging user interface, where the audio content is readily playable. This is where the do\_blocks() function came into the picture, enabling the rendering of audio blocks instead of plain URLs.
+
+Here’s a function I did for this purpose:
+
+```
+function render_audio_blocks($repeater_field) {
+    $blocks_markup = '';
+    foreach ($repeater_field as $item) {
+        $file_name = basename($item['audio'], ".mp3");
+        $blocks_markup .= "<!-- wp:audio -->
+          <figure class=\"wp-block-audio\">
+            <audio controls src=\"{$item['audio']}\"></audio>
+            <figcaption class=\"wp-element-caption\">{$file_name}</figcaption>
+        </figure><!-- /wp:audio -->";
+    }
+    return $blocks_markup;
+}
+```
+
+Let's break down this function, the `render_audio_blocks` function takes one argument, `$repeater_field`, which is expected to be an array of items, each containing an audio file URL under the key `'audio'`.  
+  
+\- It initializes an empty string $blocks\_markup.  
+\- Iterates through $repeater\_field with a for each loop, processing each $item.  
+\- Extracts the file name from the URL, excluding the ".mp3" extension, using basename().  
+\- Appends a WordPress audio block markup for each item to $blocks\_markup, with the audio source and file name as the caption.  
+\- After processing all items, it returns the concatenated $blocks\_markup, ready to be rendered in the WordPress post.
+
+And this is how I implemented my template:
+
+```
+<head>
+  <meta charset="<?php bloginfo( 'charset' ); ?>">
+  <?php
+  $repeater_field = get_field( 'audios', get_the_ID() );
+  $audio_blocks = render_audio_blocks($repeater_field);
+  ?>
+  <?php wp_head(); ?>
+</head>
+<body>
+...
+<?php echo !empty($audio_blocks) ? $audio_blocks : ''; ?>
+...
+```
+
+Why in the head? WordPress 6.0 brought a shift in how blocks support CSS loads - in the head for block themes, and in the body for classic PHP-based themes. This change is traced back to GitHub pull request [#39164](https://github.com/WordPress/gutenberg/pull/39164) and [#38750](https://github.com/WordPress/gutenberg/pull/38750), means using `do_blocks()` post `wp_head()` skips block CSS loading, a crucial detail for our setup.
+
+So, the workaround was to place the block markup in `do_blocks()` before `wp_head()` and echo it within the template body. This tweak ensured the block CSS loads correctly, making my audio blocks render as intended.
+
+I hope this dive into utilizing do\_blocks() with ACF Repeater Fields has provided valuable insights for your own WordPress projects. If you found this post helpful, feel free to share it with your network and follow for more insights on WordPress development. Until next time, happy coding!
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/case-do-blocks-function-with-acf-repeater-fields/&text=Explore how to utilize do_blocks\(\) with ACF Repeater Fields for rendering dynamic blocks in Site Editor PHP Templates.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/case-do-blocks-function-with-acf-repeater-fields/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/case-do-blocks-function-with-acf-repeater-fields/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fcase-do-blocks-function-with-acf-repeater-fields%2F&title=do_blocks\(\) and ACF: Dynamic Blocks in WP>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### A Year with the WordPress Community
+
+El Puas
+
+WordPress
+
+](/blog/a-year-with-the-wordpress-community)[
+
+##### WordCamp US 2025 – Portland, Oregon
+
+El Puas
+
+WordPress
+
+](/blog/wordcamp-us-2025-portland-oregon)

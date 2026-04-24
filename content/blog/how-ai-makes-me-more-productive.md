@@ -1,0 +1,83 @@
+AI - Artificial Intelligence
+
+# How AI Makes Me More Productive
+
+El Puas 01/08/2024
+
+I've been an early user of AI assistance, and I've always been amazed by what it can do. In my day to day, I rely on two AI tools: `GitHub Copilot` and `ChatGPT`. These tools have become essential in my daily tasks. This is how I've used them to improve my work and streamline my processes.
+
+Let's take a look at how these AI companions have become integral to my life.
+
+## AI as an Editor and Corrector
+
+My initial encounters with `ChatGPT` involved using it as a text corrector. I would begin by drafting my content in my own words. Then, I'd ask `ChatGPT` to review and refine the text.
+
+Initially, ChatGPT's responses included many fancy qualifiers that didn't quite fit my preferences. To address this, I introduced custom instructions like 'Keep the tone direct and to the point' or 'I'm not a native English speaker, consider this when writing.'
+
+These instructions helped tailor the AI's responses to my specific needs, especially when writing blog posts for my website. Thanks to this, I found `ChatGPT` to be a valuable editor that allows me to express my ideas clearly.
+
+To show the clear difference that custom instructions have made in my writing process, let's examine two of my blog articles: one written before using custom instructions with ChatGPT and another written after applying these personalized guidelines.
+
+In this [earlier piece](https://elpuas.com/blog/master-wizard-worthy-code-with-typescript-learn-the-basics/), you'll notice how `ChatGPT's` responses sometimes differed from my preferred writing style. In contrast, the [second article](https://elpuas.com/blog/product-rendering-how-set-and-map-resolved-order-discrepancies/), written after fine-tuning `ChatGPT` with custom instructions, reflects a more refined writing style that better matches my preferences.
+
+In addition to its role as a text editor, AI has also found its way into the visual aspects of my blog posts. I've begun experimenting with AI-generated images that complement my written content.
+
+## **AI for Code Writing and Advanced Autocomplete**
+
+Some individuals worry about AI replacing them in their jobs or raising concerns about commercial rights, particularly when dealing with client work. However, it's important to clarify that AI doesn't replace us; instead, it boosts our productivity.
+
+To address these concerns, I've adopted a selective approach. I avoid using AI for client projects, except when I need assistance with specific functions or quick code snippets, which enhances my productivity.
+
+On personal projects, AI has proven exceptionally valuable. Take my recent project, "[ForkCast](https://github.com/elpuas/forkcast)," for example. It's a recipe app that relies on Firebase. AI, specifically `GitHub Copilot`, played an essential role in building the Firebase connection, identifying and explaining bugs, and speeding up development. `CoPilot`, integrated into my IDE, has become an indispensable coding companion for my personal projects.
+
+## AI in My Day-to-Day Life
+
+The ChatGPT mobile app has ideally integrated into my daily life, proving to be a valid companion in various situations.
+
+In shopping, I've found it handy for selecting products. Asking for ingredient recommendations helps me make informed choices. In the kitchen, `ChatGPT` provides recipes based on available ingredients and offers insights into dish histories.
+
+For personal fitness, it serves as a virtual trainer, suggesting exercises tailored to my age, weight, and height.
+
+In travel planning, AI plays a vital role, as it did for my recent trip to Washington DC. It helped with creating itineraries, suggesting transportation options, and finding budget-friendly activities.
+
+In learning, whether it's understanding a movie or deciphering complex science news, I can ask for explanations of intricate concepts, like having a personalized teacher. As an example, I recently asked AI to explain the Bekenstein Bound, a complex topic in theoretical physics. It provided a clear and concise explanation, highlighting its ability to simplify intricate subjects.
+
+In written communication, AI assists with grammar checks, creating meal plans, outlining projects, and drafting contracts. AI has become an essential and versatile assistant in my daily life.
+
+In today's tech-driven world, AI isn't a replacement; it's a trusted partner. `ChatGPT` and `GitHub Copilot` have consistently integrated into my life, enhancing productivity and efficiency.
+
+From refining my writing to expediting code and simplifying daily tasks, AI has become indispensable. It adapts to my needs, making me more productive and resourceful.
+
+If you found my article insightful, please consider sharing it with others. And if you're not already following me, please do so on X (Twitter) [@3lpu4s](https://twitter.com/3LPU4S).
+
+##### Give and Share
+
+Enjoyed this article? Share it with your friends and colleagues!
+
+[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/how-ai-makes-me-more-productive/&text=Explore how AI tools like ChatGPT and GitHub Copilot supercharge productivity in writing, coding, and daily life.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/how-ai-makes-me-more-productive/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/how-ai-makes-me-more-productive/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhow-ai-makes-me-more-productive%2F&title=Boosting Productivity with AI Assistance>)
+
+##### Buy Me a Coffee
+
+If you found this article helpful, consider buying me a coffee!
+
+[](https://buymeacoffee.com/elpuas)
+
+## Recent Posts
+
+[
+
+##### Building My Own Image Optimizer with Electron, Node.js, and Sharp
+
+El Puas
+
+CodeAI - Artificial Intelligence
+
+](/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp)[
+
+##### How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding
+
+El Puas
+
+CodeAI - Artificial Intelligence
+
+](/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding)
