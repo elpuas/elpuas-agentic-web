@@ -227,12 +227,49 @@ const navigation = [
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
-					const appendMessage = (role, text) => {
-						const item = document.createElement('p');
-						item.className = `cli-message cli-message-${role}`;
-						item.textContent = text;
-						messages.append(item);
+					const scrollMessages = () => {
 						messages.scrollTop = messages.scrollHeight;
+					};
+
+					const renderMessageContent = (item, role, text, isLoading = false) => {
+						item.replaceChildren();
+
+						if (isLoading) {
+							const loader = document.createElement('span');
+							loader.className = 'cli-loader';
+							loader.setAttribute('aria-label', 'Assistant is typing');
+
+							for (let i = 0; i < 3; i += 1) {
+								const dot = document.createElement('span');
+								dot.className = 'cli-loader-dot';
+								loader.append(dot);
+							}
+
+							item.append(loader);
+							return;
+						}
+
+						const value = typeof text === 'string' ? text.trim() : '';
+						const paragraphs =
+							role === 'assistant'
+								? value.split(/\n+/).map((paragraph) => paragraph.trim()).filter(Boolean)
+								: [value];
+
+						paragraphs.forEach((paragraph) => {
+							const block = document.createElement('p');
+							block.className = 'cli-message-paragraph';
+							block.textContent = paragraph;
+							item.append(block);
+						});
+					};
+
+					const appendMessage = (role, text, isLoading = false) => {
+						const item = document.createElement('div');
+						item.className = `cli-message cli-message-${role}`;
+						renderMessageContent(item, role, text, isLoading);
+						messages.append(item);
+						scrollMessages();
+						return item;
 					};
 
 					form.addEventListener('submit', async (event) => {
@@ -244,6 +281,7 @@ const navigation = [
 						}
 
 						appendMessage('user', question);
+						const assistantMessage = appendMessage('assistant', '', true);
 						input.value = '';
 						input.disabled = true;
 						submitButton.disabled = true;
@@ -256,9 +294,11 @@ const navigation = [
 							});
 							const payload = await response.json();
 							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";
-							appendMessage('assistant', text);
+							renderMessageContent(assistantMessage, 'assistant', text);
+							scrollMessages();
 						} catch {
-							appendMessage('assistant', 'Something went wrong. Please try again.');
+							renderMessageContent(assistantMessage, 'assistant', 'Something went wrong. Please try again.');
+							scrollMessages();
 						} finally {
 							input.disabled = false;
 							submitButton.disabled = false;
@@ -281,6 +321,10 @@ const navigation = [
 	.sidebar {
 		display: flex;
 		flex-direction: column;
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		overflow-y: auto;
 		background: var(--color-surface);
 		border-right: var(--space-px) solid var(--color-border);
 		padding-top: var(--space-4);
@@ -453,22 +497,86 @@ const navigation = [
 	.cli-messages {
 		max-height: 13rem;
 		overflow: auto;
-		padding: var(--space-4) var(--space-4) 0;
+		padding: var(--space-4);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
 	}
 
 	.cli-message {
 		margin: 0;
-		padding-bottom: var(--space-3);
+		max-width: min(100%, 44rem);
+		padding: var(--space-3) var(--space-4);
+		border-radius: var(--radius-lg);
 		font-size: var(--font-size-sm);
-		line-height: var(--line-height-sm);
+		line-height: var(--line-height-base);
+		border: var(--space-px) solid transparent;
+		background: rgba(255, 255, 255, 0.02);
+	}
+
+	.cli-message-paragraph {
+		margin: 0;
+	}
+
+	.cli-message-paragraph + .cli-message-paragraph {
+		margin-top: var(--space-3);
 	}
 
 	.cli-message-user {
-		color: var(--color-text);
+		color: var(--color-accent);
+		background: var(--color-accent-soft);
+		border-color: rgba(216, 255, 0, 0.2);
 	}
 
 	.cli-message-assistant {
 		color: var(--color-text-subtle);
+		border-color: var(--color-border);
+	}
+
+	:global(.cli-loader) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		min-height: 1rem;
+		color: var(--color-accent);
+	}
+
+	:global(.cli-loader-dot) {
+		width: 0.35rem;
+		height: 0.35rem;
+		border-radius: 999px;
+		background: currentColor;
+		opacity: 0.35;
+		animation: cli-loader-pulse 1s ease-in-out infinite;
+	}
+
+	:global(.cli-loader-dot:nth-child(2)) {
+		animation-delay: 0.15s;
+	}
+
+	:global(.cli-loader-dot:nth-child(3)) {
+		animation-delay: 0.3s;
+	}
+
+	@keyframes cli-loader-pulse {
+		0%,
+		80%,
+		100% {
+			opacity: 0.35;
+			transform: translateY(0);
+		}
+
+		40% {
+			opacity: 1;
+			transform: translateY(-0.1rem);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.cli-loader-dot) {
+			animation: none;
+			opacity: 0.6;
+		}
 	}
 
 	.cli-row {
