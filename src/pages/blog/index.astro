@@ -74,18 +74,21 @@ const posts = (await getCollection('blog'))
 
 	.blog-list {
 		margin: var(--space-6) 0 0;
-		padding: 0;
-		list-style: none;
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		padding-left: 1rem;
+		list-style: disc;
+		column-count: 2;
 		column-gap: var(--space-8);
-		row-gap: var(--space-3);
-		align-items: start;
 	}
 
 	.blog-list li {
-		margin: 0;
-		line-height: 1.35;
+		margin: 0 0 0.35rem;
+		break-inside: avoid-column;
+		line-height: 1.4;
+		font-size: 0.875rem;
+	}
+
+	.blog-list li::marker {
+		color: var(--color-accent);
 	}
 
 	.blog-list a {
@@ -131,7 +134,7 @@ const posts = (await getCollection('blog'))
 		}
 
 		.blog-list {
-			grid-template-columns: 1fr;
+			column-count: 1;
 			column-gap: 0;
 		}
 	}

@@ -72,3 +72,10 @@
   - accent color (green) for titles
   - subtle hover/focus interaction (underline + slight opacity change)
 - Kept the page minimal and text-focused without cards or boxes.
+
+## Blog index column layout fix (2026-04-24)
+
+- Removed grid layout from the blog index post list.
+- Implemented column-based list flow using CSS columns (desktop: 2 columns, mobile: 1 column).
+- Restored visible list bullets and styled markers with accent green.
+- Adjusted list typography to a more compact size (`~14px`) while preserving readability.
