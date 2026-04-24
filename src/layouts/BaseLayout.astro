@@ -219,6 +219,50 @@ const navigation = [
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
+					const assistantUrlPattern = /https?:\/\/[^\s<>"']+/g;
+					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
+
+					const appendAssistantTextWithLinks = (container, paragraph) => {
+						let lastIndex = 0;
+
+						for (const match of paragraph.matchAll(assistantUrlPattern)) {
+							const index = match.index ?? 0;
+							const rawUrl = match[0];
+
+							if (index > lastIndex) {
+								container.append(document.createTextNode(paragraph.slice(lastIndex, index)));
+							}
+
+							let href = rawUrl;
+							let trailing = '';
+							const trailingMatch = rawUrl.match(trailingPunctuationPattern);
+
+							if (trailingMatch) {
+								trailing = trailingMatch[0];
+								href = rawUrl.slice(0, -trailing.length);
+							}
+
+							if (href) {
+								const link = document.createElement('a');
+								link.href = href;
+								link.target = '_blank';
+								link.rel = 'noopener noreferrer';
+								link.textContent = href;
+								container.append(link);
+							}
+
+							if (trailing) {
+								container.append(document.createTextNode(trailing));
+							}
+
+							lastIndex = index + rawUrl.length;
+						}
+
+						if (lastIndex < paragraph.length) {
+							container.append(document.createTextNode(paragraph.slice(lastIndex)));
+						}
+					};
+
 					const scrollMessages = () => {
 						messages.scrollTop = messages.scrollHeight;
 					};
@@ -250,7 +294,13 @@ const navigation = [
 						paragraphs.forEach((paragraph) => {
 							const block = document.createElement('p');
 							block.className = 'cli-message-paragraph';
-							block.textContent = paragraph;
+
+							if (role === 'assistant') {
+								appendAssistantTextWithLinks(block, paragraph);
+							} else {
+								block.textContent = paragraph;
+							}
+
 							item.append(block);
 						});
 					};
@@ -474,6 +524,22 @@ const navigation = [
 	.cli-message-assistant {
 		color: var(--color-text-subtle);
 		border-color: var(--color-border);
+	}
+
+	:global(.cli-message-assistant a) {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-decoration-color: rgba(216, 255, 0, 0.55);
+		text-underline-offset: 0.14em;
+		transition:
+			filter 120ms ease,
+			text-decoration-color 120ms ease;
+	}
+
+	:global(.cli-message-assistant a:hover),
+	:global(.cli-message-assistant a:focus-visible) {
+		filter: brightness(1.12);
+		text-decoration-color: currentColor;
 	}
 
 	:global(.cli-loader) {
