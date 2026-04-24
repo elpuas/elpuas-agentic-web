@@ -1,4 +1,6 @@
 ---
+import logo from '../assets/logo.svg';
+
 const profile = {
 	name: 'Alfredo Navas',
 	role: 'Product Builder',
@@ -63,7 +65,9 @@ const profile = {
 		data-profile-trigger
 	>
 		<div class="avatar" aria-hidden="true">
-			<div class="avatar-core">☠</div>
+			<div class="avatar-core">
+				<img class="avatar-logo" src={logo.src} alt="" />
+			</div>
 		</div>
 		<div class="profile-copy">
 			<p class="profile-name">{profile.name}</p>
@@ -245,8 +249,8 @@ const profile = {
 	}
 
 	.avatar {
-		width: 2.5rem;
-		height: 2.5rem;
+		width: 2.75rem;
+		height: 2.75rem;
 		border-radius: 999px;
 		padding: 0.125rem;
 		background:
@@ -260,11 +264,16 @@ const profile = {
 		height: 100%;
 		border-radius: inherit;
 		background: #27272a;
-		color: var(--color-accent);
 		display: grid;
 		place-items: center;
-		font-size: 1rem;
-		line-height: 1;
+		overflow: hidden;
+	}
+
+	.avatar-logo {
+		width: 74%;
+		height: 74%;
+		object-fit: contain;
+		display: block;
 	}
 
 	.profile-copy {

@@ -40,3 +40,9 @@
 
 ### Removed duplication
 - Deleted the popover footer block that repeated avatar, name, and role inside the panel.
+
+## Avatar refinement update
+
+- avatar fix: replaced text-based placeholder avatar content with the project logo graphic.
+- asset usage: imported and used `src/assets/logo.svg` directly in `ProfilePanel.astro` via Astro asset import.
+- sizing adjustment: increased avatar size slightly for better visual balance and updated logo sizing/fit to keep it centered inside the circular green ring without distortion.
