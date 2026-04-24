@@ -63,3 +63,12 @@
   - `tags` (4-8 lowercase tags)
   - `draft: false`
 - Completed `.md` to `.mdx` conversion for 19 files.
+
+## Blog index UI refinement update (2026-04-24)
+
+- Updated blog index post list layout from a single column to a 2-column grid on desktop.
+- Added responsive behavior to switch to 1 column on mobile.
+- Applied styling adjustments to post links:
+  - accent color (green) for titles
+  - subtle hover/focus interaction (underline + slight opacity change)
+- Kept the page minimal and text-focused without cards or boxes.
