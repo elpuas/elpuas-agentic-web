@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { getBlogIndexContext } from './blog-context';
 
 const KNOWLEDGE_FILES = [
 	'../../content/knowledge/background.mdx',
@@ -17,5 +18,8 @@ export async function loadContext(): Promise<string> {
 		}),
 	);
 
-	return sections.join('\n\n');
+	const knowledgeContext = sections.join('\n\n');
+	const blogIndexContext = await getBlogIndexContext();
+
+	return `${knowledgeContext}\n\n## Blog Posts\n${blogIndexContext}`;
 }

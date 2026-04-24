@@ -1,21 +1,23 @@
 import { getCollection } from 'astro:content';
 
-export async function loadBlogContext(): Promise<string> {
+export async function getBlogIndexContext(): Promise<string> {
 	const posts = (await getCollection('blog'))
 		.filter((post) => !post.data.draft)
 		.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
 	if (posts.length === 0) {
-		return 'Blog posts metadata:\n- No published blog posts.';
+		return '- No published blog posts.';
 	}
 
-	const summaries = posts.map((post) => {
+	const summaries = posts.map((post, index) => {
 		const tags = post.data.tags.join(', ');
 		const date = post.data.date.toISOString().slice(0, 10);
+		const url = `/blog/${post.data.slug}`;
 
 		return [
-			`- title: ${post.data.title}`,
+			`${index + 1}. title: ${post.data.title}`,
 			`  slug: ${post.data.slug}`,
+			`  url: ${url}`,
 			`  description: ${post.data.description}`,
 			`  category: ${post.data.category}`,
 			`  tags: ${tags}`,
@@ -23,5 +25,5 @@ export async function loadBlogContext(): Promise<string> {
 		].join('\n');
 	});
 
-	return `Blog posts metadata:\n${summaries.join('\n')}`;
+	return summaries.join('\n');
 }
