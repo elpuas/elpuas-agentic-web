@@ -49,3 +49,17 @@
 - Removed duplicate blog content previously created in `/src/content/blog`.
 - Moved source blog files from `/content/blog` to `/src/content/blog`.
 - Preserved file extensions and content exactly as-is during the move (`.md` and `.mdx` unchanged).
+
+## Frontmatter normalization update (2026-04-24)
+
+- Updated 20 blog files in `/src/content/blog` to align with the content collection schema.
+- Applied frontmatter normalization across all files:
+  - `title`
+  - `slug`
+  - `description`
+  - `date` (valid `YYYY-MM-DD` string)
+  - `author` (`"Alfredo Navas"`)
+  - `category`
+  - `tags` (4-8 lowercase tags)
+  - `draft: false`
+- Completed `.md` to `.mdx` conversion for 19 files.
