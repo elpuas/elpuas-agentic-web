@@ -1,13 +1,150 @@
 ---
-import { frontmatter } from '../../content/about.mdx';
-import AboutContent from '../../content/about.mdx';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import logo from '../assets/logo.svg';
+import profileImage from '../assets/alfredo-navas.webp';
 ---
 
-<BaseLayout
-	title={frontmatter.title}
-	description={frontmatter.description}
-	activeNav="about"
->
-	<AboutContent />
+<BaseLayout title="About Me" description="Learn more about Alfredo Navas" activeNav="about">
+	<section class="about">
+		<header class="about-title">
+			<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
+			<h1>About Me</h1>
+		</header>
+
+		<div class="about-body">
+			<img
+				class="about-photo"
+				src={profileImage.src}
+				width="218"
+				height="218"
+				alt="Portrait of Alfredo Navas"
+				loading="eager"
+				decoding="async"
+			/>
+
+			<div class="about-copy">
+				<p>
+					Senior WordPress & Full Stack Developer with 15+ years of experience building web platforms.
+				</p>
+				<p>Founder of ElPuas Digital Crafts and active member of the WordPress community.</p>
+
+				<h2>Ask me</h2>
+				<p>You can ask me about:</p>
+				<ul>
+					<li>my experience</li>
+					<li>projects I've worked on</li>
+					<li>my background</li>
+					<li>technologies I use</li>
+				</ul>
+				<p>Just type your question below.</p>
+			</div>
+		</div>
+	</section>
 </BaseLayout>
+
+<style>
+	.about {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		color: var(--color-text);
+		padding: var(--space-12) 0 var(--space-8);
+	}
+
+	.about-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.about-title img {
+		width: 3.9375rem;
+		height: 3.9375rem;
+		flex: 0 0 auto;
+	}
+
+	.about-title h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.about-body {
+		margin-top: 2.5625rem;
+		display: grid;
+		grid-template-columns: 13.625rem minmax(0, 1fr);
+		align-items: start;
+		gap: 1.5rem;
+	}
+
+	.about-photo {
+		width: 13.625rem;
+		height: 13.625rem;
+		object-fit: cover;
+		border-radius: 0.625rem;
+		box-shadow:
+			0 0 0 1px var(--color-border),
+			0 14px 36px rgba(0, 0, 0, 0.35);
+	}
+
+	.about-copy {
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+	}
+
+	.about-copy p,
+	.about-copy ul {
+		margin: 0;
+	}
+
+	.about-copy p + p {
+		margin-top: 0.25rem;
+	}
+
+	.about-copy h2 {
+		margin: 0.75rem 0 0.125rem;
+		font-size: 1.5rem;
+		line-height: 1.2;
+		font-weight: 700;
+	}
+
+	.about-copy ul {
+		margin-top: 0.125rem;
+		padding-left: 1.1rem;
+	}
+
+	.about-copy li {
+		line-height: 1.35;
+	}
+
+	@media (max-width: 48rem) {
+		.about {
+			padding: var(--space-8) 0 var(--space-6);
+		}
+
+		.about-title {
+			gap: var(--space-4);
+		}
+
+		.about-title img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		.about-title h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+
+		.about-body {
+			margin-top: var(--space-6);
+			grid-template-columns: 1fr;
+			justify-items: center;
+			gap: var(--space-6);
+		}
+
+		.about-copy {
+			width: min(100%, 34rem);
+		}
+	}
+</style>
