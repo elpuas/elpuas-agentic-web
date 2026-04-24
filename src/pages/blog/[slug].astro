@@ -1,0 +1,160 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).filter((post) => !post.data.draft);
+
+	return posts.map((post) => ({
+		params: { slug: post.data.slug },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+const { Content } = await render(post);
+
+const heroImageModules = import.meta.glob('../../assets/blog/**/*.{avif,gif,jpeg,jpg,png,svg,webp}', {
+	eager: true,
+});
+
+const resolveHeroImageSrc = (path?: string): string | undefined => {
+	if (!path) {
+		return undefined;
+	}
+
+	if (path.startsWith('../../assets/')) {
+		const assetKey = `/src/assets/${path.replace('../../assets/', '')}`;
+		const assetModule = heroImageModules[assetKey] as
+			| { default?: { src?: string } }
+			| undefined;
+
+		return assetModule?.default?.src ?? undefined;
+	}
+
+	return path;
+};
+
+const heroImageSrc = resolveHeroImageSrc(post.data.heroImage);
+const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(post.data.date);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} activeNav="blog">
+	<article class="blog-post">
+		<header class="blog-post-header">
+			<h1>{post.data.title}</h1>
+			<p class="meta">
+				<time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+				<span>{post.data.category}</span>
+			</p>
+			{post.data.tags.length > 0 && (
+				<ul class="tags" aria-label="Tags">
+					{post.data.tags.map((tag) => (
+						<li>{tag}</li>
+					))}
+				</ul>
+			)}
+		</header>
+
+		{heroImageSrc && (
+			<img
+				class="hero"
+				src={heroImageSrc}
+				alt={post.data.heroAlt || post.data.title}
+				loading="eager"
+				decoding="async"
+			/>
+		)}
+
+		<div class="post-content">
+			<Content />
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	.blog-post {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		padding: var(--space-12) 0 var(--space-8);
+		color: var(--color-text);
+	}
+
+	.blog-post-header h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.meta {
+		margin-top: var(--space-3);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3);
+		color: var(--color-text-muted);
+		font-size: var(--font-size-sm);
+	}
+
+	.tags {
+		margin: var(--space-4) 0 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+
+	.tags li {
+		padding: 0.25rem 0.625rem;
+		border: var(--space-px) solid var(--color-border);
+		border-radius: 9999px;
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+	}
+
+	.hero {
+		width: 100%;
+		margin-top: var(--space-6);
+		border-radius: var(--radius-lg);
+	}
+
+	.post-content {
+		margin-top: var(--space-6);
+		font-size: var(--font-size-base);
+		line-height: 1.75;
+	}
+
+	.post-content :global(h2),
+	.post-content :global(h3) {
+		margin-top: var(--space-8);
+		margin-bottom: var(--space-3);
+		line-height: 1.25;
+	}
+
+	.post-content :global(p) {
+		margin: 0;
+	}
+
+	.post-content :global(p + p) {
+		margin-top: var(--space-4);
+	}
+
+	.post-content :global(a) {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	@media (max-width: 48rem) {
+		.blog-post {
+			padding: var(--space-8) 0 var(--space-6);
+		}
+
+		.blog-post-header h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+	}
+</style>

@@ -1,0 +1,141 @@
+---
+import { getCollection } from 'astro:content';
+import logo from '../../assets/logo.svg';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blog'))
+	.filter((post) => !post.data.draft)
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout
+	title="Blog"
+	description="Read Alfredo Navas blog posts about development, challenges, and lessons learned."
+	activeNav="blog"
+>
+	<section class="blog">
+		<header class="blog-title">
+			<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
+			<h1>Blog</h1>
+		</header>
+
+		<p class="blog-intro">
+			Welcome to my blog. Explore my experiences as a developer, solving problems, facing
+			challenges, and sharing what I’ve learned along the way.
+		</p>
+
+		{posts.length > 0 ? (
+			<ul class="blog-list">
+				{posts.map((post) => (
+					<li>
+						<a href={`/blog/${post.data.slug}/`}>{post.data.title}</a>
+					</li>
+				))}
+			</ul>
+		) : (
+			<p class="blog-empty">No posts published yet.</p>
+		)}
+	</section>
+</BaseLayout>
+
+<style>
+	.blog {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		color: var(--color-text);
+		padding: var(--space-12) 0 var(--space-8);
+	}
+
+	.blog-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.blog-title img {
+		width: 3.9375rem;
+		height: 3.9375rem;
+		flex: 0 0 auto;
+	}
+
+	.blog-title h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.blog-intro {
+		margin-top: var(--space-6);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+		max-width: 60ch;
+	}
+
+	.blog-list {
+		margin: var(--space-6) 0 0;
+		padding-left: 1rem;
+		list-style: disc;
+		column-count: 2;
+		column-gap: var(--space-8);
+	}
+
+	.blog-list li {
+		margin: 0 0 0.35rem;
+		break-inside: avoid-column;
+		line-height: 1.4;
+		font-size: 0.875rem;
+	}
+
+	.blog-list li::marker {
+		color: var(--color-accent);
+	}
+
+	.blog-list a {
+		color: var(--color-accent);
+		font-weight: var(--font-weight-medium);
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		text-underline-offset: 4px;
+		transition:
+			text-decoration-color 120ms ease,
+			opacity 120ms ease;
+	}
+
+	.blog-list a:hover,
+	.blog-list a:focus-visible {
+		text-decoration-color: currentColor;
+		opacity: 0.88;
+		outline: none;
+	}
+
+	.blog-empty {
+		margin-top: var(--space-6);
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 48rem) {
+		.blog {
+			padding: var(--space-8) 0 var(--space-6);
+		}
+
+		.blog-title {
+			gap: var(--space-4);
+		}
+
+		.blog-title img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		.blog-title h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+
+		.blog-list {
+			column-count: 1;
+			column-gap: 0;
+		}
+	}
+</style>
