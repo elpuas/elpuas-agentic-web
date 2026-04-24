@@ -1,0 +1,301 @@
+---
+const profile = {
+	name: 'Alfredo Navas',
+	role: 'Product Builder',
+	email: 'elpuas@gmail.com',
+	github: 'github.com/elpuas',
+	wordpress: 'profiles.wordpress.org/elpuas/',
+};
+---
+
+<div class="profile-panel" data-profile-panel data-open="false">
+	<div class="profile-popover" id="sidebar-profile-panel" role="dialog" aria-label="Profile details" aria-hidden="true">
+		<ul class="profile-links">
+			<li class="profile-link-item">
+				<a href={`mailto:${profile.email}`} class="profile-link">
+					<svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							d="M4 7h16v10H4zM4 8l8 6 8-6"
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1.8"
+						/>
+					</svg>
+					<span>{profile.email}</span>
+				</a>
+			</li>
+			<li class="profile-link-item">
+				<a href="https://github.com/elpuas" class="profile-link" target="_blank" rel="noreferrer">
+					<svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							d="M12 3.5a8.5 8.5 0 0 0-2.69 16.56c.43.07.58-.18.58-.4v-1.53c-2.35.5-2.85-1.12-2.85-1.12-.4-.99-.97-1.25-.97-1.25-.8-.54.06-.53.06-.53.88.06 1.34.9 1.34.9.79 1.33 2.06.94 2.56.72.08-.56.31-.94.56-1.15-1.88-.21-3.84-.93-3.84-4.14 0-.92.33-1.67.88-2.27-.09-.22-.38-1.09.08-2.28 0 0 .71-.23 2.34.87a8.2 8.2 0 0 1 4.26 0c1.62-1.1 2.33-.87 2.33-.87.47 1.2.18 2.06.09 2.28.54.6.87 1.35.87 2.27 0 3.22-1.96 3.93-3.84 4.14.31.27.58.79.58 1.58v2.34c0 .22.15.47.59.4A8.5 8.5 0 0 0 12 3.5Z"
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1.5"
+						/>
+					</svg>
+					<span>{profile.github}</span>
+				</a>
+			</li>
+			<li class="profile-link-item">
+				<a href="https://profiles.wordpress.org/elpuas/" class="profile-link" target="_blank" rel="noreferrer">
+					<svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true">
+						<path
+							d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 0c1.58 0 2.42.9 2.42 2.01 0 1.35-.77 2.48-.77 4.03 0 1.2.64 2.17.64 3.43 0 1.08-.41 2.33-.98 2.33-.57 0-.96-.5-.96-1.18 0-.7.45-1.46.45-2.12 0-.63-.34-1.16-1.03-1.16-.82 0-1.48.86-1.48 2.02 0 .74.25 1.25.25 1.25l-1.01 4.27A8 8 0 0 1 6.4 7.94c0-1.47.53-2.78 1.39-3.8.31.01.6.02.74.02 1.2 0 3.07-.15 3.07-.15.62-.03.7.88.07.95 0 0-.63.07-1.32.1l2.11 6.26 1.27-3.79c.55-1.65.77-2.82.77-3.53v-.01A7.92 7.92 0 0 1 12 4Z"
+							fill="none"
+							stroke="currentColor"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1.2"
+						/>
+					</svg>
+					<span>{profile.wordpress}</span>
+				</a>
+			</li>
+		</ul>
+		<div class="profile-popover-footer">
+			<div class="avatar" aria-hidden="true">
+				<div class="avatar-core">☠</div>
+			</div>
+			<div class="profile-copy">
+				<p class="profile-name">{profile.name}</p>
+				<p class="profile-role">{profile.role}</p>
+			</div>
+		</div>
+	</div>
+
+	<button
+		class="profile-trigger"
+		type="button"
+		aria-haspopup="dialog"
+		aria-controls="sidebar-profile-panel"
+		aria-expanded="false"
+		data-profile-trigger
+	>
+		<div class="avatar" aria-hidden="true">
+			<div class="avatar-core">☠</div>
+		</div>
+		<div class="profile-copy">
+			<p class="profile-name">{profile.name}</p>
+			<p class="profile-role">{profile.role}</p>
+		</div>
+	</button>
+</div>
+
+<script>
+	const closeProfilePanel = (root) => {
+		root.dataset.open = 'false';
+		const trigger = root.querySelector('[data-profile-trigger]');
+		const popover = root.querySelector('.profile-popover');
+
+		if (trigger) {
+			trigger.setAttribute('aria-expanded', 'false');
+		}
+
+		if (popover) {
+			popover.setAttribute('aria-hidden', 'true');
+		}
+	};
+
+	const toggleProfilePanel = (root) => {
+		const nextOpen = root.dataset.open !== 'true';
+		const trigger = root.querySelector('[data-profile-trigger]');
+		const popover = root.querySelector('.profile-popover');
+		root.dataset.open = nextOpen ? 'true' : 'false';
+
+		if (trigger) {
+			trigger.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+		}
+
+		if (popover) {
+			popover.setAttribute('aria-hidden', nextOpen ? 'false' : 'true');
+		}
+	};
+
+	const mountProfilePanel = () => {
+		const roots = document.querySelectorAll('[data-profile-panel]');
+
+		roots.forEach((root) => {
+			if (root.dataset.bound === 'true') {
+				return;
+			}
+
+			root.dataset.bound = 'true';
+			const trigger = root.querySelector('[data-profile-trigger]');
+
+			trigger?.addEventListener('click', () => {
+				toggleProfilePanel(root);
+			});
+
+			document.addEventListener('pointerdown', (event) => {
+				if (root.dataset.open !== 'true') {
+					return;
+				}
+
+				if (!root.contains(event.target)) {
+					closeProfilePanel(root);
+				}
+			});
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape' && root.dataset.open === 'true') {
+					closeProfilePanel(root);
+				}
+			});
+		});
+	};
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', mountProfilePanel, { once: true });
+	} else {
+		mountProfilePanel();
+	}
+</script>
+
+<style>
+	.profile-panel {
+		position: relative;
+		margin-top: auto;
+		padding: 0 var(--space-4) var(--space-4);
+	}
+
+	.profile-trigger {
+		width: 100%;
+		height: 4.5625rem;
+		border-top: var(--space-px) solid var(--color-border);
+		padding-top: 1.0625rem;
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.profile-trigger:focus-visible {
+		outline: var(--space-px) solid var(--color-accent);
+		outline-offset: 0.2rem;
+		border-radius: var(--radius-lg);
+	}
+
+	.profile-popover {
+		position: absolute;
+		left: var(--space-4);
+		right: var(--space-4);
+		bottom: calc(100% + var(--space-2));
+		background: #1a1a1d;
+		border: var(--space-px) solid rgba(255, 255, 255, 0.08);
+		border-radius: var(--radius-lg);
+		box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+		transform: translateY(0.5rem);
+		transition:
+			opacity 180ms ease,
+			transform 180ms ease,
+			visibility 0ms linear 180ms;
+	}
+
+	.profile-panel[data-open='true'] .profile-popover {
+		opacity: 1;
+		visibility: visible;
+		pointer-events: auto;
+		transform: translateY(0);
+		transition-delay: 0ms;
+	}
+
+	.profile-links {
+		list-style: none;
+		padding: var(--space-2);
+		margin: 0;
+	}
+
+	.profile-link-item + .profile-link-item {
+		border-top: var(--space-px) solid rgba(255, 255, 255, 0.05);
+	}
+
+	.profile-link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+		padding: var(--space-3);
+		border-radius: 0.6rem;
+		color: var(--color-text-subtle);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-xs);
+		transition:
+			background-color 140ms ease,
+			color 140ms ease;
+	}
+
+	.profile-link:hover,
+	.profile-link:focus-visible {
+		background: rgba(255, 255, 255, 0.04);
+		color: var(--color-text);
+		outline: none;
+	}
+
+	.profile-link-icon {
+		width: 1rem;
+		height: 1rem;
+		flex: 0 0 auto;
+		color: var(--color-accent);
+	}
+
+	.profile-popover-footer {
+		border-top: var(--space-px) solid rgba(255, 255, 255, 0.08);
+		padding: var(--space-3) var(--space-4);
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+
+	.avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 999px;
+		padding: 0.125rem;
+		background:
+			radial-gradient(circle at 40% 30%, #d8ff00 0%, #00bc7d 75%),
+			transparent;
+		box-shadow: 0 0 0 2px rgba(0, 188, 125, 0.3);
+	}
+
+	.avatar-core {
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		background: #27272a;
+		color: var(--color-accent);
+		display: grid;
+		place-items: center;
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	.profile-copy {
+		min-width: 0;
+	}
+
+	.profile-name {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		line-height: var(--line-height-sm);
+	}
+
+	.profile-role {
+		color: var(--color-text-subtle);
+		font-size: var(--font-size-xs);
+		line-height: var(--line-height-xs);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.profile-popover {
+			transition: none;
+		}
+	}
+</style>
