@@ -74,6 +74,14 @@ The agent should:
 
 ---
 
+## Content vs UI
+
+Files in `/content` are knowledge-base files for the AI agent.
+
+Do not modify `/content` files when implementing visual UI changes unless the task explicitly asks to update the knowledge base.
+
+Page UI should live in `/src/pages` or `/src/components`.
+
 ## Performance
 
 - Prefer static rendering
