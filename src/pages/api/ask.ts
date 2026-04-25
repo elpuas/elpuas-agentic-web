@@ -7,8 +7,13 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		console.log('[api/ask] request received');
+		const runtimeApiKey = process.env.ELPUAS_OPENAI_API_KEY;
 		console.log('[api/ask] env check', {
-			hasApiKey: Boolean(import.meta.env.ELPUAS_OPENAI_API_KEY),
+			hasApiKeyFromProcessEnv: Boolean(runtimeApiKey),
+			apiKeyPrefix: runtimeApiKey ? runtimeApiKey.slice(0, 10) : '',
+			apiKeySuffix: runtimeApiKey ? runtimeApiKey.slice(-6) : '',
+			apiKeyLength: runtimeApiKey?.length ?? 0,
+			hasWhitespace: runtimeApiKey ? /\s/.test(runtimeApiKey) : false,
 		});
 
 		let payload: unknown;

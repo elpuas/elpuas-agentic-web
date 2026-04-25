@@ -7,7 +7,14 @@ function getClient(): OpenAI {
 		throw new Error('OpenAI client can only be initialized in the server runtime.');
 	}
 
-	const apiKey = import.meta.env.ELPUAS_OPENAI_API_KEY;
+	const apiKey = process.env.ELPUAS_OPENAI_API_KEY;
+
+	console.log('[ai] process.env API key diagnostics', {
+		apiKeyPrefix: apiKey ? apiKey.slice(0, 10) : '',
+		apiKeySuffix: apiKey ? apiKey.slice(-6) : '',
+		apiKeyLength: apiKey?.length ?? 0,
+		hasWhitespace: apiKey ? /\s/.test(apiKey) : false,
+	});
 
 	if (!apiKey) {
 		throw new Error('Missing ELPUAS_OPENAI_API_KEY.');
