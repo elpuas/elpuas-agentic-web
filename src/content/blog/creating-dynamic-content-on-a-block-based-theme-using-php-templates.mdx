@@ -66,11 +66,42 @@ In the following example, we'll explore a standard PHP template structure design
 
 This PHP template follows a standard structure used to create dynamic movie pages within the theme. Here's what it includes:
 
-**<!doctype html>** and **<html>** attributes: These ensure proper rendering of your page.  
-**<head>** section: It contains essential metadata and WordPress functions triggered by **wp\_head()**.  
-**<body>** tag: We utilize **body\_class()** and **wp\_body\_open()** for styling and functionality.  
-A wrapping **<div>** with the CSS class **wp-site-blocks**: This maintains consistency with HTML templates used in your theme.  
-An encapsulating function known as **block\_header\_area()**, is designed to output the 'header' template part. Similarly, there's an enclosing function named [**block\_footer\_area()**](https://developer.wordpress.org/reference/functions/block_footer_area/), responsible for rendering the 'footer' template part.
+The custom PHP template should include a few critical structural pieces to behave like a normal block theme template.
+
+```html
+<!doctype html>
+<html>
+```
+
+These ensure proper rendering of the page.
+
+```php
+<?php wp_head(); ?>
+```
+
+The `<head>` section contains essential metadata and all WordPress assets injected through `wp_head()`.
+
+```php
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+```
+
+The `<body>` tag should use `body_class()` and `wp_body_open()` for proper styling, scripts, and accessibility hooks.
+
+```html
+<div class="wp-site-blocks">
+```
+
+This wrapping container maintains consistency with the HTML templates used across the theme.
+
+You should also include the header and footer template parts using:
+
+```php
+<?php block_header_area(); ?>
+<?php block_footer_area(); ?>
+```
+
+These functions render the global `header` and `footer` template parts so the custom PHP template behaves like the rest of the block-based theme.
 
 ### **Working with Block Content**
 
