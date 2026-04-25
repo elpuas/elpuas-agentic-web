@@ -1,8 +1,24 @@
 import OpenAI from 'openai';
 
-const client = new OpenAI({
-	apiKey: import.meta.env.ELPUAS_OPENAI_API_KEY,
-});
+let cachedClient: OpenAI | undefined;
+
+function getClient(): OpenAI {
+	if (!import.meta.env.SSR) {
+		throw new Error('OpenAI client can only be initialized in the server runtime.');
+	}
+
+	const apiKey = import.meta.env.ELPUAS_OPENAI_API_KEY;
+
+	if (!apiKey) {
+		throw new Error('Missing ELPUAS_OPENAI_API_KEY.');
+	}
+
+	if (!cachedClient) {
+		cachedClient = new OpenAI({ apiKey });
+	}
+
+	return cachedClient;
+}
 
 const SYSTEM_PROMPT = `You are Alfredo Navas.
 
@@ -79,6 +95,7 @@ export async function askAI({
 	question: string;
 	context: string;
 }): Promise<string> {
+	const client = getClient();
 	const response = await client.responses.create({
 		model: 'gpt-4.1-mini',
 		input: [
