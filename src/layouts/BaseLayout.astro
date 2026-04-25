@@ -30,8 +30,21 @@ const navigation = [
 		<title>{title}</title>
 	</head>
 		<body>
-			<div class="shell">
-				<aside class="sidebar" aria-label="Primary navigation">
+			<div class="shell" data-sidebar-shell data-sidebar-open="false">
+				<button
+					class="sidebar-toggle"
+					type="button"
+					aria-label="Open navigation menu"
+					aria-controls="primary-sidebar"
+					aria-expanded="false"
+					data-sidebar-toggle
+				>
+					<span class="sidebar-toggle-line" aria-hidden="true"></span>
+					<span class="sidebar-toggle-line" aria-hidden="true"></span>
+					<span class="sidebar-toggle-line" aria-hidden="true"></span>
+				</button>
+
+				<aside class="sidebar" id="primary-sidebar" aria-label="Primary navigation" data-mobile-sidebar>
 					<div class="search-wrap">
 						<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
 							<path
@@ -67,6 +80,8 @@ const navigation = [
 
 					<ProfilePanel />
 				</aside>
+
+				<button class="sidebar-backdrop" type="button" aria-hidden="true" tabindex="-1" data-sidebar-backdrop></button>
 
 				<div class="workspace">
 					<main class="content">
@@ -378,6 +393,92 @@ const navigation = [
 						}
 					});
 				}
+
+				const sidebarRoots = document.querySelectorAll('[data-sidebar-shell]');
+				const mobileSidebarQuery = window.matchMedia('(max-width: 48rem)');
+
+				sidebarRoots.forEach((root) => {
+					if (root.dataset.sidebarBound === 'true') {
+						return;
+					}
+
+					root.dataset.sidebarBound = 'true';
+					const sidebar = root.querySelector('[data-mobile-sidebar]');
+					const toggle = root.querySelector('[data-sidebar-toggle]');
+					const backdrop = root.querySelector('[data-sidebar-backdrop]');
+					const navLinks = root.querySelectorAll('.nav-link');
+
+					if (!(sidebar instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) {
+						return;
+					}
+
+					const syncSidebarState = (open) => {
+						const isMobile = mobileSidebarQuery.matches;
+						root.dataset.sidebarOpen = open ? 'true' : 'false';
+						toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+						toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+
+						if (!isMobile) {
+							sidebar.setAttribute('aria-hidden', 'false');
+							sidebar.removeAttribute('inert');
+							document.body.style.removeProperty('overflow');
+							return;
+						}
+
+						sidebar.setAttribute('aria-hidden', open ? 'false' : 'true');
+						if (open) {
+							sidebar.removeAttribute('inert');
+							document.body.style.overflow = 'hidden';
+						} else {
+							sidebar.setAttribute('inert', '');
+							document.body.style.removeProperty('overflow');
+						}
+					};
+
+					const closeSidebar = () => {
+						syncSidebarState(false);
+					};
+
+					toggle.addEventListener('click', () => {
+						const nextOpen = root.dataset.sidebarOpen !== 'true';
+						syncSidebarState(nextOpen);
+					});
+
+					backdrop?.addEventListener('click', closeSidebar);
+
+					navLinks.forEach((link) => {
+						link.addEventListener('click', () => {
+							if (mobileSidebarQuery.matches) {
+								closeSidebar();
+							}
+						});
+					});
+
+					document.addEventListener('pointerdown', (event) => {
+						if (!mobileSidebarQuery.matches || root.dataset.sidebarOpen !== 'true') {
+							return;
+						}
+
+						if (sidebar.contains(event.target) || toggle.contains(event.target)) {
+							return;
+						}
+
+						closeSidebar();
+					});
+
+					document.addEventListener('keydown', (event) => {
+						if (event.key === 'Escape' && root.dataset.sidebarOpen === 'true') {
+							closeSidebar();
+							toggle.focus();
+						}
+					});
+
+					mobileSidebarQuery.addEventListener('change', () => {
+						syncSidebarState(false);
+					});
+
+					syncSidebarState(false);
+				});
 			</script>
 		</body>
 </html>
@@ -388,6 +489,14 @@ const navigation = [
 		display: grid;
 		grid-template-columns: 16rem minmax(0, 1fr);
 		background: var(--color-canvas);
+	}
+
+	.sidebar-toggle {
+		display: none;
+	}
+
+	.sidebar-backdrop {
+		display: none;
 	}
 
 	.sidebar {
@@ -706,9 +815,74 @@ const navigation = [
 			grid-template-columns: 1fr;
 		}
 
+		.sidebar-toggle {
+			display: inline-flex;
+			position: fixed;
+			top: var(--space-4);
+			left: var(--space-4);
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: var(--radius-lg);
+			border: var(--space-px) solid var(--color-border);
+			background: var(--color-surface);
+			color: var(--color-text);
+			z-index: 1200;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 0.3rem;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+		}
+
+		.sidebar-toggle:focus-visible {
+			outline: var(--space-px) solid var(--color-accent);
+			outline-offset: 0.15rem;
+		}
+
+		.sidebar-toggle-line {
+			display: block;
+			width: 1rem;
+			height: 0.12rem;
+			border-radius: 999px;
+			background: currentColor;
+		}
+
 		.sidebar {
-			border-right: 0;
-			border-bottom: var(--space-px) solid var(--color-border);
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: min(18rem, 86vw);
+			height: 100vh;
+			border-right: var(--space-px) solid var(--color-border);
+			border-bottom: 0;
+			transform: translateX(-100%);
+			transition: transform 180ms ease;
+			z-index: 1300;
+			box-shadow: 16px 0 32px rgba(0, 0, 0, 0.24);
+		}
+
+		.shell[data-sidebar-open='true'] .sidebar {
+			transform: translateX(0);
+		}
+
+		.sidebar-backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.48);
+			opacity: 0;
+			pointer-events: none;
+			z-index: 1250;
+			transition: opacity 180ms ease;
+		}
+
+		.shell[data-sidebar-open='true'] .sidebar-backdrop {
+			opacity: 1;
+			pointer-events: auto;
+		}
+
+		.workspace {
+			padding-top: 4rem;
 		}
 
 		.content {

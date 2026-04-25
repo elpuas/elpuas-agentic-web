@@ -9,27 +9,13 @@ const requestCooldownByIp = new Map<string, number>();
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
-		console.log('[api/ask] request received');
 		const clientIp = getClientIp(request);
 		const cooldown = registerAndGetCooldown(clientIp);
 		if (cooldown.active) {
-			console.warn('[api/ask] throttled request', {
-				clientIp,
-				retryAfterMs: cooldown.retryAfterMs,
-			});
 			return jsonResponse(429, {
 				error: 'Please wait a few seconds before sending another question.',
 			});
 		}
-
-		const runtimeApiKey = process.env.ELPUAS_OPENAI_API_KEY;
-		const legacyOpenAIApiKey = process.env.OPENAI_API_KEY;
-		console.log('[api/ask] env check', {
-			hasApiKeyFromProcessEnv: Boolean(runtimeApiKey),
-			hasLegacyOpenAIApiKeyEnv: Boolean(legacyOpenAIApiKey),
-			hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
-			hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
-		});
 
 		let payload: unknown;
 		try {
@@ -45,11 +31,6 @@ export const POST: APIRoute = async ({ request }) => {
 
 		const normalizedQuestion = typeof question === 'string' ? question.trim() : '';
 		const normalizedPageContext = typeof pageContext === 'string' ? pageContext.trim() : '';
-
-		console.log('[api/ask] payload check', {
-			hasQuestion: normalizedQuestion.length > 0,
-			hasPageContext: normalizedPageContext.length > 0,
-		});
 
 		if (normalizedQuestion.length === 0) {
 			return jsonResponse(400, { error: 'Please enter a question before sending.' });
@@ -68,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		} catch (error) {
 			const message = getErrorMessage(error);
-			console.error('[api/ask] context loading error', { message, error });
+			console.error('[api/ask] context loading failure:', message);
 			return jsonResponse(500, {
 				error: 'Something went wrong while preparing the answer. Please try again.',
 			});
@@ -82,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		} catch (error) {
 			const message = getErrorMessage(error);
-			console.error('[api/ask] OpenAI error', { message, error });
+			console.error('[api/ask] OpenAI request failure:', message);
 			return jsonResponse(500, {
 				error: 'Something went wrong while generating a reply. Please try again in a moment.',
 			});
@@ -91,7 +72,7 @@ export const POST: APIRoute = async ({ request }) => {
 		return jsonResponse(200, { text });
 	} catch (error) {
 		const message = getErrorMessage(error);
-		console.error('[api/ask] unhandled runtime error', { message, error });
+		console.error('[api/ask] unexpected handler failure:', message);
 		return jsonResponse(500, {
 			error: 'Something went wrong on the server. Please try again in a moment.',
 		});
