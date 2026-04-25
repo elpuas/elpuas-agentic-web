@@ -6,6 +6,7 @@ const {
 	title = 'Alfredo Navas',
 	description = 'Alfredo Navas personal website.',
 	activeNav = 'home',
+	pageContext = '',
 } = Astro.props;
 const currentPage = Astro.url.pathname;
 
@@ -74,7 +75,12 @@ const navigation = [
 						</div>
 					</main>
 
-					<section class="cli" aria-label="Command line interface" data-page={currentPage}>
+					<section
+						class="cli"
+						aria-label="Command line interface"
+						data-page={currentPage}
+						data-page-context={encodeURIComponent(pageContext)}
+					>
 						<div class="cli-panel">
 							<div class="cli-box">
 								<div class="cli-messages" id="cli-messages"></div>
@@ -215,38 +221,53 @@ const navigation = [
 				const form = document.querySelector('#cli-form');
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
-				const page = document.querySelector('.cli')?.dataset.page ?? '/';
+				const cliRoot = document.querySelector('.cli');
+				const page = cliRoot?.dataset.page ?? '/';
+				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
+				let pageContext = '';
+
+				if (encodedPageContext) {
+					try {
+						pageContext = decodeURIComponent(encodedPageContext);
+					} catch {
+						pageContext = '';
+					}
+				}
+
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
-					const assistantUrlPattern = /https?:\/\/[^\s<>"']+/g;
+					const assistantLinkPattern =
+						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
 
 					const appendAssistantTextWithLinks = (container, paragraph) => {
 						let lastIndex = 0;
 
-						for (const match of paragraph.matchAll(assistantUrlPattern)) {
+						for (const match of paragraph.matchAll(assistantLinkPattern)) {
 							const index = match.index ?? 0;
-							const rawUrl = match[0];
+							const rawLink = match[0];
 
 							if (index > lastIndex) {
 								container.append(document.createTextNode(paragraph.slice(lastIndex, index)));
 							}
 
-							let href = rawUrl;
+							let href = rawLink;
 							let trailing = '';
-							const trailingMatch = rawUrl.match(trailingPunctuationPattern);
+							const trailingMatch = rawLink.match(trailingPunctuationPattern);
 
 							if (trailingMatch) {
 								trailing = trailingMatch[0];
-								href = rawUrl.slice(0, -trailing.length);
+								href = rawLink.slice(0, -trailing.length);
 							}
 
 							if (href) {
 								const link = document.createElement('a');
 								link.href = href;
-								link.target = '_blank';
-								link.rel = 'noopener noreferrer';
+								if (href.startsWith('http://') || href.startsWith('https://')) {
+									link.target = '_blank';
+									link.rel = 'noopener noreferrer';
+								}
 								link.textContent = href;
 								container.append(link);
 							}
@@ -255,7 +276,7 @@ const navigation = [
 								container.append(document.createTextNode(trailing));
 							}
 
-							lastIndex = index + rawUrl.length;
+							lastIndex = index + rawLink.length;
 						}
 
 						if (lastIndex < paragraph.length) {
@@ -329,10 +350,19 @@ const navigation = [
 						submitButton.disabled = true;
 
 						try {
+							const requestBody = pageContext ? { question, page, pageContext } : { question, page };
+							if (import.meta.env.DEV) {
+								console.debug('[cli] /api/ask payload', {
+									question,
+									page,
+									pageContextPreview: pageContext.slice(0, 240),
+								});
+							}
+
 							const response = await fetch('/api/ask', {
 								method: 'POST',
 								headers: { 'Content-Type': 'application/json' },
-								body: JSON.stringify({ question, page }),
+								body: JSON.stringify(requestBody),
 							});
 							const payload = await response.json();
 							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";

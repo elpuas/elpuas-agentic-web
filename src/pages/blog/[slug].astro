@@ -37,9 +37,24 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 
 const heroImageSrc = resolveHeroImageSrc(post.data.heroImage);
 const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(post.data.date);
+const pageContext = [
+	'Current Page Type: Blog Post',
+	`Current Blog Title: ${post.data.title}`,
+	`Current Blog Slug: ${post.data.slug}`,
+	`Current Blog Description: ${post.data.description}`,
+	`Current Blog Category: ${post.data.category}`,
+	`Current Blog Tags: ${post.data.tags.join(', ') || 'None'}`,
+	'Current Blog Content:',
+	post.body,
+].join('\n');
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} activeNav="blog">
+<BaseLayout
+	title={post.data.title}
+	description={post.data.description}
+	activeNav="blog"
+	pageContext={pageContext}
+>
 	<article class="blog-post">
 		<header class="blog-post-header">
 			<h1>{post.data.title}</h1>

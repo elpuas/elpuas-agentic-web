@@ -10,7 +10,11 @@ const KNOWLEDGE_FILES = [
 	'../../content/knowledge/personal.mdx',
 ] as const;
 
-export async function loadContext(): Promise<string> {
+export async function loadContext({
+	pageContext,
+}: {
+	pageContext?: string;
+} = {}): Promise<string> {
 	const sections = await Promise.all(
 		KNOWLEDGE_FILES.map(async (relativePath) => {
 			const fileUrl = new URL(relativePath, import.meta.url);
@@ -20,6 +24,16 @@ export async function loadContext(): Promise<string> {
 
 	const knowledgeContext = sections.join('\n\n');
 	const blogIndexContext = await getBlogIndexContext();
+	const normalizedPageContext = pageContext?.trim();
 
-	return `${knowledgeContext}\n\n## Blog Posts\n${blogIndexContext}`;
+	const contextParts = [
+		`## Global Knowledge Context\n${knowledgeContext}`,
+		`## Blog Discovery Context\n${blogIndexContext}`,
+	];
+
+	if (normalizedPageContext) {
+		contextParts.push(`## Current Page Context\n${normalizedPageContext}`);
+	}
+
+	return contextParts.join('\n\n');
 }
