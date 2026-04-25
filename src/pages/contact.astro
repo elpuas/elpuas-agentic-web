@@ -1,0 +1,194 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import logo from '../assets/logo.svg';
+---
+
+<BaseLayout
+	title="Contact"
+	description="Contact Alfredo Navas for projects, technical help, or collaboration."
+	activeNav="contact"
+>
+	<section class="contact">
+		<header class="contact-title">
+			<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
+			<h1>Contact</h1>
+		</header>
+
+		<p class="contact-intro">
+			Have a project in mind, need technical help, or just want to connect? Send me a message.
+		</p>
+
+		<form class="contact-form" name="contact" method="POST" data-netlify="true">
+			<input type="hidden" name="form-name" value="contact" />
+
+			<div class="contact-grid">
+				<label class="field">
+					<span>Name</span>
+					<input type="text" name="name" autocomplete="name" required />
+				</label>
+
+				<label class="field">
+					<span>Email</span>
+					<input type="email" name="email" autocomplete="email" required />
+				</label>
+			</div>
+
+			<label class="field">
+				<span>Project / Message</span>
+				<textarea name="message" rows="6" required></textarea>
+			</label>
+
+			<button class="submit" type="submit">Send Message</button>
+		</form>
+
+		<p class="contact-note">
+			You can also reach me directly at <a href="mailto:elpuas@gmail.com">elpuas@gmail.com</a>.
+		</p>
+	</section>
+</BaseLayout>
+
+<style>
+	.contact {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		color: var(--color-text);
+		padding: var(--space-12) 0 var(--space-8);
+	}
+
+	.contact-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.contact-title img {
+		width: 3.9375rem;
+		height: 3.9375rem;
+		flex: 0 0 auto;
+	}
+
+	.contact-title h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.contact-intro {
+		margin-top: var(--space-6);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+		max-width: 62ch;
+	}
+
+	.contact-form {
+		margin-top: var(--space-6);
+		display: grid;
+		gap: var(--space-4);
+	}
+
+	.contact-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-4);
+	}
+
+	.field {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.field span {
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+	}
+
+	.field input,
+	.field textarea {
+		width: 100%;
+		padding: 0.75rem 0.875rem;
+		border: var(--space-px) solid var(--color-border);
+		border-radius: var(--radius-sm);
+		background: var(--color-surface);
+		color: var(--color-text);
+		transition:
+			border-color 120ms ease,
+			box-shadow 120ms ease;
+	}
+
+	.field textarea {
+		resize: vertical;
+		min-height: 8.5rem;
+	}
+
+	.field input:focus,
+	.field textarea:focus {
+		outline: none;
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 var(--space-px) var(--color-accent);
+	}
+
+	.submit {
+		justify-self: start;
+		padding: 0.65rem 1rem;
+		border: var(--space-px) solid var(--color-accent);
+		border-radius: var(--radius-sm);
+		background: transparent;
+		color: var(--color-accent);
+		font-size: var(--font-size-sm);
+		font-weight: var(--font-weight-medium);
+		cursor: pointer;
+		transition:
+			background-color 120ms ease,
+			color 120ms ease,
+			opacity 120ms ease;
+	}
+
+	.submit:hover,
+	.submit:focus-visible {
+		background: var(--color-accent);
+		color: #141414;
+		outline: none;
+	}
+
+	.contact-note {
+		margin-top: var(--space-6);
+		font-size: var(--font-size-sm);
+		color: var(--color-text-muted);
+	}
+
+	.contact-note a {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	@media (max-width: 48rem) {
+		.contact {
+			padding: var(--space-8) 0 var(--space-6);
+		}
+
+		.contact-title {
+			gap: var(--space-4);
+		}
+
+		.contact-title img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		.contact-title h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+
+		.contact-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.submit {
+			width: 100%;
+			justify-self: stretch;
+		}
+	}
+</style>
