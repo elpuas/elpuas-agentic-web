@@ -1,15 +1,18 @@
-import OpenAI from 'openai';
+import packageJson from '../../package.json';
 
-let cachedClient: OpenAI | undefined;
+const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
+const OPENAI_SDK_VERSION =
+	typeof packageJson.dependencies?.openai === 'string'
+		? packageJson.dependencies.openai
+		: 'unknown';
 
-function getClient(): OpenAI {
+function getApiKey(): string {
 	if (!import.meta.env.SSR) {
-		throw new Error('OpenAI client can only be initialized in the server runtime.');
+		throw new Error('OpenAI calls can only be initialized in the server runtime.');
 	}
 
 	const apiKey = process.env.ELPUAS_OPENAI_API_KEY;
-
-	console.log('[ai] process.env API key diagnostics', {
+		console.log('[ai] process.env API key diagnostics', {
 		apiKeyPrefix: apiKey ? apiKey.slice(0, 10) : '',
 		apiKeySuffix: apiKey ? apiKey.slice(-6) : '',
 		apiKeyLength: apiKey?.length ?? 0,
@@ -20,11 +23,7 @@ function getClient(): OpenAI {
 		throw new Error('Missing ELPUAS_OPENAI_API_KEY.');
 	}
 
-	if (!cachedClient) {
-		cachedClient = new OpenAI({ apiKey });
-	}
-
-	return cachedClient;
+	return apiKey;
 }
 
 const SYSTEM_PROMPT = `You are Alfredo Navas.
@@ -102,26 +101,80 @@ export async function askAI({
 	question: string;
 	context: string;
 }): Promise<string> {
-	const client = getClient();
-	const response = await client.responses.create({
-		model: 'gpt-4.1-mini',
-		input: [
-			{
-				role: 'system',
-				content: [{ type: 'input_text', text: SYSTEM_PROMPT }],
-			},
-			{
-				role: 'user',
-				content: [
-					{
-						type: 'input_text',
-						text: `Context:\n${context}\n\nQuestion:\n${question}`,
-					},
-				],
-			},
-		],
+	const apiKey = getApiKey();
+	const hasLegacyOpenAIApiKeyEnv = Boolean(process.env.OPENAI_API_KEY);
+
+	console.log('[ai] openai transport audit', {
+		hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
+		hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
+		hasLegacyOpenAIApiKeyEnv,
+		customBaseUrlPassed: false,
+		openaiSdkVersion: OPENAI_SDK_VERSION,
+		transport: 'raw-fetch',
+		endpoint: OPENAI_RESPONSES_URL,
 	});
 
-	const text = response.output_text?.trim();
+	const response = await fetch(OPENAI_RESPONSES_URL, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			model: 'gpt-4.1-mini',
+			input: [
+				{
+					role: 'system',
+					content: SYSTEM_PROMPT,
+				},
+				{
+					role: 'user',
+					content: `Context:\n${context}\n\nQuestion:\n${question}`,
+				},
+			],
+		}),
+	});
+
+	const serverHeader = response.headers.get('server') ?? 'unknown';
+	console.log('[ai] raw fetch main request result', {
+		status: response.status,
+		server: serverHeader,
+		ok: response.ok,
+		hasLegacyOpenAIApiKeyEnv,
+	});
+
+	const payload = await readJson(response);
+
+	if (!response.ok) {
+		const errorMessage = getOpenAIErrorMessage(payload);
+		throw new Error(
+			`OpenAI fetch failed with status ${response.status} (server: ${serverHeader}). ${errorMessage}`,
+		);
+	}
+
+	const text = getOutputText(payload);
 	return text || "I don't know.";
+}
+
+type ResponsesPayload = {
+	output_text?: string;
+	error?: {
+		message?: string;
+	};
+};
+
+async function readJson(response: Response): Promise<ResponsesPayload> {
+	try {
+		return (await response.json()) as ResponsesPayload;
+	} catch {
+		return {};
+	}
+}
+
+function getOutputText(payload: ResponsesPayload): string {
+	return typeof payload.output_text === 'string' ? payload.output_text.trim() : '';
+}
+
+function getOpenAIErrorMessage(payload: ResponsesPayload): string {
+	return payload.error?.message || 'Unknown OpenAI API error.';
 }
