@@ -13,3 +13,21 @@
 
 ## Next steps
 - Verify form submissions in a Netlify deploy context and confirm entries appear in Netlify Forms dashboard.
+
+## Blog MDX Cleanup Pass
+
+### What was done
+- Scanned all `.mdx` files in `/src/content/blog` for MDX parser-breaking patterns and validated via full Astro build.
+- Cleaned parser-breaking syntax in `/src/content/blog/you-might-not-need-a-custom-block-the-block-styles-api.mdx` by converting a raw CSS selector snippet with braces to inline code formatting so MDX no longer parses it as an expression.
+- Enabled static prerendering for dynamic blog slugs by adding `export const prerender = true;` in `/src/pages/blog/[slug].astro`.
+
+### Files cleaned
+- `/src/content/blog/you-might-not-need-a-custom-block-the-block-styles-api.mdx`
+- `/src/pages/blog/[slug].astro`
+
+### MDX syntax issues removed
+- Removed one MDX-breaking raw brace expression in prose that caused `[@mdx-js/rollup] Could not parse expression with acorn`.
+
+### Build validation result
+- Ran `npm run build` on April 25, 2026.
+- Result: success. Astro completed build and prerendered all blog post routes.

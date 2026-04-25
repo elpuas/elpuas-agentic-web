@@ -108,7 +108,7 @@ register_block_style(
 
 **Label (\_\_( 'Custom Primary Button', 'textdomain' )):**The 'label' is what will appear in the block editor for users to select. It’s the human-readable name of your style.We use the \_\_( 'Primary Button', 'textdomain' ) function for localization, making sure the label can be translated into other languages if needed.
 
-**Inline Style ('.wp-block-button.is-style-custom-primary-button { ... }'):**The 'inline\_style' parameter allows you to define the CSS that will be applied when the style is selected. This is a quick and direct way to style your block.The CSS is scoped to this specific block and style using the .wp-block-button.is-style-primary-button selector, ensuring the styles only apply when this style is selected.
+**Inline Style (`.wp-block-button.is-style-custom-primary-button { ... }`):**The 'inline\_style' parameter allows you to define the CSS that will be applied when the style is selected. This is a quick and direct way to style your block.The CSS is scoped to this specific block and style using the `.wp-block-button.is-style-primary-button` selector, ensuring the styles only apply when this style is selected.
 
 These are the key parameters we’re using in our example. There are additional parameters like 'style\_handle' and 'editor\_style' that you can use for more advanced scenarios. For a complete list of options and more detailed explanations, I recommend checking out the [WordPress documentation on block styles](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-styles/#server-side-registration-helper).
 
