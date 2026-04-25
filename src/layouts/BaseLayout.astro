@@ -30,7 +30,12 @@ const navigation = [
 		<title>{title}</title>
 	</head>
 		<body>
-			<div class="shell" data-sidebar-shell data-sidebar-open="false">
+			<div
+				class="shell"
+				data-sidebar-shell
+				data-sidebar-open="false"
+				data-home={currentPage === '/' ? 'true' : 'false'}
+			>
 				<button
 					class="sidebar-toggle"
 					type="button"
@@ -819,19 +824,18 @@ const navigation = [
 			display: inline-flex;
 			position: fixed;
 			top: var(--space-4);
-			left: var(--space-4);
+			right: var(--space-4);
 			width: 2.5rem;
 			height: 2.5rem;
 			border-radius: var(--radius-lg);
-			border: var(--space-px) solid var(--color-border);
-			background: var(--color-surface);
-			color: var(--color-text);
+			border: 0;
+			background: transparent;
+			color: var(--color-accent);
 			z-index: 1200;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			gap: 0.3rem;
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 		}
 
 		.sidebar-toggle:focus-visible {
@@ -891,6 +895,31 @@ const navigation = [
 
 		.cli {
 			padding: 0 var(--space-4) var(--space-8);
+		}
+
+		.shell[data-home='true'] .workspace {
+			padding-top: clamp(0.75rem, 3.5vh, 1.25rem);
+			min-height: 100vh;
+			display: grid;
+			grid-template-rows: auto auto;
+			align-content: center;
+			row-gap: var(--space-8);
+		}
+
+		.shell[data-home='true'] .content {
+			padding: 0 var(--space-4);
+		}
+
+		.shell[data-home='true'] .content-inner {
+			width: min(100%, 26rem);
+		}
+
+		.shell[data-home='true'] .cli {
+			padding: 0 var(--space-4) clamp(1.75rem, 3vh, 2.5rem);
+		}
+
+		.shell[data-home='true'] .cli-panel {
+			width: min(100%, 26rem);
 		}
 	}
 </style>

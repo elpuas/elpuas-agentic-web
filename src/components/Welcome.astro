@@ -3,6 +3,16 @@ import logo from '../assets/logo.svg';
 ---
 
 <div id="container">
+	<header class="mobile-home-header" aria-label="Homepage identity">
+		<div class="mobile-brand" aria-hidden="true">
+			<img src={logo.src} width="44" height="44" alt="" />
+			<div class="mobile-brand-copy">
+				<p class="mobile-brand-name">Alfredo Navas</p>
+				<p class="mobile-brand-role">Product Builder</p>
+			</div>
+		</div>
+	</header>
+
 	<main>
 		<section id="hero">
 			<div class="hero-title">
@@ -25,6 +35,15 @@ import logo from '../assets/logo.svg';
 	#container,
 	main {
 		height: 100%;
+	}
+
+	#container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.mobile-home-header {
+		display: none;
 	}
 
 	main {
@@ -77,30 +96,85 @@ import logo from '../assets/logo.svg';
 	}
 
 	@media (max-width: 48rem) {
+		.mobile-home-header {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			min-height: 3rem;
+			margin-bottom: var(--space-8);
+		}
+
+		.mobile-brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+
+		.mobile-brand img {
+			width: 2.75rem;
+			height: 2.75rem;
+			border-radius: 999px;
+		}
+
+		.mobile-brand-copy {
+			display: grid;
+			gap: 0.125rem;
+		}
+
+		.mobile-brand-name {
+			font-size: var(--font-size-sm);
+			line-height: var(--line-height-sm);
+			font-weight: 500;
+			color: var(--color-text);
+		}
+
+		.mobile-brand-role {
+			font-size: var(--font-size-xs);
+			line-height: var(--line-height-xs);
+			color: var(--color-text-subtle);
+		}
+
 		main {
-			min-height: clamp(16rem, 45vh, 26rem);
-			padding: var(--space-8) var(--space-4) var(--space-6);
+			flex: 1;
+			min-height: auto;
+			padding: 0;
+			align-items: center;
+		}
+
+		#hero {
+			width: min(100%, 23rem);
+			align-items: center;
+			text-align: center;
 		}
 
 		.hero-title {
-			gap: var(--space-4);
-			min-height: 3rem;
+			flex-direction: column;
+			align-items: center;
+			gap: var(--space-8);
+			min-height: 0;
 			padding-left: 0;
 		}
 
 		.hero-title img {
-			width: 3rem;
-			height: 3rem;
+			width: 4.5rem;
+			height: 4.5rem;
 		}
 
 		.hero-copy {
-			margin-top: var(--space-6);
-			row-gap: var(--space-4);
+			margin-top: var(--space-7);
+			max-width: 20rem;
 		}
 
 		h1 {
-			font-size: 1.75rem;
-			line-height: 1.2;
+			max-width: 12.5ch;
+			font-size: clamp(2rem, 8vw, 2.35rem);
+			line-height: 1.16;
+			text-wrap: balance;
+		}
+
+		p {
+			font-size: 1.05rem;
+			line-height: 1.6;
 		}
 	}
 </style>
