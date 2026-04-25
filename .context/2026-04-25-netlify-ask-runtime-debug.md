@@ -78,3 +78,25 @@
   - `response.status`
   - `response.headers.server`
   - `response.ok`
+
+## 2026-04-25 Responses Payload Parsing Update
+
+### Raw payload inspection added
+- Added temporary full payload diagnostics immediately after JSON parsing:
+  - `console.log('[ai] raw openai payload', JSON.stringify(payload, null, 2))`
+- Purpose: inspect production OpenAI Responses API payload shape and verify where assistant text is returned.
+
+### Output parser hardened
+- Updated `getOutputText()` in `src/lib/ai.ts` to parse multiple response shapes safely:
+  - first checks `payload.output_text`
+  - then traverses `payload.output[]`
+  - inspects `outputItem.content[]`
+  - returns the first valid text found from `text` or `output_text`
+- Parser now tolerates mixed/unknown payload structures without throwing.
+
+### Transport unchanged
+- No changes were made to:
+  - raw fetch transport
+  - authorization handling
+  - endpoint
+  - model

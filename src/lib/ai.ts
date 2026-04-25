@@ -144,6 +144,7 @@ export async function askAI({
 	});
 
 	const payload = await readJson(response);
+	console.log('[ai] raw openai payload', JSON.stringify(payload, null, 2));
 
 	if (!response.ok) {
 		const errorMessage = getOpenAIErrorMessage(payload);
@@ -157,7 +158,8 @@ export async function askAI({
 }
 
 type ResponsesPayload = {
-	output_text?: string;
+	output_text?: unknown;
+	output?: unknown;
 	error?: {
 		message?: string;
 	};
@@ -172,7 +174,61 @@ async function readJson(response: Response): Promise<ResponsesPayload> {
 }
 
 function getOutputText(payload: ResponsesPayload): string {
-	return typeof payload.output_text === 'string' ? payload.output_text.trim() : '';
+	const topLevelText = getTrimmedString(payload.output_text);
+	if (topLevelText) {
+		return topLevelText;
+	}
+
+	if (!Array.isArray(payload.output)) {
+		return '';
+	}
+
+	for (const outputItem of payload.output) {
+		const directOutputText = getTrimmedString(
+			isRecord(outputItem) ? outputItem.output_text : undefined,
+		);
+		if (directOutputText) {
+			return directOutputText;
+		}
+
+		if (!isRecord(outputItem) || !Array.isArray(outputItem.content)) {
+			continue;
+		}
+
+		for (const contentItem of outputItem.content) {
+			if (typeof contentItem === 'string') {
+				const directText = contentItem.trim();
+				if (directText) {
+					return directText;
+				}
+				continue;
+			}
+
+			if (!isRecord(contentItem)) {
+				continue;
+			}
+
+			const nestedText = getTrimmedString(contentItem.text);
+			if (nestedText) {
+				return nestedText;
+			}
+
+			const nestedOutputText = getTrimmedString(contentItem.output_text);
+			if (nestedOutputText) {
+				return nestedOutputText;
+			}
+		}
+	}
+
+	return '';
+}
+
+function getTrimmedString(value: unknown): string {
+	return typeof value === 'string' ? value.trim() : '';
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
 }
 
 function getOpenAIErrorMessage(payload: ResponsesPayload): string {
