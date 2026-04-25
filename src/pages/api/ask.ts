@@ -3,13 +3,28 @@ import { askAI } from '../../lib/ai';
 import { loadContext } from '../../lib/context';
 
 export const prerender = false;
+const MAX_QUESTION_LENGTH = 450;
+const COOLDOWN_MS = 4000;
+const requestCooldownByIp = new Map<string, number>();
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		console.log('[api/ask] request received');
+		const clientIp = getClientIp(request);
+		const cooldown = registerAndGetCooldown(clientIp);
+		if (cooldown.active) {
+			console.warn('[api/ask] throttled request', {
+				clientIp,
+				retryAfterMs: cooldown.retryAfterMs,
+			});
+			return jsonResponse(429, {
+				error: 'Please wait a few seconds before sending another question.',
+			});
+		}
+
 		const runtimeApiKey = process.env.ELPUAS_OPENAI_API_KEY;
 		const legacyOpenAIApiKey = process.env.OPENAI_API_KEY;
-			console.log('[api/ask] env check', {
+		console.log('[api/ask] env check', {
 			hasApiKeyFromProcessEnv: Boolean(runtimeApiKey),
 			hasLegacyOpenAIApiKeyEnv: Boolean(legacyOpenAIApiKey),
 			hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
@@ -20,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
 		try {
 			payload = await request.json();
 		} catch {
-			return jsonResponse(400, { error: 'Invalid JSON body' });
+			return jsonResponse(400, { error: 'Please send a valid JSON request body.' });
 		}
 
 		const { question, pageContext } = (payload ?? {}) as {
@@ -37,7 +52,13 @@ export const POST: APIRoute = async ({ request }) => {
 		});
 
 		if (normalizedQuestion.length === 0) {
-			return jsonResponse(400, { error: 'Question is required' });
+			return jsonResponse(400, { error: 'Please enter a question before sending.' });
+		}
+
+		if (normalizedQuestion.length > MAX_QUESTION_LENGTH) {
+			return jsonResponse(400, {
+				error: `Please keep your question under ${MAX_QUESTION_LENGTH} characters.`,
+			});
 		}
 
 		let context: string;
@@ -49,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
 			const message = getErrorMessage(error);
 			console.error('[api/ask] context loading error', { message, error });
 			return jsonResponse(500, {
-				error: `Context loading failed: ${message}`,
+				error: 'Something went wrong while preparing the answer. Please try again.',
 			});
 		}
 
@@ -63,7 +84,7 @@ export const POST: APIRoute = async ({ request }) => {
 			const message = getErrorMessage(error);
 			console.error('[api/ask] OpenAI error', { message, error });
 			return jsonResponse(500, {
-				error: `OpenAI request failed: ${message}`,
+				error: 'Something went wrong while generating a reply. Please try again in a moment.',
 			});
 		}
 
@@ -72,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
 		const message = getErrorMessage(error);
 		console.error('[api/ask] unhandled runtime error', { message, error });
 		return jsonResponse(500, {
-			error: `Unhandled /api/ask error: ${message}`,
+			error: 'Something went wrong on the server. Please try again in a moment.',
 		});
 	}
 };
@@ -86,4 +107,38 @@ function jsonResponse(status: number, body: { error?: string; text?: string }): 
 
 function getErrorMessage(error: unknown): string {
 	return error instanceof Error ? error.message : 'Unknown error';
+}
+
+function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: number } {
+	const now = Date.now();
+	const lastRequestAt = requestCooldownByIp.get(ip);
+	if (typeof lastRequestAt === 'number') {
+		const elapsed = now - lastRequestAt;
+		if (elapsed < COOLDOWN_MS) {
+			return {
+				active: true,
+				retryAfterMs: COOLDOWN_MS - elapsed,
+			};
+		}
+	}
+
+	requestCooldownByIp.set(ip, now);
+	return { active: false, retryAfterMs: 0 };
+}
+
+function getClientIp(request: Request): string {
+	const forwardedFor = request.headers.get('x-forwarded-for');
+	if (forwardedFor) {
+		const firstIp = forwardedFor.split(',')[0]?.trim();
+		if (firstIp) {
+			return firstIp;
+		}
+	}
+
+	const realIp = request.headers.get('x-real-ip')?.trim();
+	if (realIp) {
+		return realIp;
+	}
+
+	return 'unknown-client';
 }
