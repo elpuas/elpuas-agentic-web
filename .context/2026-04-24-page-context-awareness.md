@@ -75,3 +75,33 @@
   - metadata from `post.data`
   - full article body from `post.body`
 - No About/knowledge-page content is injected into `pageContext` at source.
+
+## Blog link refinement follow-up
+
+### Blog discovery context formatting adjusted
+- Updated `src/lib/blog-context.ts` entry formatting to be more readable and explicit per post while preserving required fields:
+  - `title`
+  - `slug`
+  - `url` (explicitly `/blog/[slug]`)
+  - `description`
+  - `category`
+  - `tags`
+  - `date`
+- Kept plain text context format for prompt compatibility.
+
+### System prompt updated for internal blog links
+- Updated `src/lib/ai.ts` instructions to require that when referencing/recommending existing posts, responses include:
+  - post title
+  - internal URL path (`/blog/[slug]`)
+- Added a natural-language example that shows title + path in plain text.
+
+### Validation notes
+- API prompt test: `do you have a post about AI?`
+  - Returned relevant titles and included `/blog/...` links.
+- API prompt test: `do you have something about Electron?`
+  - Returned Electron post title + `/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp`.
+- API prompt test: `have you written about WordPress Playground?`
+  - Returned Playground post title + `/blog/taking-playground-further-meet-blueprints`.
+- In-page-context test on `/blog/a-year-with-the-wordpress-community/` with:
+  - `do you have more posts like this?`
+  - Returned related post reference with internal `/blog/...` link.

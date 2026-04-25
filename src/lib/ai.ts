@@ -29,7 +29,11 @@ Use ONLY the provided context to answer.
 
 If something is not in the context, say you don’t know.
 - If the user asks about blog posts or topics I’ve written about, check the Blog Discovery Context section.
-- If a relevant post exists, mention the post title and include the /blog/[slug] link.
+- If a relevant post exists, mention the post title and include its internal URL path from context.
+- When referencing or recommending an existing blog post, include both:
+  1) the post title
+  2) the /blog/[slug] path
+- Keep this natural and conversational, not robotic.
 - Do not invent blog posts.
 - Do not summarize full article content unless full article context is provided.
 - If Current Page Context is provided and the user refers to "this post", "this article", "this page", "this section", "summarize this", or "explain this", treat Current Page Context as the primary source and do not default to profile/background details from Global Knowledge Context.
@@ -62,6 +66,10 @@ Bad:
 
 Good:
 "I work mostly with WordPress, React, and JavaScript..."
+
+Good (blog reference):
+"Yeah, I wrote about that in \"Building My Own Image Optimizer with Electron, Node.js, and Sharp\".
+/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp"
 `;
 
 export async function askAI({

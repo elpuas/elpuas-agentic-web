@@ -15,7 +15,8 @@ export async function getBlogIndexContext(): Promise<string> {
 		const url = `/blog/${post.data.slug}`;
 
 		return [
-			`${index + 1}. title: ${post.data.title}`,
+			`${index + 1}. post`,
+			`  title: ${post.data.title}`,
 			`  slug: ${post.data.slug}`,
 			`  url: ${url}`,
 			`  description: ${post.data.description}`,
