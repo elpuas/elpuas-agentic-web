@@ -105,3 +105,23 @@
 - In-page-context test on `/blog/a-year-with-the-wordpress-community/` with:
   - `do you have more posts like this?`
   - Returned related post reference with internal `/blog/...` link.
+
+## Link parsing follow-up
+
+### Internal path parsing added
+- Updated assistant response parsing in `src/layouts/BaseLayout.astro` to detect both:
+  - external URLs (`http://`, `https://`)
+  - internal relative paths that begin with `/` and continue with path-safe characters (for example `/blog/...`, `/about`, `/skills`, `/experience`, `/background`)
+- Internal path matches are now rendered as clickable `<a>` links.
+
+### External URL parsing preserved
+- Existing external URL auto-linking remains active.
+- External links still open in a new tab with `target="_blank"` and `rel="noopener noreferrer"`.
+- Internal links do not force a new tab and navigate normally within the site.
+
+### Validation notes
+- Parsing validation with mixed text confirmed detection for:
+  - `/blog/how-ai-makes-me-more-productive`
+  - `/about`
+  - `https://github.com/elpuas`
+- Validation also confirmed punctuation-only slash cases (`/`, `/.`) are not auto-linked.

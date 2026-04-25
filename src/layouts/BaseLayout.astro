@@ -237,34 +237,37 @@ const navigation = [
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
-					const assistantUrlPattern = /https?:\/\/[^\s<>"']+/g;
+					const assistantLinkPattern =
+						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
 
 					const appendAssistantTextWithLinks = (container, paragraph) => {
 						let lastIndex = 0;
 
-						for (const match of paragraph.matchAll(assistantUrlPattern)) {
+						for (const match of paragraph.matchAll(assistantLinkPattern)) {
 							const index = match.index ?? 0;
-							const rawUrl = match[0];
+							const rawLink = match[0];
 
 							if (index > lastIndex) {
 								container.append(document.createTextNode(paragraph.slice(lastIndex, index)));
 							}
 
-							let href = rawUrl;
+							let href = rawLink;
 							let trailing = '';
-							const trailingMatch = rawUrl.match(trailingPunctuationPattern);
+							const trailingMatch = rawLink.match(trailingPunctuationPattern);
 
 							if (trailingMatch) {
 								trailing = trailingMatch[0];
-								href = rawUrl.slice(0, -trailing.length);
+								href = rawLink.slice(0, -trailing.length);
 							}
 
 							if (href) {
 								const link = document.createElement('a');
 								link.href = href;
-								link.target = '_blank';
-								link.rel = 'noopener noreferrer';
+								if (href.startsWith('http://') || href.startsWith('https://')) {
+									link.target = '_blank';
+									link.rel = 'noopener noreferrer';
+								}
 								link.textContent = href;
 								container.append(link);
 							}
@@ -273,7 +276,7 @@ const navigation = [
 								container.append(document.createTextNode(trailing));
 							}
 
-							lastIndex = index + rawUrl.length;
+							lastIndex = index + rawLink.length;
 						}
 
 						if (lastIndex < paragraph.length) {
