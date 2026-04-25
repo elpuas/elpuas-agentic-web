@@ -5,50 +5,80 @@ import { loadContext } from '../../lib/context';
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
-	let payload: unknown;
-
 	try {
-		payload = await request.json();
-	} catch {
-		return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-			status: 400,
-			headers: { 'Content-Type': 'application/json' },
+		console.log('[api/ask] request received');
+		console.log('[api/ask] env check', {
+			hasApiKey: Boolean(import.meta.env.ELPUAS_OPENAI_API_KEY),
+		});
+
+		let payload: unknown;
+		try {
+			payload = await request.json();
+		} catch {
+			return jsonResponse(400, { error: 'Invalid JSON body' });
+		}
+
+		const { question, pageContext } = (payload ?? {}) as {
+			question?: unknown;
+			pageContext?: unknown;
+		};
+
+		const normalizedQuestion = typeof question === 'string' ? question.trim() : '';
+		const normalizedPageContext = typeof pageContext === 'string' ? pageContext.trim() : '';
+
+		console.log('[api/ask] payload check', {
+			hasQuestion: normalizedQuestion.length > 0,
+			hasPageContext: normalizedPageContext.length > 0,
+		});
+
+		if (normalizedQuestion.length === 0) {
+			return jsonResponse(400, { error: 'Question is required' });
+		}
+
+		let context: string;
+		try {
+			context = await loadContext({
+				pageContext: normalizedPageContext || undefined,
+			});
+		} catch (error) {
+			const message = getErrorMessage(error);
+			console.error('[api/ask] context loading error', { message, error });
+			return jsonResponse(500, {
+				error: `Context loading failed: ${message}`,
+			});
+		}
+
+		let text: string;
+		try {
+			text = await askAI({
+				question: normalizedQuestion,
+				context,
+			});
+		} catch (error) {
+			const message = getErrorMessage(error);
+			console.error('[api/ask] OpenAI error', { message, error });
+			return jsonResponse(500, {
+				error: `OpenAI request failed: ${message}`,
+			});
+		}
+
+		return jsonResponse(200, { text });
+	} catch (error) {
+		const message = getErrorMessage(error);
+		console.error('[api/ask] unhandled runtime error', { message, error });
+		return jsonResponse(500, {
+			error: `Unhandled /api/ask error: ${message}`,
 		});
 	}
+};
 
-	const { question, pageContext } = (payload ?? {}) as {
-		question?: unknown;
-		page?: unknown;
-		pageContext?: unknown;
-	};
-
-	if (typeof question !== 'string' || question.trim().length === 0) {
-		return new Response(JSON.stringify({ error: 'Question is required' }), {
-			status: 400,
-			headers: { 'Content-Type': 'application/json' },
-		});
-	}
-
-	const context = await loadContext({
-		pageContext: typeof pageContext === 'string' ? pageContext : undefined,
-	});
-
-	if (import.meta.env.DEV) {
-		console.log('[api/ask] payload debug', {
-			question: question.trim(),
-			hasPageContext: typeof pageContext === 'string' && pageContext.trim().length > 0,
-			pageContextPreview:
-				typeof pageContext === 'string' ? pageContext.trim().slice(0, 240) : '',
-		});
-	}
-
-	const text = await askAI({
-		question: question.trim(),
-		context,
-	});
-
-	return new Response(JSON.stringify({ text }), {
-		status: 200,
+function jsonResponse(status: number, body: { error?: string; text?: string }): Response {
+	return new Response(JSON.stringify(body), {
+		status,
 		headers: { 'Content-Type': 'application/json' },
 	});
-};
+}
+
+function getErrorMessage(error: unknown): string {
+	return error instanceof Error ? error.message : 'Unknown error';
+}
