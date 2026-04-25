@@ -32,3 +32,27 @@
 - Deploy this branch to Netlify and invoke `POST /api/ask` from production.
 - Check Netlify function logs for new diagnostics to pinpoint remaining runtime issues if any.
 - After confirming fix, remove or reduce temporary diagnostics verbosity.
+
+## 2026-04-25 Transport Debug Update
+
+### Base URL audit
+- Audited codebase for OpenAI transport configuration (`new OpenAI(`, `baseURL`, `OPENAI_BASE_URL`, `OPENAI_API_BASE`, `api.openai`, fetch/proxy overrides).
+- No custom OpenAI SDK `baseURL` configuration found in server code.
+- Runtime diagnostics now log:
+  - `hasOpenAIBaseUrlEnv`
+  - `hasOpenAIApiBaseEnv`
+  - `customBaseUrlPassed` (currently `false`)
+  - OpenAI SDK version from `package.json` (`openai` dependency)
+
+### Raw fetch test result instrumentation
+- Added raw fetch probe call to `https://api.openai.com/v1/responses` before the main model call.
+- Probe logs only:
+  - response `status`
+  - response `headers.server`
+  - `ok` boolean
+- Main OpenAI request also logs the same transport result fields.
+
+### Active transport
+- OpenAI SDK transport is temporarily bypassed for requests.
+- Active path is raw `fetch` to `https://api.openai.com/v1/responses`.
+- System prompt and context composition behavior remain unchanged.

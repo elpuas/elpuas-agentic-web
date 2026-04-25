@@ -7,8 +7,11 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		console.log('[api/ask] request received');
+		const runtimeApiKey = process.env.ELPUAS_OPENAI_API_KEY;
 		console.log('[api/ask] env check', {
-			hasApiKey: Boolean(import.meta.env.ELPUAS_OPENAI_API_KEY),
+			hasApiKeyFromProcessEnv: Boolean(runtimeApiKey),
+			hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
+			hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
 		});
 
 		let payload: unknown;
