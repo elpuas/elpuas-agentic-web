@@ -56,3 +56,25 @@
 - OpenAI SDK transport is temporarily bypassed for requests.
 - Active path is raw `fetch` to `https://api.openai.com/v1/responses`.
 - System prompt and context composition behavior remain unchanged.
+
+## 2026-04-25 Direct Transport Hardening Update
+
+### Netlify AI proxy suspicion
+- Production failures showed `server: Netlify` and `x-nf-request-id` in auth-error responses, indicating probable request interception/proxy behavior before reaching OpenAI directly.
+
+### Raw fetch direct transport implemented
+- Kept `/api/ask` AI behavior unchanged (same model, same system prompt, same context formatting).
+- Confirmed active transport is direct `fetch` to `https://api.openai.com/v1/responses` using:
+  - `Authorization: Bearer ${process.env.ELPUAS_OPENAI_API_KEY}`
+  - `Content-Type: application/json`
+- Removed additional probe request so only the main direct OpenAI call is sent.
+- No OpenAI SDK request path is used for runtime inference calls.
+
+### Runtime diagnostics added
+- Added explicit env-conflict diagnostics:
+  - whether `process.env.OPENAI_API_KEY` exists
+  - while keeping `ELPUAS_OPENAI_API_KEY` as the only key used for authorization
+- Added direct transport result diagnostics:
+  - `response.status`
+  - `response.headers.server`
+  - `response.ok`

@@ -96,17 +96,17 @@ export async function askAI({
 	context: string;
 }): Promise<string> {
 	const apiKey = getApiKey();
+	const hasLegacyOpenAIApiKeyEnv = Boolean(process.env.OPENAI_API_KEY);
 
 	console.log('[ai] openai transport audit', {
 		hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
 		hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
+		hasLegacyOpenAIApiKeyEnv,
 		customBaseUrlPassed: false,
 		openaiSdkVersion: OPENAI_SDK_VERSION,
 		transport: 'raw-fetch',
 		endpoint: OPENAI_RESPONSES_URL,
 	});
-
-	await runRawFetchProbe(apiKey);
 
 	const response = await fetch(OPENAI_RESPONSES_URL, {
 		method: 'POST',
@@ -134,6 +134,7 @@ export async function askAI({
 		status: response.status,
 		server: serverHeader,
 		ok: response.ok,
+		hasLegacyOpenAIApiKeyEnv,
 	});
 
 	const payload = await readJson(response);
@@ -147,35 +148,6 @@ export async function askAI({
 
 	const text = getOutputText(payload);
 	return text || "I don't know.";
-}
-
-async function runRawFetchProbe(apiKey: string): Promise<void> {
-	const probeResponse = await fetch(OPENAI_RESPONSES_URL, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			model: 'gpt-4.1-mini',
-			input: [
-				{
-					role: 'system',
-					content: 'You are Alfredo Navas.',
-				},
-				{
-					role: 'user',
-					content: 'hello',
-				},
-			],
-		}),
-	});
-
-	console.log('[ai] raw fetch probe result', {
-		status: probeResponse.status,
-		server: probeResponse.headers.get('server') ?? 'unknown',
-		ok: probeResponse.ok,
-	});
 }
 
 type ResponsesPayload = {

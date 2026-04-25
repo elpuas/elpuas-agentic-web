@@ -8,8 +8,10 @@ export const POST: APIRoute = async ({ request }) => {
 	try {
 		console.log('[api/ask] request received');
 		const runtimeApiKey = process.env.ELPUAS_OPENAI_API_KEY;
+		const legacyOpenAIApiKey = process.env.OPENAI_API_KEY;
 		console.log('[api/ask] env check', {
 			hasApiKeyFromProcessEnv: Boolean(runtimeApiKey),
+			hasLegacyOpenAIApiKeyEnv: Boolean(legacyOpenAIApiKey),
 			hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
 			hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
 		});
