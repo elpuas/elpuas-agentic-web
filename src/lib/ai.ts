@@ -1,10 +1,4 @@
-import packageJson from '../../package.json';
-
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
-const OPENAI_SDK_VERSION =
-	typeof packageJson.dependencies?.openai === 'string'
-		? packageJson.dependencies.openai
-		: 'unknown';
 
 function getApiKey(): string {
 	if (!import.meta.env.SSR) {
@@ -12,12 +6,6 @@ function getApiKey(): string {
 	}
 
 	const apiKey = process.env.ELPUAS_OPENAI_API_KEY;
-		console.log('[ai] process.env API key diagnostics', {
-		apiKeyPrefix: apiKey ? apiKey.slice(0, 10) : '',
-		apiKeySuffix: apiKey ? apiKey.slice(-6) : '',
-		apiKeyLength: apiKey?.length ?? 0,
-		hasWhitespace: apiKey ? /\s/.test(apiKey) : false,
-	});
 
 	if (!apiKey) {
 		throw new Error('Missing ELPUAS_OPENAI_API_KEY.');
@@ -100,17 +88,6 @@ export async function askAI({
 	context: string;
 }): Promise<string> {
 	const apiKey = getApiKey();
-	const hasLegacyOpenAIApiKeyEnv = Boolean(process.env.OPENAI_API_KEY);
-
-	console.log('[ai] openai transport audit', {
-		hasOpenAIBaseUrlEnv: Boolean(process.env.OPENAI_BASE_URL),
-		hasOpenAIApiBaseEnv: Boolean(process.env.OPENAI_API_BASE),
-		hasLegacyOpenAIApiKeyEnv,
-		customBaseUrlPassed: false,
-		openaiSdkVersion: OPENAI_SDK_VERSION,
-		transport: 'raw-fetch',
-		endpoint: OPENAI_RESPONSES_URL,
-	});
 
 	const response = await fetch(OPENAI_RESPONSES_URL, {
 		method: 'POST',
@@ -138,15 +115,7 @@ export async function askAI({
 	});
 
 	const serverHeader = response.headers.get('server') ?? 'unknown';
-	console.log('[ai] raw fetch main request result', {
-		status: response.status,
-		server: serverHeader,
-		ok: response.ok,
-		hasLegacyOpenAIApiKeyEnv,
-	});
-
 	const payload = await readJson(response);
-	console.log('[ai] raw openai payload', JSON.stringify(payload, null, 2));
 
 	if (!response.ok) {
 		const errorMessage = getOpenAIErrorMessage(payload);
