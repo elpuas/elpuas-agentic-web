@@ -3,16 +3,6 @@ import logo from '../assets/logo.svg';
 ---
 
 <div id="container">
-	<header class="mobile-home-header" aria-label="Homepage identity">
-		<div class="mobile-brand" aria-hidden="true">
-			<img src={logo.src} width="44" height="44" alt="" />
-			<div class="mobile-brand-copy">
-				<p class="mobile-brand-name">Alfredo Navas</p>
-				<p class="mobile-brand-role">Product Builder</p>
-			</div>
-		</div>
-	</header>
-
 	<main>
 		<section id="hero">
 			<div class="hero-title">
@@ -40,10 +30,6 @@ import logo from '../assets/logo.svg';
 	#container {
 		display: flex;
 		flex-direction: column;
-	}
-
-	.mobile-home-header {
-		display: none;
 	}
 
 	main {
@@ -96,44 +82,6 @@ import logo from '../assets/logo.svg';
 	}
 
 	@media (max-width: 48rem) {
-		.mobile-home-header {
-			display: flex;
-			align-items: center;
-			justify-content: flex-start;
-			min-height: 3rem;
-			margin-bottom: var(--space-8);
-		}
-
-		.mobile-brand {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.75rem;
-		}
-
-		.mobile-brand img {
-			width: 2.75rem;
-			height: 2.75rem;
-			border-radius: 999px;
-		}
-
-		.mobile-brand-copy {
-			display: grid;
-			gap: 0.125rem;
-		}
-
-		.mobile-brand-name {
-			font-size: var(--font-size-sm);
-			line-height: var(--line-height-sm);
-			font-weight: 500;
-			color: var(--color-text);
-		}
-
-		.mobile-brand-role {
-			font-size: var(--font-size-xs);
-			line-height: var(--line-height-xs);
-			color: var(--color-text-subtle);
-		}
-
 		main {
 			flex: 1;
 			min-height: auto;
@@ -142,7 +90,7 @@ import logo from '../assets/logo.svg';
 		}
 
 		#hero {
-			width: min(100%, 23rem);
+			width: min(100%, 22rem);
 			align-items: center;
 			text-align: center;
 		}
@@ -150,31 +98,31 @@ import logo from '../assets/logo.svg';
 		.hero-title {
 			flex-direction: column;
 			align-items: center;
-			gap: var(--space-8);
+			gap: clamp(1rem, 5.5vw, 1.5rem);
 			min-height: 0;
 			padding-left: 0;
 		}
 
 		.hero-title img {
-			width: 4.5rem;
-			height: 4.5rem;
+			width: clamp(3.5rem, 16vw, 4.4rem);
+			height: clamp(3.5rem, 16vw, 4.4rem);
 		}
 
 		.hero-copy {
-			margin-top: var(--space-7);
-			max-width: 20rem;
+			margin-top: clamp(0.95rem, 5.2vw, 1.5rem);
+			max-width: min(100%, 19.5rem);
 		}
 
 		h1 {
-			max-width: 12.5ch;
-			font-size: clamp(2rem, 8vw, 2.35rem);
-			line-height: 1.16;
+			max-width: 11.5ch;
+			font-size: clamp(1.82rem, 8vw, 2.08rem);
+			line-height: 1.2;
 			text-wrap: balance;
 		}
 
 		p {
-			font-size: 1.05rem;
-			line-height: 1.6;
+			font-size: clamp(0.98rem, 3.95vw, 1.05rem);
+			line-height: 1.5;
 		}
 	}
 </style>
