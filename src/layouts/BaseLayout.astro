@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
+import logo from '../assets/logo.svg';
 
 const {
 	title = 'Alfredo Navas',
@@ -30,20 +31,12 @@ const navigation = [
 		<title>{title}</title>
 	</head>
 		<body>
-			<div class="shell" data-sidebar-shell data-sidebar-open="false">
-				<button
-					class="sidebar-toggle"
-					type="button"
-					aria-label="Open navigation menu"
-					aria-controls="primary-sidebar"
-					aria-expanded="false"
-					data-sidebar-toggle
-				>
-					<span class="sidebar-toggle-line" aria-hidden="true"></span>
-					<span class="sidebar-toggle-line" aria-hidden="true"></span>
-					<span class="sidebar-toggle-line" aria-hidden="true"></span>
-				</button>
-
+			<div
+				class="shell"
+				data-sidebar-shell
+				data-sidebar-open="false"
+				data-home={currentPage === '/' ? 'true' : 'false'}
+			>
 				<aside class="sidebar" id="primary-sidebar" aria-label="Primary navigation" data-mobile-sidebar>
 					<div class="search-wrap">
 						<svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -84,6 +77,28 @@ const navigation = [
 				<button class="sidebar-backdrop" type="button" aria-hidden="true" tabindex="-1" data-sidebar-backdrop></button>
 
 				<div class="workspace">
+					<header class="mobile-header" aria-label="Mobile header">
+						<a class="mobile-brand" href="/" aria-label="Go to homepage">
+							<img class="mobile-brand-logo" src={logo.src} width="42" height="42" alt="" />
+							<span class="mobile-brand-copy">
+								<span class="mobile-brand-name">Alfredo Navas</span>
+								<span class="mobile-brand-role">Product Builder</span>
+							</span>
+						</a>
+						<button
+							class="sidebar-toggle"
+							type="button"
+							aria-label="Open navigation menu"
+							aria-controls="primary-sidebar"
+							aria-expanded="false"
+							data-sidebar-toggle
+						>
+							<span class="sidebar-toggle-line" aria-hidden="true"></span>
+							<span class="sidebar-toggle-line" aria-hidden="true"></span>
+							<span class="sidebar-toggle-line" aria-hidden="true"></span>
+						</button>
+					</header>
+
 					<main class="content">
 						<div class="content-inner">
 							<slot />
@@ -598,6 +613,10 @@ const navigation = [
 		min-width: 0;
 	}
 
+	.mobile-header {
+		display: none;
+	}
+
 	.content {
 		flex: 1;
 		padding: var(--space-8) var(--space-8) var(--space-12);
@@ -815,23 +834,60 @@ const navigation = [
 			grid-template-columns: 1fr;
 		}
 
+		.mobile-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--space-3);
+			padding: clamp(0.65rem, 3vw, 0.9rem) clamp(1rem, 4.8vw, 1.25rem) 0;
+		}
+
+		.mobile-brand {
+			display: inline-flex;
+			align-items: center;
+			flex-wrap: nowrap;
+			gap: clamp(0.55rem, 2.6vw, 0.75rem);
+			min-width: 0;
+		}
+
+		.mobile-brand-logo {
+			width: clamp(2.1rem, 9vw, 2.65rem);
+			height: clamp(2.1rem, 9vw, 2.65rem);
+			flex: 0 0 auto;
+		}
+
+		.mobile-brand-copy {
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+		}
+
+		.mobile-brand-name {
+			color: var(--color-text);
+			font-size: clamp(0.9rem, 3.4vw, 1rem);
+			line-height: 1.25;
+			font-weight: var(--font-weight-medium);
+		}
+
+		.mobile-brand-role {
+			color: var(--color-text-subtle);
+			font-size: clamp(0.72rem, 2.7vw, 0.8rem);
+			line-height: 1.2;
+		}
+
 		.sidebar-toggle {
 			display: inline-flex;
-			position: fixed;
-			top: var(--space-4);
-			left: var(--space-4);
-			width: 2.5rem;
-			height: 2.5rem;
-			border-radius: var(--radius-lg);
-			border: var(--space-px) solid var(--color-border);
-			background: var(--color-surface);
-			color: var(--color-text);
-			z-index: 1200;
+			width: clamp(2.15rem, 9vw, 2.5rem);
+			height: clamp(2.15rem, 9vw, 2.5rem);
+			border-radius: 0.65rem;
+			border: 0;
+			background: transparent;
+			color: var(--color-accent);
+			flex: 0 0 auto;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			gap: 0.3rem;
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+			gap: clamp(0.22rem, 1.2vw, 0.3rem);
 		}
 
 		.sidebar-toggle:focus-visible {
@@ -841,7 +897,7 @@ const navigation = [
 
 		.sidebar-toggle-line {
 			display: block;
-			width: 1rem;
+			width: clamp(1rem, 4.2vw, 1.2rem);
 			height: 0.12rem;
 			border-radius: 999px;
 			background: currentColor;
@@ -882,15 +938,41 @@ const navigation = [
 		}
 
 		.workspace {
-			padding-top: 4rem;
+			padding-top: 0;
 		}
 
 		.content {
-			padding: var(--space-6) var(--space-4);
+			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem);
 		}
 
 		.cli {
-			padding: 0 var(--space-4) var(--space-8);
+			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1.5rem, 6.4vw, 2rem);
+		}
+
+		.shell[data-home='true'] .workspace {
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.shell[data-home='true'] .content {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			padding: clamp(0.6rem, 3.4vh, 1.35rem) clamp(1rem, 4.8vw, 1.25rem)
+				clamp(0.6rem, 2.7vh, 1rem);
+		}
+
+		.shell[data-home='true'] .content-inner {
+			width: min(100%, 25rem);
+		}
+
+		.shell[data-home='true'] .cli {
+			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1rem, 3.8vh, 1.65rem);
+		}
+
+		.shell[data-home='true'] .cli-panel {
+			width: min(100%, 25rem);
 		}
 	}
 </style>

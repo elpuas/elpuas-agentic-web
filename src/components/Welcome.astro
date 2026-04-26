@@ -27,6 +27,11 @@ import logo from '../assets/logo.svg';
 		height: 100%;
 	}
 
+	#container {
+		display: flex;
+		flex-direction: column;
+	}
+
 	main {
 		display: flex;
 		align-items: flex-end;
@@ -78,29 +83,46 @@ import logo from '../assets/logo.svg';
 
 	@media (max-width: 48rem) {
 		main {
-			min-height: clamp(16rem, 45vh, 26rem);
-			padding: var(--space-8) var(--space-4) var(--space-6);
+			flex: 1;
+			min-height: auto;
+			padding: 0;
+			align-items: center;
+		}
+
+		#hero {
+			width: min(100%, 22rem);
+			align-items: center;
+			text-align: center;
 		}
 
 		.hero-title {
-			gap: var(--space-4);
-			min-height: 3rem;
+			flex-direction: column;
+			align-items: center;
+			gap: clamp(1rem, 5.5vw, 1.5rem);
+			min-height: 0;
 			padding-left: 0;
 		}
 
 		.hero-title img {
-			width: 3rem;
-			height: 3rem;
+			width: clamp(3.5rem, 16vw, 4.4rem);
+			height: clamp(3.5rem, 16vw, 4.4rem);
 		}
 
 		.hero-copy {
-			margin-top: var(--space-6);
-			row-gap: var(--space-4);
+			margin-top: clamp(0.95rem, 5.2vw, 1.5rem);
+			max-width: min(100%, 19.5rem);
 		}
 
 		h1 {
-			font-size: 1.75rem;
+			max-width: 100%;
+			font-size: clamp(1.82rem, 8vw, 2.08rem);
 			line-height: 1.2;
+			text-wrap: balance;
+		}
+
+		p {
+			font-size: clamp(0.98rem, 3.95vw, 1.05rem);
+			line-height: 1.5;
 		}
 	}
 </style>
