@@ -1,5 +1,11 @@
 import { getCollection } from 'astro:content';
 
+/**
+ * Builds a compact blog discovery index consumed by the AI context loader.
+ *
+ * Includes only non-draft posts, newest first, so the assistant can reference
+ * real post titles and internal URLs without loading full article bodies.
+ */
 export async function getBlogIndexContext(): Promise<string> {
 	const posts = (await getCollection('blog'))
 		.filter((post) => !post.data.draft)

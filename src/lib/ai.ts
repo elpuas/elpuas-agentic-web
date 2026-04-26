@@ -1,5 +1,11 @@
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
 
+/**
+ * Reads the OpenAI API key from the server runtime.
+ *
+ * @returns API key used for OpenAI Responses requests.
+ * @throws When invoked on the client or when the key is missing.
+ */
 function getApiKey(): string {
 	if (!import.meta.env.SSR) {
 		throw new Error('OpenAI calls can only be initialized in the server runtime.');
@@ -80,6 +86,14 @@ Good (blog reference):
 /blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp"
 `;
 
+/**
+ * Sends a question and constrained context to the OpenAI Responses API.
+ *
+ * @param params.question End-user question after server-side normalization.
+ * @param params.context Page-scoped knowledge context assembled by `loadContext`.
+ * @returns Assistant plain-text response suitable for direct CLI rendering.
+ * @throws When the upstream OpenAI request fails.
+ */
 export async function askAI({
 	question,
 	context,
@@ -136,6 +150,10 @@ type ResponsesPayload = {
 	};
 };
 
+/**
+ * Attempts to parse an OpenAI response body as JSON.
+ * Returns an empty object for non-JSON or empty bodies to keep error handling uniform.
+ */
 async function readJson(response: Response): Promise<ResponsesPayload> {
 	try {
 		return (await response.json()) as ResponsesPayload;
@@ -144,6 +162,9 @@ async function readJson(response: Response): Promise<ResponsesPayload> {
 	}
 }
 
+/**
+ * Extracts the first meaningful text value from OpenAI Responses payload variants.
+ */
 function getOutputText(payload: ResponsesPayload): string {
 	const topLevelText = getTrimmedString(payload.output_text);
 	if (topLevelText) {
@@ -194,14 +215,23 @@ function getOutputText(payload: ResponsesPayload): string {
 	return '';
 }
 
+/**
+ * Normalizes string-like values to a trimmed string or an empty string.
+ */
 function getTrimmedString(value: unknown): string {
 	return typeof value === 'string' ? value.trim() : '';
 }
 
+/**
+ * Narrowing helper for object-like values used during payload traversal.
+ */
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
+/**
+ * Produces an actionable OpenAI error message from a parsed payload.
+ */
 function getOpenAIErrorMessage(payload: ResponsesPayload): string {
 	return payload.error?.message || 'Unknown OpenAI API error.';
 }

@@ -7,6 +7,15 @@ const MAX_QUESTION_LENGTH = 450;
 const COOLDOWN_MS = 4000;
 const requestCooldownByIp = new Map<string, number>();
 
+/**
+ * Handles CLI chat requests from the client-side interface.
+ *
+ * Workflow:
+ * - applies a lightweight in-memory per-IP cooldown
+ * - validates payload shape and question length
+ * - assembles page-aware context
+ * - delegates generation to the OpenAI helper
+ */
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		const clientIp = getClientIp(request);
@@ -79,6 +88,9 @@ export const POST: APIRoute = async ({ request }) => {
 	}
 };
 
+/**
+ * Creates a JSON response with a stable content-type header.
+ */
 function jsonResponse(status: number, body: { error?: string; text?: string }): Response {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -86,10 +98,17 @@ function jsonResponse(status: number, body: { error?: string; text?: string }): 
 	});
 }
 
+/**
+ * Converts unknown throwables into log-safe messages.
+ */
 function getErrorMessage(error: unknown): string {
 	return error instanceof Error ? error.message : 'Unknown error';
 }
 
+/**
+ * Registers the current request timestamp and reports whether the caller
+ * must wait before sending another request.
+ */
 function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: number } {
 	const now = Date.now();
 	const lastRequestAt = requestCooldownByIp.get(ip);
@@ -107,6 +126,9 @@ function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: nu
 	return { active: false, retryAfterMs: 0 };
 }
 
+/**
+ * Extracts the best-effort client IP from common reverse-proxy headers.
+ */
 function getClientIp(request: Request): string {
 	const forwardedFor = request.headers.get('x-forwarded-for');
 	if (forwardedFor) {

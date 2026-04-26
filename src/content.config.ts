@@ -1,6 +1,9 @@
 import { glob } from 'astro/loaders';
 import { defineCollection, z } from 'astro:content';
 
+/**
+ * Blog collection schema used by Astro content APIs and static route generation.
+ */
 const blog = defineCollection({
 	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
 	schema: z.object({
@@ -18,6 +21,9 @@ const blog = defineCollection({
 	}),
 });
 
+/**
+ * Central Astro content collection registry.
+ */
 export const collections = {
 	blog,
 };

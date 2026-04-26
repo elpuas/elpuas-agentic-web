@@ -3,6 +3,9 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 export const prerender = true;
 
+/**
+ * Generates static routes for all published blog posts.
+ */
 export async function getStaticPaths() {
 	const posts = (await getCollection('blog')).filter((post) => !post.data.draft);
 
@@ -19,6 +22,12 @@ const heroImageModules = import.meta.glob('../../assets/blog/**/*.{avif,gif,jpeg
 	eager: true,
 });
 
+/**
+ * Resolves a frontmatter hero image path into a public asset URL.
+ *
+ * Supports relative `../../assets/...` references and leaves absolute/remote
+ * URLs untouched.
+ */
 const resolveHeroImageSrc = (path?: string): string | undefined => {
 	if (!path) {
 		return undefined;

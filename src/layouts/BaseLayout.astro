@@ -260,6 +260,10 @@ const navigation = [
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
 
+					/**
+					 * Renders assistant text into a container and converts URL-like substrings
+					 * to clickable links while preserving trailing punctuation.
+					 */
 					const appendAssistantTextWithLinks = (container, paragraph) => {
 						let lastIndex = 0;
 
@@ -303,10 +307,17 @@ const navigation = [
 						}
 					};
 
+					/**
+					 * Keeps the latest CLI message visible after updates.
+					 */
 					const scrollMessages = () => {
 						messages.scrollTop = messages.scrollHeight;
 					};
 
+					/**
+					 * Replaces a message node with either loading feedback or paragraph content.
+					 * Assistant messages support multiline formatting and inline link detection.
+					 */
 					const renderMessageContent = (item, role, text, isLoading = false) => {
 						item.replaceChildren();
 
@@ -345,6 +356,10 @@ const navigation = [
 						});
 					};
 
+					/**
+					 * Appends a chat bubble for the given role and returns its DOM node
+					 * so callers can progressively update it.
+					 */
 					const appendMessage = (role, text, isLoading = false) => {
 						const item = document.createElement('div');
 						item.className = `cli-message cli-message-${role}`;
@@ -416,6 +431,10 @@ const navigation = [
 						return;
 					}
 
+					/**
+					 * Centralizes sidebar state changes and accessibility attributes
+					 * for desktop and mobile behavior.
+					 */
 					const syncSidebarState = (open) => {
 						const isMobile = mobileSidebarQuery.matches;
 						root.dataset.sidebarOpen = open ? 'true' : 'false';
@@ -439,6 +458,9 @@ const navigation = [
 						}
 					};
 
+					/**
+					 * Convenience wrapper used by all close interactions.
+					 */
 					const closeSidebar = () => {
 						syncSidebarState(false);
 					};
