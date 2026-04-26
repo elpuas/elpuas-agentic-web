@@ -744,6 +744,10 @@ const navigation = [
 			animation: none;
 			opacity: 0.6;
 		}
+
+		.cli-panel {
+			animation: none;
+		}
 	}
 
 	.cli-row {
@@ -832,6 +836,9 @@ const navigation = [
 	@media (max-width: 48rem) {
 		.shell {
 			grid-template-columns: 1fr;
+			--mobile-cli-inline: clamp(0.85rem, 4.8vw, 1.25rem);
+			--mobile-cli-bottom-gap: clamp(0.55rem, 2.8vh, 0.95rem);
+			--mobile-cli-reserve: clamp(9.5rem, 31vh, 12rem);
 		}
 
 		.mobile-header {
@@ -942,11 +949,45 @@ const navigation = [
 		}
 
 		.content {
-			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem);
+			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem)
+				calc(clamp(1.2rem, 5vw, 1.7rem) + var(--mobile-cli-reserve));
 		}
 
 		.cli {
-			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1.5rem, 6.4vw, 2rem);
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 0 var(--mobile-cli-inline) calc(env(safe-area-inset-bottom, 0px) + var(--mobile-cli-bottom-gap));
+			z-index: 1200;
+			pointer-events: none;
+		}
+
+		.cli-panel {
+			pointer-events: auto;
+			animation: mobile-cli-enter 260ms ease-out both;
+		}
+
+		.cli-messages {
+			scrollbar-width: thin;
+			scrollbar-color: rgba(128, 134, 145, 0.28) transparent;
+		}
+
+		.cli-messages::-webkit-scrollbar {
+			width: 0.35rem;
+		}
+
+		.cli-messages::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		.cli-messages::-webkit-scrollbar-thumb {
+			background: rgba(128, 134, 145, 0.3);
+			border-radius: 999px;
+		}
+
+		.cli-messages::-webkit-scrollbar-thumb:hover {
+			background: rgba(128, 134, 145, 0.42);
 		}
 
 		.shell[data-home='true'] .workspace {
@@ -960,7 +1001,7 @@ const navigation = [
 			display: flex;
 			align-items: center;
 			padding: clamp(0.6rem, 3.4vh, 1.35rem) clamp(1rem, 4.8vw, 1.25rem)
-				clamp(0.6rem, 2.7vh, 1rem);
+				calc(clamp(0.6rem, 2.7vh, 1rem) + var(--mobile-cli-reserve));
 		}
 
 		.shell[data-home='true'] .content-inner {
@@ -968,11 +1009,23 @@ const navigation = [
 		}
 
 		.shell[data-home='true'] .cli {
-			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1rem, 3.8vh, 1.65rem);
+			padding: 0 var(--mobile-cli-inline) calc(env(safe-area-inset-bottom, 0px) + var(--mobile-cli-bottom-gap));
 		}
 
 		.shell[data-home='true'] .cli-panel {
 			width: min(100%, 25rem);
+		}
+	}
+
+	@keyframes mobile-cli-enter {
+		from {
+			opacity: 0;
+			transform: translateY(0.55rem);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
 		}
 	}
 </style>
