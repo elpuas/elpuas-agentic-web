@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import logo from "../assets/logo.svg";
 
 const profile = {
@@ -121,7 +122,7 @@ const profile = {
   >
     <div class="avatar" aria-hidden="true">
       <div class="avatar-core">
-        <img class="avatar-logo" src={logo.src} alt="" />
+        <Image class="avatar-logo" src={logo} width={24} height={24} alt="" />
       </div>
     </div>
     <div class="profile-copy">

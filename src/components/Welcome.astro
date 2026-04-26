@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import logo from '../assets/logo.svg';
 ---
 
@@ -6,15 +7,15 @@ import logo from '../assets/logo.svg';
 	<main>
 		<section id="hero">
 			<div class="hero-title">
-				<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
-				<h1>Hi, I'm Alfredo Navas, Product Builder.</h1>
+				<span class="hero-skull-wrap" aria-hidden="true">
+					<Image class="hero-skull" src={logo} width={63} height={63} alt="" />
+				</span>
+				<h1>Hi, I'm Alfredo Navas.</h1>
 			</div>
 
 			<div class="hero-copy">
 				<p>
-					Welcome to my personal website! Here, I share my journey as a product builder, insights on
-					technology, and my passion for creating innovative solutions. Ask me anything about my work or
-					projects.
+					This is my <span style="color: var(--color-accent)">digital playground</span>, where WordPress, AI, web products, and <span style="color: var(--color-accent)">too many late-night ideas</span>	 turn into real things. Feel free to ask me anything.
 				</p>
 			</div>
 		</section>
@@ -55,10 +56,65 @@ import logo from '../assets/logo.svg';
 		padding-left: 1.0625rem;
 	}
 
-	.hero-title img {
+	.hero-skull-wrap {
+		flex: 0 0 auto;
+		display: inline-flex;
+		animation: hero-skull-float 8.6s ease-in-out 1.55s infinite;
+		will-change: transform;
+		transform: translate3d(0, 0, 0);
+	}
+
+	.hero-skull {
 		flex: 0 0 auto;
 		width: 3.9375rem;
 		height: 3.9375rem;
+		opacity: 0;
+		transform: translate3d(0, 0.75rem, 0) scale(0.94);
+		animation: hero-skull-enter 740ms cubic-bezier(0.22, 0.61, 0.36, 1) 520ms forwards;
+		will-change: opacity, transform;
+	}
+
+	@keyframes hero-skull-enter {
+		from {
+			opacity: 0;
+			transform: translate3d(0, 0.75rem, 0) scale(0.94);
+		}
+
+		68% {
+			opacity: 1;
+			transform: translate3d(0, -0.08rem, 0) scale(1.01);
+		}
+
+		to {
+			opacity: 1;
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+	}
+
+	@keyframes hero-skull-float {
+		0% {
+			transform: translate3d(0, 0.24rem, 0) rotate(-0.22deg);
+			opacity: 0.96;
+		}
+
+		50% {
+			transform: translate3d(0, -0.24rem, 0) rotate(0.22deg);
+			opacity: 1;
+		}
+
+		100% {
+			transform: translate3d(0, 0.24rem, 0) rotate(-0.22deg);
+			opacity: 0.96;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-skull-wrap,
+		.hero-skull {
+			animation: none;
+			transform: none;
+			opacity: 1;
+		}
 	}
 
 	h1 {
@@ -103,7 +159,7 @@ import logo from '../assets/logo.svg';
 			padding-left: 0;
 		}
 
-		.hero-title img {
+		.hero-skull {
 			width: clamp(3.5rem, 16vw, 4.4rem);
 			height: clamp(3.5rem, 16vw, 4.4rem);
 		}

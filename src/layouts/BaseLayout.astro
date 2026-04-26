@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
 import logo from '../assets/logo.svg';
@@ -79,9 +80,9 @@ const navigation = [
 				<div class="workspace">
 					<header class="mobile-header" aria-label="Mobile header">
 						<a class="mobile-brand" href="/" aria-label="Go to homepage">
-							<img class="mobile-brand-logo" src={logo.src} width="42" height="42" alt="" />
+							<Image class="mobile-brand-logo" src={logo} width={42} height={42} alt="" />
 							<span class="mobile-brand-copy">
-								<span class="mobile-brand-name">Alfredo Navas</span>
+								<span class="mobile-brand-name" style="color: var(--color-accent)">Alfredo Navas</span>
 								<span class="mobile-brand-role">Product Builder</span>
 							</span>
 						</a>
@@ -115,8 +116,8 @@ const navigation = [
 							<div class="cli-box">
 								<div class="cli-messages" id="cli-messages"></div>
 								<form class="cli-row" id="cli-form">
-									<button class="cli-btn" type="button" aria-label="New command" disabled>
-										<svg viewBox="0 0 24 24" aria-hidden="true">
+									<span class="cli-prompt-marker" aria-hidden="true">
+										<svg viewBox="0 0 24 24">
 											<path
 												d="M12 5v14M5 12h14"
 												fill="none"
@@ -125,7 +126,7 @@ const navigation = [
 												stroke-width="1.8"
 											/>
 										</svg>
-									</button>
+									</span>
 									<input
 										class="cli-input"
 										id="cli-input"
@@ -136,23 +137,11 @@ const navigation = [
 										autocomplete="off"
 										required
 									/>
-									<div class="cli-actions">
-										<button class="cli-btn" type="button" aria-label="Web" disabled>
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-web" />
-											</svg>
-										</button>
-										<button class="cli-btn" type="button" aria-label="Mic" disabled>
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-mic" />
-											</svg>
-										</button>
-										<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-send" />
-											</svg>
-										</button>
-									</div>
+									<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
+										<svg viewBox="0 0 24 24">
+											<use href="#icon-send" />
+										</svg>
+									</button>
 								</form>
 							</div>
 							<p class="cli-hint">
@@ -744,6 +733,10 @@ const navigation = [
 			animation: none;
 			opacity: 0.6;
 		}
+
+		.cli-panel {
+			animation: none;
+		}
 	}
 
 	.cli-row {
@@ -752,6 +745,20 @@ const navigation = [
 		align-items: center;
 		gap: var(--space-3);
 		padding: var(--space-3) var(--space-4);
+	}
+
+	.cli-prompt-marker {
+		width: 1.5rem;
+		height: 1.5rem;
+		display: grid;
+		place-items: center;
+		color: rgba(217, 223, 232, 0.56);
+		flex: 0 0 auto;
+	}
+
+	.cli-prompt-marker svg {
+		width: 1rem;
+		height: 1rem;
 	}
 
 	.cli-btn {
@@ -784,7 +791,7 @@ const navigation = [
 	}
 
 	.cli-input::placeholder {
-		color: var(--color-text-placeholder);
+		color: rgba(217, 223, 232, 0.74);
 	}
 
 	.cli-input:focus {
@@ -793,12 +800,6 @@ const navigation = [
 
 	.cli-input:disabled {
 		opacity: 0.65;
-	}
-
-	.cli-actions {
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
 	}
 
 	.cli-btn-send {
@@ -813,7 +814,7 @@ const navigation = [
 	.cli-hint {
 		margin-top: var(--space-4);
 		text-align: center;
-		color: var(--color-text-placeholder);
+		color: rgba(217, 223, 232, 0.68);
 		font-size: var(--font-size-xs);
 		line-height: var(--line-height-xs);
 	}
@@ -832,6 +833,9 @@ const navigation = [
 	@media (max-width: 48rem) {
 		.shell {
 			grid-template-columns: 1fr;
+			--mobile-cli-inline: clamp(0.85rem, 4.8vw, 1.25rem);
+			--mobile-cli-bottom-gap: clamp(0.55rem, 2.8vh, 0.95rem);
+			--mobile-cli-reserve: clamp(9.5rem, 31vh, 12rem);
 		}
 
 		.mobile-header {
@@ -854,6 +858,8 @@ const navigation = [
 			width: clamp(2.1rem, 9vw, 2.65rem);
 			height: clamp(2.1rem, 9vw, 2.65rem);
 			flex: 0 0 auto;
+			filter: grayscale(100%);
+			opacity: 0.2;
 		}
 
 		.mobile-brand-copy {
@@ -941,12 +947,64 @@ const navigation = [
 			padding-top: 0;
 		}
 
+		.workspace::after {
+			content: '';
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: clamp(6.5rem, 23vh, 9.5rem);
+			background: linear-gradient(
+				to top,
+				rgba(8, 9, 12, 0.98) 0%,
+				rgba(8, 9, 12, 0.88) 34%,
+				rgba(8, 9, 12, 0.52) 65%,
+				rgba(10, 11, 14, 0) 100%
+			);
+			pointer-events: none;
+			z-index: 1100;
+		}
+
 		.content {
-			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem);
+			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem)
+				calc(clamp(1.2rem, 5vw, 1.7rem) + var(--mobile-cli-reserve));
 		}
 
 		.cli {
-			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1.5rem, 6.4vw, 2rem);
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 0 var(--mobile-cli-inline) calc(env(safe-area-inset-bottom, 0px) + var(--mobile-cli-bottom-gap));
+			z-index: 1200;
+			pointer-events: none;
+		}
+
+		.cli-panel {
+			pointer-events: auto;
+			animation: mobile-cli-enter 260ms ease-out 140ms both;
+		}
+
+		.cli-messages {
+			scrollbar-width: thin;
+			scrollbar-color: rgba(128, 134, 145, 0.28) transparent;
+		}
+
+		.cli-messages::-webkit-scrollbar {
+			width: 0.35rem;
+		}
+
+		.cli-messages::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		.cli-messages::-webkit-scrollbar-thumb {
+			background: rgba(128, 134, 145, 0.3);
+			border-radius: 999px;
+		}
+
+		.cli-messages::-webkit-scrollbar-thumb:hover {
+			background: rgba(128, 134, 145, 0.42);
 		}
 
 		.shell[data-home='true'] .workspace {
@@ -960,7 +1018,7 @@ const navigation = [
 			display: flex;
 			align-items: center;
 			padding: clamp(0.6rem, 3.4vh, 1.35rem) clamp(1rem, 4.8vw, 1.25rem)
-				clamp(0.6rem, 2.7vh, 1rem);
+				calc(clamp(0.6rem, 2.7vh, 1rem) + var(--mobile-cli-reserve));
 		}
 
 		.shell[data-home='true'] .content-inner {
@@ -968,11 +1026,23 @@ const navigation = [
 		}
 
 		.shell[data-home='true'] .cli {
-			padding: 0 clamp(1rem, 4.8vw, 1.25rem) clamp(1rem, 3.8vh, 1.65rem);
+			padding: 0 var(--mobile-cli-inline) calc(env(safe-area-inset-bottom, 0px) + var(--mobile-cli-bottom-gap));
 		}
 
 		.shell[data-home='true'] .cli-panel {
 			width: min(100%, 25rem);
+		}
+	}
+
+	@keyframes mobile-cli-enter {
+		from {
+			opacity: 0;
+			transform: translateY(0.55rem);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
 		}
 	}
 </style>
