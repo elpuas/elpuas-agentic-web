@@ -115,17 +115,6 @@ const navigation = [
 							<div class="cli-box">
 								<div class="cli-messages" id="cli-messages"></div>
 								<form class="cli-row" id="cli-form">
-									<button class="cli-btn" type="button" aria-label="New command" disabled>
-										<svg viewBox="0 0 24 24" aria-hidden="true">
-											<path
-												d="M12 5v14M5 12h14"
-												fill="none"
-												stroke="currentColor"
-												stroke-linecap="round"
-												stroke-width="1.8"
-											/>
-										</svg>
-									</button>
 									<input
 										class="cli-input"
 										id="cli-input"
@@ -136,23 +125,11 @@ const navigation = [
 										autocomplete="off"
 										required
 									/>
-									<div class="cli-actions">
-										<button class="cli-btn" type="button" aria-label="Web" disabled>
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-web" />
-											</svg>
-										</button>
-										<button class="cli-btn" type="button" aria-label="Mic" disabled>
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-mic" />
-											</svg>
-										</button>
-										<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
-											<svg viewBox="0 0 24 24">
-												<use href="#icon-send" />
-											</svg>
-										</button>
-									</div>
+									<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
+										<svg viewBox="0 0 24 24">
+											<use href="#icon-send" />
+										</svg>
+									</button>
 								</form>
 							</div>
 							<p class="cli-hint">
@@ -788,7 +765,7 @@ const navigation = [
 	}
 
 	.cli-input::placeholder {
-		color: var(--color-text-placeholder);
+		color: rgba(217, 223, 232, 0.74);
 	}
 
 	.cli-input:focus {
@@ -797,12 +774,6 @@ const navigation = [
 
 	.cli-input:disabled {
 		opacity: 0.65;
-	}
-
-	.cli-actions {
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
 	}
 
 	.cli-btn-send {
@@ -817,7 +788,7 @@ const navigation = [
 	.cli-hint {
 		margin-top: var(--space-4);
 		text-align: center;
-		color: var(--color-text-placeholder);
+		color: rgba(217, 223, 232, 0.68);
 		font-size: var(--font-size-xs);
 		line-height: var(--line-height-xs);
 	}
@@ -948,6 +919,24 @@ const navigation = [
 			padding-top: 0;
 		}
 
+		.workspace::after {
+			content: '';
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: clamp(6.5rem, 23vh, 9.5rem);
+			background: linear-gradient(
+				to top,
+				rgba(8, 9, 12, 0.98) 0%,
+				rgba(8, 9, 12, 0.88) 34%,
+				rgba(8, 9, 12, 0.52) 65%,
+				rgba(10, 11, 14, 0) 100%
+			);
+			pointer-events: none;
+			z-index: 1100;
+		}
+
 		.content {
 			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem)
 				calc(clamp(1.2rem, 5vw, 1.7rem) + var(--mobile-cli-reserve));
@@ -965,7 +954,7 @@ const navigation = [
 
 		.cli-panel {
 			pointer-events: auto;
-			animation: mobile-cli-enter 260ms ease-out both;
+			animation: mobile-cli-enter 260ms ease-out 140ms both;
 		}
 
 		.cli-messages {
