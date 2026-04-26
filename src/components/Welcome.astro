@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import logo from '../assets/logo.svg';
 ---
 
@@ -6,15 +7,13 @@ import logo from '../assets/logo.svg';
 	<main>
 		<section id="hero">
 			<div class="hero-title">
-				<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
-				<h1>Hi, I'm Alfredo Navas, Product Builder.</h1>
+				<Image src={logo} width={63} height={63} alt="" aria-hidden="true" />
+				<h1>Hi, I'm Alfredo Navas.</h1>
 			</div>
 
 			<div class="hero-copy">
 				<p>
-					Welcome to my personal website! Here, I share my journey as a product builder, insights on
-					technology, and my passion for creating innovative solutions. Ask me anything about my work or
-					projects.
+					This is my <span style="color: var(--color-accent)">digital playground</span>, where WordPress, AI, web products, and <span style="color: var(--color-accent)">too many late-night ideas</span>	 turn into real things. Feel free to ask me anything.
 				</p>
 			</div>
 		</section>

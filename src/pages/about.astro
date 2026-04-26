@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import logo from '../assets/logo.svg';
 import profileImage from '../assets/alfredo-navas.webp';
@@ -7,14 +8,14 @@ import profileImage from '../assets/alfredo-navas.webp';
 <BaseLayout title="About Me" description="Learn more about Alfredo Navas" activeNav="about">
 	<section class="about">
 		<header class="about-title">
-			<img src={logo.src} width="63" height="63" alt="" aria-hidden="true" />
+			<Image src={logo} width={63} height={63} alt="" aria-hidden="true" />
 			<h1>About Me</h1>
 		</header>
 
 		<div class="about-body">
-			<img
+			<Image
 				class="about-photo"
-				src={profileImage.src}
+				src={profileImage}
 				width="218"
 				height="218"
 				alt="Portrait of Alfredo Navas"

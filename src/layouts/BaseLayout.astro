@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
 import logo from '../assets/logo.svg';
@@ -79,9 +80,9 @@ const navigation = [
 				<div class="workspace">
 					<header class="mobile-header" aria-label="Mobile header">
 						<a class="mobile-brand" href="/" aria-label="Go to homepage">
-							<img class="mobile-brand-logo" src={logo.src} width="42" height="42" alt="" />
+							<Image class="mobile-brand-logo" src={logo} width={42} height={42} alt="" />
 							<span class="mobile-brand-copy">
-								<span class="mobile-brand-name">Alfredo Navas</span>
+								<span class="mobile-brand-name" style="color: var(--color-accent)">Alfredo Navas</span>
 								<span class="mobile-brand-role">Product Builder</span>
 							</span>
 						</a>
@@ -115,6 +116,17 @@ const navigation = [
 							<div class="cli-box">
 								<div class="cli-messages" id="cli-messages"></div>
 								<form class="cli-row" id="cli-form">
+									<span class="cli-prompt-marker" aria-hidden="true">
+										<svg viewBox="0 0 24 24">
+											<path
+												d="M12 5v14M5 12h14"
+												fill="none"
+												stroke="currentColor"
+												stroke-linecap="round"
+												stroke-width="1.8"
+											/>
+										</svg>
+									</span>
 									<input
 										class="cli-input"
 										id="cli-input"
@@ -733,6 +745,20 @@ const navigation = [
 		align-items: center;
 		gap: var(--space-3);
 		padding: var(--space-3) var(--space-4);
+	}
+
+	.cli-prompt-marker {
+		width: 1.5rem;
+		height: 1.5rem;
+		display: grid;
+		place-items: center;
+		color: rgba(217, 223, 232, 0.56);
+		flex: 0 0 auto;
+	}
+
+	.cli-prompt-marker svg {
+		width: 1rem;
+		height: 1rem;
 	}
 
 	.cli-btn {

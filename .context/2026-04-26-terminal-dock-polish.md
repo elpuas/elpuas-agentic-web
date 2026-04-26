@@ -19,3 +19,11 @@
 
 ## Next steps
 - Optional: run a manual narrow-viewport visual pass to fine-tune fade opacity percentages on actual device hardware if needed.
+
+## Follow-up correction
+- Restored one subtle left-side prompt marker in the Ask Me input row as a non-interactive terminal accent.
+- Kept clutter removed by leaving only the essential control set: prompt marker + text input + send button.
+
+## Icon clarification follow-up
+- Updated the left prompt marker icon to the original simple plus sign (`+`) glyph, as requested.
+- No additional inactive icons were reintroduced.
