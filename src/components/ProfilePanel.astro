@@ -133,6 +133,9 @@ const profile = {
 </div>
 
 <script>
+  /**
+   * Closes the profile popover and synchronizes accessibility attributes.
+   */
   const closeProfilePanel = (root) => {
     root.dataset.open = "false";
     const trigger = root.querySelector("[data-profile-trigger]");
@@ -147,6 +150,9 @@ const profile = {
     }
   };
 
+  /**
+   * Toggles the profile popover open/closed state.
+   */
   const toggleProfilePanel = (root) => {
     const nextOpen = root.dataset.open !== "true";
     const trigger = root.querySelector("[data-profile-trigger]");
@@ -162,6 +168,9 @@ const profile = {
     }
   };
 
+  /**
+   * Binds profile panel interactions once per panel instance.
+   */
   const mountProfilePanel = () => {
     const roots = document.querySelectorAll("[data-profile-panel]");
 
