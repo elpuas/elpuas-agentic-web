@@ -7,7 +7,9 @@ import logo from '../assets/logo.svg';
 	<main>
 		<section id="hero">
 			<div class="hero-title">
-				<Image src={logo} width={63} height={63} alt="" aria-hidden="true" />
+				<span class="hero-skull-wrap" aria-hidden="true">
+					<Image class="hero-skull" src={logo} width={63} height={63} alt="" />
+				</span>
 				<h1>Hi, I'm Alfredo Navas.</h1>
 			</div>
 
@@ -54,10 +56,57 @@ import logo from '../assets/logo.svg';
 		padding-left: 1.0625rem;
 	}
 
-	.hero-title img {
+	.hero-skull-wrap {
+		flex: 0 0 auto;
+		display: inline-flex;
+		animation: hero-skull-float 9.5s ease-in-out 720ms infinite;
+		will-change: transform;
+		transform: translate3d(0, 0, 0);
+	}
+
+	.hero-skull {
 		flex: 0 0 auto;
 		width: 3.9375rem;
 		height: 3.9375rem;
+		opacity: 0;
+		transform: scale(0.965);
+		animation: hero-skull-enter 480ms ease-out 120ms forwards;
+		will-change: opacity, transform;
+	}
+
+	@keyframes hero-skull-enter {
+		from {
+			opacity: 0;
+			transform: scale(0.965);
+		}
+
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@keyframes hero-skull-float {
+		0% {
+			transform: translate3d(0, 0.12rem, 0) rotate(-0.15deg);
+		}
+
+		50% {
+			transform: translate3d(0, -0.12rem, 0) rotate(0.15deg);
+		}
+
+		100% {
+			transform: translate3d(0, 0.12rem, 0) rotate(-0.15deg);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-skull-wrap,
+		.hero-skull {
+			animation: none;
+			transform: none;
+			opacity: 1;
+		}
 	}
 
 	h1 {
@@ -102,7 +151,7 @@ import logo from '../assets/logo.svg';
 			padding-left: 0;
 		}
 
-		.hero-title img {
+		.hero-skull {
 			width: clamp(3.5rem, 16vw, 4.4rem);
 			height: clamp(3.5rem, 16vw, 4.4rem);
 		}
