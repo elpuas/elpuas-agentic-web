@@ -33,13 +33,25 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 		return undefined;
 	}
 
-	if (path.startsWith('../../assets/')) {
-		const assetKey = `/src/assets/${path.replace('../../assets/', '')}`;
-		const assetModule = heroImageModules[assetKey] as
+	const resolveModuleSrc = (assetPath: string): string | undefined => {
+		const assetModule = heroImageModules[assetPath] as
 			| { default?: { src?: string } }
 			| undefined;
 
 		return assetModule?.default?.src ?? undefined;
+	};
+
+	if (path.startsWith('../../assets/')) {
+		const webpPath = path.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+
+		return resolveModuleSrc(webpPath) ?? resolveModuleSrc(path);
+	}
+
+	if (path.startsWith('/src/assets/')) {
+		const relativeAssetPath = `../../assets/${path.replace('/src/assets/', '')}`;
+		const webpPath = relativeAssetPath.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+
+		return resolveModuleSrc(webpPath) ?? resolveModuleSrc(relativeAssetPath);
 	}
 
 	return path;
@@ -95,19 +107,29 @@ const pageContext = [
 </BaseLayout>
 
 <style>
+	:global(.content) {
+		padding-top: 0;
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	:global(.content-inner) {
+		width: 100%;
+		max-width: none;
+		margin: 0;
+	}
+
 	.blog-post {
-		width: min(100%, 64rem);
-		margin: 0 auto;
-		padding: var(--space-8) 0 var(--space-6);
+		width: 100%;
+		margin: 0;
+		padding: 0 0 var(--space-6);
 	}
 
 	.blog-hero {
 		position: relative;
 		min-height: clamp(15rem, 52vw, 24rem);
-		border-radius: calc(var(--radius-lg) + var(--space-px));
 		overflow: hidden;
 		background: #141614;
-		border: var(--space-px) solid #292d2a;
 	}
 
 	.blog-hero-media {
@@ -170,7 +192,8 @@ const pageContext = [
 
 	.post-content {
 		margin: var(--space-8) auto 0;
-		width: min(100%, 46.5rem);
+		width: min(100%, 50rem);
+		padding: 0 clamp(1rem, 2.4vw, 2.5rem);
 		font-size: clamp(1rem, 0.2vw + 0.98rem, 1.1rem);
 		line-height: 1.9;
 		color: #dddfe3;
@@ -238,6 +261,14 @@ const pageContext = [
 		color: #f4f6f8;
 	}
 
+	.post-content :global(h2 strong),
+	.post-content :global(h3 strong),
+	.post-content :global(h4 strong),
+	.post-content :global(h5 strong),
+	.post-content :global(h6 strong) {
+		color: inherit;
+	}
+
 	.post-content :global(a) {
 		color: var(--color-accent);
 		text-decoration: underline;
@@ -299,15 +330,18 @@ const pageContext = [
 	}
 
 	@media (max-width: 64rem) {
-		.blog-post {
-			padding-top: var(--space-6);
+		:global(.content) {
+			padding-bottom: 2.5rem;
 		}
 	}
 
 	@media (max-width: 48rem) {
+		:global(.content) {
+			padding-bottom: var(--space-8);
+		}
+
 		.blog-hero {
 			min-height: clamp(12rem, 54vw, 17rem);
-			border-radius: var(--radius-md);
 		}
 
 		.blog-hero-content {
@@ -325,7 +359,8 @@ const pageContext = [
 
 		.post-content {
 			margin-top: var(--space-6);
-			width: 100%;
+			width: min(100%, 46.5rem);
+			padding: 0 clamp(0.95rem, 4vw, 1.5rem);
 			line-height: 1.8;
 		}
 	}
