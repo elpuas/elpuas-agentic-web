@@ -1,0 +1,155 @@
+---
+const {
+	title,
+	description,
+	url,
+	heading = 'Give and Share',
+	subtitle = 'Enjoyed this article? Share it with your friends and colleagues!',
+} = Astro.props as {
+	title: string;
+	description: string;
+	url: string;
+	heading?: string;
+	subtitle?: string;
+};
+
+const encodedTitle = encodeURIComponent(title);
+const encodedDescription = encodeURIComponent(description);
+const encodedUrl = encodeURIComponent(url);
+
+const shareLinks = [
+	{
+		label: 'Share on X',
+		href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodeURIComponent(`${title} — ${description}`)}`,
+		icon: 'x',
+	},
+	{
+		label: 'Share on Facebook',
+		href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedDescription}`,
+		icon: 'facebook',
+	},
+	{
+		label: 'Share on LinkedIn',
+		href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}&title=${encodedTitle}&summary=${encodedDescription}`,
+		icon: 'linkedin',
+	},
+	{
+		label: 'Share on Reddit',
+		href: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+		icon: 'reddit',
+	},
+];
+---
+
+<section class="share-article" aria-label="Share this article">
+	<h5>{heading}</h5>
+	<p class="share-subtitle">{subtitle}</p>
+	<ul class="share-actions">
+		{shareLinks.map((item) => (
+			<li>
+				<a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={item.label} title={item.label}>
+					{item.icon === 'x' && (
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path
+								fill="currentColor"
+								d="M17.53 3h3.067l-6.7 7.668L21.86 21h-6.235l-4.883-6.388L5.16 21H2.09l7.166-8.191L1.62 3H8.01l4.414 5.823L17.53 3Zm-1.076 16.172h1.7L7.087 4.732H5.265l11.188 14.44Z"
+							/>
+						</svg>
+					)}
+					{item.icon === 'facebook' && (
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path
+								fill="currentColor"
+								d="M13.5 21v-7h2.3l.4-3h-2.7V9.2c0-.9.3-1.5 1.6-1.5h1.2V5.1c-.2 0-1-.1-2-.1-2.4 0-4 1.4-4 4.1V11H8v3h2.3v7h3.2Z"
+							/>
+						</svg>
+					)}
+					{item.icon === 'linkedin' && (
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path
+								fill="currentColor"
+								d="M6.94 8.5A1.78 1.78 0 1 1 6.93 4.94a1.78 1.78 0 0 1 .01 3.56ZM5.45 20V10h3V20h-3Zm5 0V10h2.88v1.43h.04c.4-.76 1.37-1.56 2.82-1.56 3.02 0 3.58 1.99 3.58 4.58V20h-3v-4.88c0-1.16-.02-2.65-1.62-2.65-1.62 0-1.87 1.26-1.87 2.57V20h-2.83Z"
+							/>
+						</svg>
+					)}
+					{item.icon === 'reddit' && (
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path
+								fill="currentColor"
+								d="M14.6 9.36c1.58 0 2.9.48 3.9 1.3a1.9 1.9 0 0 1 2.85 1.64c0 1-.75 1.82-1.72 1.9.03.2.05.4.05.6 0 2.76-3.2 4.99-7.15 4.99s-7.16-2.23-7.16-4.99c0-.2.02-.39.05-.58a1.9 1.9 0 0 1 .23-3.79c.5 0 .95.2 1.29.51.98-.78 2.24-1.24 3.74-1.29l.84-3.96 2.75.59a1.42 1.42 0 1 1-.14.66l-2.2-.47-.66 3.18h.33Zm-4.3 3.9a1.05 1.05 0 1 0 0 2.1 1.05 1.05 0 0 0 0-2.1Zm4.46 0a1.05 1.05 0 1 0 0 2.1 1.05 1.05 0 0 0 0-2.1Zm-4.33 3.46c.34.53 1.08.9 1.97.9.88 0 1.62-.37 1.97-.9a.35.35 0 1 0-.59-.37c-.23.35-.74.57-1.38.57-.64 0-1.15-.22-1.38-.57a.35.35 0 1 0-.59.37Z"
+							/>
+						</svg>
+					)}
+				</a>
+			</li>
+		))}
+	</ul>
+</section>
+
+<style>
+	.share-article {
+		margin: var(--space-8) auto 0;
+		width: min(100%, 50rem);
+		padding: 0 clamp(1rem, 2.4vw, 2.5rem);
+	}
+
+	.share-article h5 {
+		margin: 0;
+		font-size: 1.05rem;
+		line-height: 1.2;
+		font-weight: 700;
+		color: var(--color-accent);
+	}
+
+	.share-subtitle {
+		margin: var(--space-3) 0 0;
+		color: #d6d9de;
+		font-size: 0.98rem;
+		line-height: 1.6;
+	}
+
+	.share-actions {
+		margin: var(--space-4) 0 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+	}
+
+	.share-actions a {
+		width: 2.6rem;
+		height: 2.6rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		border: var(--space-px) solid rgba(216, 255, 0, 0.24);
+		background: rgba(216, 255, 0, 0.08);
+		color: var(--color-accent);
+		transition:
+			transform 140ms ease,
+			background-color 140ms ease,
+			border-color 140ms ease;
+	}
+
+	.share-actions a:hover,
+	.share-actions a:focus-visible {
+		transform: translateY(-1px);
+		background: rgba(216, 255, 0, 0.16);
+		border-color: rgba(216, 255, 0, 0.5);
+		outline: none;
+	}
+
+	.share-actions svg {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
+	@media (max-width: 48rem) {
+		.share-article {
+			width: min(100%, 46.5rem);
+			padding: 0 clamp(0.95rem, 4vw, 1.5rem);
+		}
+	}
+</style>

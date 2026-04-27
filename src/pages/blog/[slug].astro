@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ShareArticleBar from '../../components/ShareArticleBar.astro';
 export const prerender = true;
 
 /**
@@ -59,6 +60,7 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 
 const heroImageSrc = resolveHeroImageSrc(post.data.heroImage);
 const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(post.data.date);
+const articleUrl = post.data.canonicalUrl ?? Astro.url.href;
 const pageContext = [
 	'Current Page Type: Blog Post',
 	`Current Blog Title: ${post.data.title}`,
@@ -105,6 +107,7 @@ const pageContext = [
 		<div class="post-content">
 			<Content />
 		</div>
+		<ShareArticleBar title={post.data.title} description={post.data.description} url={articleUrl} />
 	</article>
 </BaseLayout>
 
@@ -327,6 +330,19 @@ const pageContext = [
 
 	.post-content :global(.astro-code) {
 		margin-top: var(--space-4);
+	}
+
+	/* Hide legacy markdown share block now replaced by ShareArticleBar component. */
+	.post-content :global(h5:has(+ p + p:has(a[href*='twitter.com/intent/tweet']))) {
+		display: none;
+	}
+
+	.post-content :global(h5:has(+ p + p:has(a[href*='twitter.com/intent/tweet'])) + p) {
+		display: none;
+	}
+
+	.post-content :global(p:has(a[href*='twitter.com/intent/tweet'])) {
+		display: none;
 	}
 
 	@media (max-width: 48rem) {
