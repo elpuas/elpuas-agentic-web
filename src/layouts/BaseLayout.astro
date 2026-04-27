@@ -9,8 +9,10 @@ const {
 	description = 'Alfredo Navas personal website.',
 	activeNav = 'home',
 	pageContext = '',
+	contentLayout = 'default',
 } = Astro.props;
 const currentPage = Astro.url.pathname;
+const isEdgeContentLayout = contentLayout === 'edge';
 
 const navigation = [
 	{ href: '/', label: 'Home', key: 'home' },
@@ -100,8 +102,8 @@ const navigation = [
 						</button>
 					</header>
 
-					<main class="content">
-						<div class="content-inner">
+					<main class:list={['content', isEdgeContentLayout && 'content-edge']}>
+						<div class:list={['content-inner', isEdgeContentLayout && 'content-inner-edge']}>
 							<slot />
 						</div>
 					</main>
@@ -633,9 +635,19 @@ const navigation = [
 		padding: var(--space-8) var(--space-8) var(--space-12);
 	}
 
+	.content-edge {
+		padding: 0 0 var(--space-12);
+	}
+
 	.content-inner {
 		width: min(100%, 64rem);
 		margin: 0 auto;
+	}
+
+	.content-inner-edge {
+		width: 100%;
+		max-width: none;
+		margin: 0;
 	}
 
 	.cli {
@@ -990,6 +1002,10 @@ const navigation = [
 		.content {
 			padding: clamp(0.85rem, 3.8vw, 1.25rem) clamp(1rem, 4.8vw, 1.25rem)
 				calc(clamp(1.2rem, 5vw, 1.7rem) + var(--mobile-cli-reserve));
+		}
+
+		.content-edge {
+			padding: 0 0 calc(clamp(1.2rem, 5vw, 1.7rem) + var(--mobile-cli-reserve));
 		}
 
 		.cli {

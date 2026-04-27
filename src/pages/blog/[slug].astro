@@ -76,6 +76,7 @@ const pageContext = [
 	description={post.data.description}
 	activeNav="blog"
 	pageContext={pageContext}
+	contentLayout="edge"
 >
 	<article class="blog-post">
 		<header class:list={['blog-hero', !heroImageSrc && 'blog-hero-fallback']}>
@@ -107,18 +108,6 @@ const pageContext = [
 </BaseLayout>
 
 <style>
-	:global(.content) {
-		padding-top: 0;
-		padding-left: 0;
-		padding-right: 0;
-	}
-
-	:global(.content-inner) {
-		width: 100%;
-		max-width: none;
-		margin: 0;
-	}
-
 	.blog-post {
 		width: 100%;
 		margin: 0;
@@ -329,17 +318,7 @@ const pageContext = [
 		margin-top: var(--space-4);
 	}
 
-	@media (max-width: 64rem) {
-		:global(.content) {
-			padding-bottom: 2.5rem;
-		}
-	}
-
 	@media (max-width: 48rem) {
-		:global(.content) {
-			padding-bottom: var(--space-8);
-		}
-
 		.blog-hero {
 			min-height: clamp(12rem, 54vw, 17rem);
 		}
