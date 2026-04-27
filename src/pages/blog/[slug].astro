@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ShareArticleBar from '../../components/ShareArticleBar.astro';
 export const prerender = true;
 
 /**
@@ -33,13 +34,25 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 		return undefined;
 	}
 
-	if (path.startsWith('../../assets/')) {
-		const assetKey = `/src/assets/${path.replace('../../assets/', '')}`;
-		const assetModule = heroImageModules[assetKey] as
+	const resolveModuleSrc = (assetPath: string): string | undefined => {
+		const assetModule = heroImageModules[assetPath] as
 			| { default?: { src?: string } }
 			| undefined;
 
 		return assetModule?.default?.src ?? undefined;
+	};
+
+	if (path.startsWith('../../assets/')) {
+		const webpPath = path.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+
+		return resolveModuleSrc(webpPath) ?? resolveModuleSrc(path);
+	}
+
+	if (path.startsWith('/src/assets/')) {
+		const relativeAssetPath = `../../assets/${path.replace('/src/assets/', '')}`;
+		const webpPath = relativeAssetPath.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+
+		return resolveModuleSrc(webpPath) ?? resolveModuleSrc(relativeAssetPath);
 	}
 
 	return path;
@@ -47,6 +60,7 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 
 const heroImageSrc = resolveHeroImageSrc(post.data.heroImage);
 const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(post.data.date);
+const articleUrl = post.data.canonicalUrl ?? Astro.url.href;
 const pageContext = [
 	'Current Page Type: Blog Post',
 	`Current Blog Title: ${post.data.title}`,
@@ -64,122 +78,312 @@ const pageContext = [
 	description={post.data.description}
 	activeNav="blog"
 	pageContext={pageContext}
+	contentLayout="edge"
+	floatingCliDesktop={true}
 >
 	<article class="blog-post">
-		<header class="blog-post-header">
-			<h1>{post.data.title}</h1>
-			<p class="meta">
-				<time datetime={post.data.date.toISOString()}>{formattedDate}</time>
-				<span>{post.data.category}</span>
-			</p>
-			{post.data.tags.length > 0 && (
-				<ul class="tags" aria-label="Tags">
-					{post.data.tags.map((tag) => (
-						<li>{tag}</li>
-					))}
-				</ul>
+		<header class:list={['blog-hero', !heroImageSrc && 'blog-hero-fallback']}>
+			{heroImageSrc ? (
+				<img
+					class="blog-hero-media"
+					src={heroImageSrc}
+					alt={post.data.heroAlt || post.data.title}
+					loading="eager"
+					decoding="async"
+				/>
+			) : (
+				<div class="blog-hero-media blog-hero-media-fallback" aria-hidden="true"></div>
 			)}
+			<div class="blog-hero-overlay" aria-hidden="true"></div>
+			<div class="blog-hero-content">
+				<p class="blog-category">{post.data.category}</p>
+				<h1>{post.data.title}</h1>
+				<p class="blog-date">
+					<time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+				</p>
+			</div>
 		</header>
-
-		{heroImageSrc && (
-			<img
-				class="hero"
-				src={heroImageSrc}
-				alt={post.data.heroAlt || post.data.title}
-				loading="eager"
-				decoding="async"
-			/>
-		)}
 
 		<div class="post-content">
 			<Content />
 		</div>
+		<ShareArticleBar title={post.data.title} description={post.data.description} url={articleUrl} />
 	</article>
 </BaseLayout>
 
 <style>
 	.blog-post {
-		width: min(100%, 56rem);
-		margin: 0 auto;
-		padding: var(--space-12) 0 var(--space-8);
-		color: var(--color-text);
-	}
-
-	.blog-post-header h1 {
-		margin: 0;
-		font-size: 2.25rem;
-		line-height: 1.15;
-		font-weight: 700;
-	}
-
-	.meta {
-		margin-top: var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-3);
-		color: var(--color-text-muted);
-		font-size: var(--font-size-sm);
-	}
-
-	.tags {
-		margin: var(--space-4) 0 0;
-		padding: 0;
-		list-style: none;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-	}
-
-	.tags li {
-		padding: 0.25rem 0.625rem;
-		border: var(--space-px) solid var(--color-border);
-		border-radius: 9999px;
-		font-size: var(--font-size-sm);
-		color: var(--color-text-muted);
-	}
-
-	.hero {
 		width: 100%;
-		margin-top: var(--space-6);
-		border-radius: var(--radius-lg);
+		margin: 0;
+		padding: 0 0 var(--space-6);
+	}
+
+	.blog-hero {
+		position: relative;
+		min-height: clamp(15rem, 52vw, 24rem);
+		overflow: hidden;
+		background: #141614;
+	}
+
+	.blog-hero-media {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.blog-hero-media-fallback {
+		background:
+			radial-gradient(circle at 22% 14%, rgba(216, 255, 0, 0.13), transparent 56%),
+			radial-gradient(circle at 88% 84%, rgba(130, 147, 84, 0.14), transparent 52%),
+			linear-gradient(138deg, #181c1a 0%, #111311 52%, #191c19 100%);
+	}
+
+	.blog-hero-overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(8, 9, 8, 0.26) 8%, rgba(8, 9, 8, 0.78) 100%);
+	}
+
+	.blog-hero-content {
+		position: relative;
+		z-index: 1;
+		padding: clamp(1.25rem, 3.8vw, 2.5rem);
+		max-width: min(100%, 41rem);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		justify-content: flex-end;
+		min-height: inherit;
+	}
+
+	.blog-category {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.2;
+		font-weight: 760;
+		color: #f6f8ee;
+	}
+
+	.blog-hero h1 {
+		margin: 0;
+		font-size: clamp(1.65rem, 4vw, 3rem);
+		line-height: 1.12;
+		font-weight: 760;
+		color: #fcfcf8;
+		text-wrap: balance;
+	}
+
+	@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+		.blog-hero h1 {
+			background: linear-gradient(102deg, #ffffff 20%, #f3ffe4 62%, var(--color-accent) 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+			color: transparent;
+		}
+	}
+
+	.blog-date {
+		margin: 0;
+		font-size: 1.05rem;
+		line-height: 1.35;
+		font-weight: 630;
+		color: #f2f6e2;
 	}
 
 	.post-content {
-		margin-top: var(--space-6);
-		font-size: var(--font-size-base);
-		line-height: 1.75;
+		margin: var(--space-8) auto 0;
+		width: min(100%, 50rem);
+		padding: 0 clamp(1rem, 2.4vw, 2.5rem);
+		font-size: clamp(1rem, 0.2vw + 0.98rem, 1.1rem);
+		line-height: 1.9;
+		color: #dddfe3;
 	}
 
 	.post-content :global(h2),
-	.post-content :global(h3) {
+	.post-content :global(h3),
+	.post-content :global(h4),
+	.post-content :global(h5),
+	.post-content :global(h6) {
+		margin: 0;
 		margin-top: var(--space-8);
 		margin-bottom: var(--space-3);
 		line-height: 1.25;
+		letter-spacing: -0.01em;
+		color: var(--color-accent);
 	}
 
-	.post-content :global(p) {
+	.post-content :global(h2) {
+		font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+		font-weight: 700;
+	}
+
+	.post-content :global(h3) {
+		font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+		font-weight: 680;
+	}
+
+	.post-content :global(h4),
+	.post-content :global(h5),
+	.post-content :global(h6) {
+		font-size: 1.08rem;
+		font-weight: 640;
+	}
+
+	.post-content :global(p),
+	.post-content :global(ul),
+	.post-content :global(ol),
+	.post-content :global(blockquote),
+	.post-content :global(pre),
+	.post-content :global(figure) {
 		margin: 0;
 	}
 
-	.post-content :global(p + p) {
+	.post-content :global(* + p),
+	.post-content :global(* + ul),
+	.post-content :global(* + ol),
+	.post-content :global(* + blockquote),
+	.post-content :global(* + pre),
+	.post-content :global(* + figure) {
 		margin-top: var(--space-4);
+	}
+
+	.post-content :global(ul),
+	.post-content :global(ol) {
+		padding-left: 1.35rem;
+	}
+
+	.post-content :global(li + li) {
+		margin-top: var(--space-2);
+	}
+
+	.post-content :global(strong) {
+		font-weight: 660;
+		color: #f4f6f8;
+	}
+
+	.post-content :global(h2 strong),
+	.post-content :global(h3 strong),
+	.post-content :global(h4 strong),
+	.post-content :global(h5 strong),
+	.post-content :global(h6 strong) {
+		color: inherit;
 	}
 
 	.post-content :global(a) {
 		color: var(--color-accent);
 		text-decoration: underline;
-		text-underline-offset: 3px;
+		text-decoration-thickness: 2px;
+		text-decoration-color: rgba(216, 255, 0, 0.62);
+		text-underline-offset: 0.16em;
+		transition:
+			text-decoration-color 120ms ease,
+			filter 120ms ease;
+	}
+
+	.post-content :global(a:hover),
+	.post-content :global(a:focus-visible) {
+		filter: brightness(1.08);
+		text-decoration-color: currentColor;
+	}
+
+	.post-content :global(blockquote) {
+		padding: var(--space-3) var(--space-4);
+		border-left: 0.2rem solid rgba(216, 255, 0, 0.65);
+		background: rgba(255, 255, 255, 0.02);
+		color: #eceff2;
+	}
+
+	.post-content :global(code) {
+		font-size: 0.95em;
+		padding: 0.08em 0.38em;
+		border-radius: var(--radius-sm);
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.post-content :global(pre) {
+		padding: var(--space-4);
+		border-radius: var(--radius-md);
+		border: var(--space-px) solid var(--color-border);
+		background: #151717;
+		overflow-x: auto;
+	}
+
+	.post-content :global(pre code) {
+		padding: 0;
+		background: transparent;
+	}
+
+	.post-content :global(hr) {
+		margin: var(--space-8) 0;
+		border: 0;
+		height: var(--space-px);
+		background: var(--color-border);
+	}
+
+	.post-content :global(img) {
+		margin: var(--space-6) auto;
+		border-radius: var(--radius-md);
+	}
+
+	.post-content :global(.astro-code) {
+		margin-top: var(--space-4);
+	}
+
+	/* Hide legacy markdown share block now replaced by ShareArticleBar component. */
+	.post-content :global(h5:has(+ p + p:has(a[href*='twitter.com/intent/tweet']))) {
+		display: none;
+	}
+
+	.post-content :global(h5:has(+ p + p:has(a[href*='twitter.com/intent/tweet'])) + p) {
+		display: none;
+	}
+
+	.post-content :global(p:has(a[href*='twitter.com/intent/tweet'])) {
+		display: none;
 	}
 
 	@media (max-width: 48rem) {
-		.blog-post {
-			padding: var(--space-8) 0 var(--space-6);
+		.blog-hero {
+			min-height: clamp(12rem, 54vw, 17rem);
 		}
 
-		.blog-post-header h1 {
-			font-size: 1.75rem;
-			line-height: 1.2;
+		.blog-hero-content {
+			padding: clamp(1rem, 4.2vw, 1.6rem);
+			max-width: 100%;
+		}
+
+		.blog-category {
+			font-size: 0.95rem;
+		}
+
+		.blog-date {
+			font-size: 0.96rem;
+		}
+
+		.post-content {
+			margin-top: var(--space-6);
+			width: min(100%, 46.5rem);
+			padding: 0 clamp(0.95rem, 4vw, 1.5rem);
+			line-height: 1.8;
+		}
+	}
+
+	@media (max-width: 32rem) {
+		.blog-hero h1 {
+			font-size: 1.55rem;
+		}
+
+		.post-content {
+			font-size: 1rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.post-content :global(a) {
+			transition: none;
 		}
 	}
 </style>
