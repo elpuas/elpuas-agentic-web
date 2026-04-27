@@ -20,6 +20,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props as { post: CollectionEntry<'blog'> };
 const { Content } = await render(post);
+const allPublishedPosts = (await getCollection('blog')).filter((entry) => !entry.data.draft);
 
 const heroImageModules = import.meta.glob('../../assets/blog/**/*.{avif,gif,jpeg,jpg,png,svg,webp}', {
 	eager: true,
@@ -87,6 +88,30 @@ const articleSchema = {
 	keywords: post.data.tags.join(', '),
 	image: articleImageUrl,
 };
+const searchableContent = (value: string): Set<string> =>
+	new Set(
+		value
+			.toLowerCase()
+			.replace(/[^a-z0-9\s]/g, ' ')
+			.split(/\s+/)
+			.filter((token) => token.length >= 4),
+	);
+const currentTags = new Set(post.data.tags.map((tag) => tag.toLowerCase()));
+const currentTerms = searchableContent(`${post.data.title} ${excerpt}`);
+const relatedPosts = allPublishedPosts
+	.filter((entry) => entry.data.slug !== post.data.slug)
+	.map((entry) => {
+		const entryExcerpt = getBlogExcerpt(entry.data);
+		const entryTerms = searchableContent(`${entry.data.title} ${entryExcerpt}`);
+		const sharedTags = entry.data.tags.filter((tag) => currentTags.has(tag.toLowerCase())).length;
+		const sharedTerms = [...entryTerms].filter((term) => currentTerms.has(term)).length;
+		const sameCategory = entry.data.category === post.data.category ? 1 : 0;
+		const score = sharedTags * 6 + sharedTerms * 2 + sameCategory * 4;
+
+		return { entry, entryExcerpt, score };
+	})
+	.sort((a, b) => b.score - a.score || getBlogPublishDate(b.entry.data).getTime() - getBlogPublishDate(a.entry.data).getTime())
+	.slice(0, 3);
 const pageContext = [
 	'Current Page Type: Blog Post',
 	`Current Blog Title: ${post.data.title}`,
@@ -135,8 +160,24 @@ const pageContext = [
 		</header>
 
 		<div class="post-content">
-			<Content />
+			<Content components={{ h1: 'h2' }} />
 		</div>
+		{relatedPosts.length > 0 && (
+			<section class="related-posts" aria-label="Related blog posts">
+				<h2>Related Reads</h2>
+				<ul>
+					{relatedPosts.map(({ entry, entryExcerpt }) => (
+						<li>
+							<a href={`/blog/${entry.data.slug}/`}>
+								<span class="related-post-title">{entry.data.title}</span>
+								<span class="related-post-meta">{entry.data.category}</span>
+								<span class="related-post-excerpt">{entryExcerpt}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		)}
 		<ShareArticleBar title={post.data.title} description={excerpt} url={articleUrl} />
 	</article>
 </BaseLayout>
@@ -362,6 +403,73 @@ const pageContext = [
 		margin-top: var(--space-4);
 	}
 
+	.related-posts {
+		margin: var(--space-8) auto 0;
+		width: min(100%, 50rem);
+		padding: 0 clamp(1rem, 2.4vw, 2.5rem);
+	}
+
+	.related-posts h2 {
+		margin: 0;
+		font-size: 1.1rem;
+		line-height: 1.2;
+		font-weight: 700;
+		color: var(--color-accent);
+	}
+
+	.related-posts ul {
+		margin: var(--space-4) 0 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: var(--space-3);
+	}
+
+	.related-posts li {
+		margin: 0;
+	}
+
+	.related-posts a {
+		display: grid;
+		gap: 0.3rem;
+		padding: var(--space-4);
+		border: var(--space-px) solid rgba(216, 255, 0, 0.2);
+		border-radius: var(--radius-md);
+		background: rgba(216, 255, 0, 0.04);
+		text-decoration: none;
+		transition:
+			background-color 120ms ease,
+			border-color 120ms ease;
+	}
+
+	.related-posts a:hover,
+	.related-posts a:focus-visible {
+		background: rgba(216, 255, 0, 0.1);
+		border-color: rgba(216, 255, 0, 0.42);
+		outline: none;
+	}
+
+	.related-post-title {
+		font-size: 1rem;
+		line-height: 1.4;
+		font-weight: 650;
+		color: #fbfdf4;
+	}
+
+	.related-post-meta {
+		font-size: 0.8rem;
+		line-height: 1.2;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: rgba(216, 255, 0, 0.9);
+	}
+
+	.related-post-excerpt {
+		font-size: 0.94rem;
+		line-height: 1.5;
+		color: #d4d8dd;
+	}
+
 	/* Hide legacy markdown share block now replaced by ShareArticleBar component. */
 	.post-content :global(h5:has(+ p + p:has(a[href*='twitter.com/intent/tweet']))) {
 		display: none;
@@ -398,6 +506,11 @@ const pageContext = [
 			width: min(100%, 46.5rem);
 			padding: 0 clamp(0.95rem, 4vw, 1.5rem);
 			line-height: 1.8;
+		}
+
+		.related-posts {
+			width: min(100%, 46.5rem);
+			padding: 0 clamp(0.95rem, 4vw, 1.5rem);
 		}
 	}
 
