@@ -15,7 +15,6 @@
 - Added handcrafted page metadata (title + description + OG title/description) for:
   - Home (`src/pages/index.astro`)
   - About (`src/pages/about.astro`)
-  - Projects (`src/pages/projects.astro`, new)
   - Contact (`src/pages/contact.astro`)
   - Blog archive (`src/pages/blog/index.astro`)
 - Extended `src/layouts/BaseLayout.astro` to support page-level `ogTitle` and `ogDescription` overrides.
@@ -45,7 +44,7 @@
 
 ### 5) Visual stability
 - Kept existing visual language and layout intact.
-- Added only minimal styling needed for the related-posts module and projects page content rendering.
+- Added only minimal styling needed for the related-posts module.
 
 ## Files changed
 - `src/layouts/BaseLayout.astro`
@@ -56,7 +55,6 @@
 - `src/pages/contact.astro`
 - `src/pages/blog/index.astro`
 - `src/pages/blog/[slug].astro`
-- `src/pages/projects.astro` (new)
 - `src/content/blog/*.mdx` (all existing blog entries normalized)
 
 ## Validation result
