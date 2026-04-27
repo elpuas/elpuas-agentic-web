@@ -59,7 +59,7 @@ import logo from '../assets/logo.svg';
 	.hero-skull-wrap {
 		flex: 0 0 auto;
 		display: inline-flex;
-		animation: hero-skull-float 8.6s ease-in-out 1.55s infinite;
+		animation: hero-skull-float 9.4s cubic-bezier(0.4, 0, 0.2, 1) 1.65s infinite;
 		will-change: transform;
 		transform: translate3d(0, 0, 0);
 	}
@@ -69,20 +69,20 @@ import logo from '../assets/logo.svg';
 		width: 3.9375rem;
 		height: 3.9375rem;
 		opacity: 0;
-		transform: translate3d(0, 0.75rem, 0) scale(0.94);
-		animation: hero-skull-enter 740ms cubic-bezier(0.22, 0.61, 0.36, 1) 520ms forwards;
+		transform: translate3d(0, 1rem, 0) scale(0.91);
+		animation: hero-skull-enter 900ms cubic-bezier(0.22, 0.61, 0.36, 1) 680ms forwards;
 		will-change: opacity, transform;
 	}
 
 	@keyframes hero-skull-enter {
 		from {
 			opacity: 0;
-			transform: translate3d(0, 0.75rem, 0) scale(0.94);
+			transform: translate3d(0, 1rem, 0) scale(0.91);
 		}
 
-		68% {
+		62% {
 			opacity: 1;
-			transform: translate3d(0, -0.08rem, 0) scale(1.01);
+			transform: translate3d(0.04rem, -0.14rem, 0) scale(1.02);
 		}
 
 		to {
@@ -93,18 +93,23 @@ import logo from '../assets/logo.svg';
 
 	@keyframes hero-skull-float {
 		0% {
-			transform: translate3d(0, 0.24rem, 0) rotate(-0.22deg);
-			opacity: 0.96;
+			transform: translate3d(-0.1rem, 0.44rem, 0) rotate(-0.8deg);
+			opacity: 0.95;
 		}
 
-		50% {
-			transform: translate3d(0, -0.24rem, 0) rotate(0.22deg);
+		36% {
+			transform: translate3d(0.14rem, -0.28rem, 0) rotate(0.35deg);
 			opacity: 1;
 		}
 
+		68% {
+			transform: translate3d(0.08rem, 0.12rem, 0) rotate(0.85deg);
+			opacity: 0.97;
+		}
+
 		100% {
-			transform: translate3d(0, 0.24rem, 0) rotate(-0.22deg);
-			opacity: 0.96;
+			transform: translate3d(-0.1rem, 0.44rem, 0) rotate(-0.8deg);
+			opacity: 0.95;
 		}
 	}
 
