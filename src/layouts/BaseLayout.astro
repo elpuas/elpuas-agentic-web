@@ -3,17 +3,82 @@ import { Image } from 'astro:assets';
 import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
 import logo from '../assets/logo.svg';
+import {
+	DEFAULT_DESCRIPTION,
+	DEFAULT_OG_IMAGE,
+	DEFAULT_TITLE,
+	SITE_NAME,
+	SITE_URL,
+	resolveCanonicalUrl,
+	toAbsoluteUrl,
+} from '../lib/site';
 
 const {
-	title = 'Alfredo Navas',
-	description = 'Alfredo Navas personal website.',
+	title = DEFAULT_TITLE,
+	description = DEFAULT_DESCRIPTION,
 	activeNav = 'home',
 	pageContext = '',
 	contentLayout = 'default',
 	floatingCliDesktop = false,
+	canonicalUrl,
+	ogImage = DEFAULT_OG_IMAGE,
+	ogType = 'website',
+	twitterCard = 'summary_large_image',
+	schema,
+	noindex = false,
 } = Astro.props;
 const currentPage = Astro.url.pathname;
 const isEdgeContentLayout = contentLayout === 'edge';
+const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+const siteUrl = Astro.site ?? new URL(SITE_URL);
+const canonical = resolveCanonicalUrl({
+	canonicalUrl,
+	pathname: currentPage,
+	siteUrl,
+});
+const ogImageAbsolute = toAbsoluteUrl(ogImage, siteUrl);
+const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? 'G-TESTMEASID0';
+
+const defaultSchemas: Array<Record<string, unknown>> = [
+	{
+		'@context': 'https://schema.org',
+		'@type': 'Person',
+		name: 'Alfredo Navas',
+		url: siteUrl.toString(),
+		jobTitle: 'Senior WordPress & Full Stack Developer',
+		email: 'mailto:elpuas@gmail.com',
+		description:
+			'Senior WordPress and full stack developer focused on web platforms, AI workflows, and practical product delivery.',
+		knowsAbout: [
+			'WordPress',
+			'JavaScript',
+			'TypeScript',
+			'Astro',
+			'AI Engineering',
+			'Web Performance',
+		],
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: SITE_NAME,
+		url: siteUrl.toString(),
+		description: DEFAULT_DESCRIPTION,
+		inLanguage: 'en',
+		publisher: {
+			'@type': 'Person',
+			name: 'Alfredo Navas',
+		},
+	},
+];
+
+const customSchemas = Array.isArray(schema)
+	? (schema as Array<Record<string, unknown>>)
+	: schema
+		? [schema as Record<string, unknown>]
+		: [];
+const pageSchemas = [...defaultSchemas, ...customSchemas];
 
 const navigation = [
 	{ href: '/', label: 'Home', key: 'home' },
@@ -30,9 +95,38 @@ const navigation = [
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
+		<meta name="robots" content={robotsContent} />
+		<link rel="canonical" href={canonical} />
+
+		<meta property="og:site_name" content={SITE_NAME} />
+		<meta property="og:type" content={ogType} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImageAbsolute} />
+
+		<meta name="twitter:card" content={twitterCard} />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageAbsolute} />
+
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
-		<title>{title}</title>
+		<title>{pageTitle}</title>
+
+		{pageSchemas.map((schemaNode) => (
+			<script type="application/ld+json" set:html={JSON.stringify(schemaNode)} />
+		))}
+
+		<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+		<script is:inline define:vars={{ gaMeasurementId }}>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+			gtag('config', gaMeasurementId);
+		</script>
 	</head>
 		<body>
 			<div

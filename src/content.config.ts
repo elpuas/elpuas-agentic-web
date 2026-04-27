@@ -10,14 +10,25 @@ const blog = defineCollection({
 		title: z.string(),
 		slug: z.string(),
 		description: z.string(),
-		date: z.coerce.date(),
-		author: z.string(),
-		category: z.string(),
-		tags: z.array(z.string()),
+		excerpt: z.string().optional(),
+		publishDate: z.coerce.date().optional(),
+		date: z.coerce.date().optional(),
+		author: z.string().default('Alfredo Navas'),
+		category: z.string().default('General'),
+		tags: z.array(z.string()).default([]),
+		featuredImage: z.string().optional(),
 		heroImage: z.string().optional(),
 		heroAlt: z.string().optional(),
 		canonicalUrl: z.string().url().optional(),
 		draft: z.boolean().default(false),
+	}).superRefine((value, ctx) => {
+		if (!value.publishDate && !value.date) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Blog posts must include either publishDate or date in frontmatter.',
+				path: ['publishDate'],
+			});
+		}
 	}),
 });
 

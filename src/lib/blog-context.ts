@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { getBlogPublishDate } from './blog-metadata';
 
 /**
  * Builds a compact blog discovery index consumed by the AI context loader.
@@ -9,7 +10,7 @@ import { getCollection } from 'astro:content';
 export async function getBlogIndexContext(): Promise<string> {
 	const posts = (await getCollection('blog'))
 		.filter((post) => !post.data.draft)
-		.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+		.sort((a, b) => getBlogPublishDate(b.data).getTime() - getBlogPublishDate(a.data).getTime());
 
 	if (posts.length === 0) {
 		return '- No published blog posts.';
@@ -17,7 +18,7 @@ export async function getBlogIndexContext(): Promise<string> {
 
 	const summaries = posts.map((post, index) => {
 		const tags = post.data.tags.join(', ');
-		const date = post.data.date.toISOString().slice(0, 10);
+		const date = getBlogPublishDate(post.data).toISOString().slice(0, 10);
 		const url = `/blog/${post.data.slug}`;
 
 		return [
