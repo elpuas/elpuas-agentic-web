@@ -10,6 +10,7 @@ const {
 	activeNav = 'home',
 	pageContext = '',
 	contentLayout = 'default',
+	floatingCliDesktop = false,
 } = Astro.props;
 const currentPage = Astro.url.pathname;
 const isEdgeContentLayout = contentLayout === 'edge';
@@ -35,7 +36,7 @@ const navigation = [
 	</head>
 		<body>
 			<div
-				class="shell"
+				class:list={['shell', floatingCliDesktop && 'shell-cli-floating-desktop']}
 				data-sidebar-shell
 				data-sidebar-open="false"
 				data-home={currentPage === '/' ? 'true' : 'false'}
@@ -773,6 +774,45 @@ const navigation = [
 		}
 	}
 
+	@media (min-width: 48.0625rem) {
+		.shell-cli-floating-desktop .workspace::after {
+			content: '';
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 8.75rem;
+			background: linear-gradient(
+				to top,
+				rgba(8, 9, 12, 0.94) 0%,
+				rgba(8, 9, 12, 0.74) 38%,
+				rgba(8, 9, 12, 0.26) 70%,
+				rgba(8, 9, 12, 0) 100%
+			);
+			pointer-events: none;
+			z-index: 1100;
+		}
+
+		.shell-cli-floating-desktop .content {
+			padding-bottom: 10rem;
+		}
+
+		.shell-cli-floating-desktop .cli {
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 0 var(--space-8) 1.35rem;
+			pointer-events: none;
+			z-index: 1200;
+		}
+
+		.shell-cli-floating-desktop .cli-panel {
+			pointer-events: auto;
+			animation: desktop-cli-enter 260ms ease-out 140ms both;
+		}
+	}
+
 	.cli-row {
 		height: 3.75rem;
 		display: flex;
@@ -1076,6 +1116,18 @@ const navigation = [
 		from {
 			opacity: 0;
 			transform: translateY(0.55rem);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes desktop-cli-enter {
+		from {
+			opacity: 0;
+			transform: translateY(0.7rem);
 		}
 
 		to {

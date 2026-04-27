@@ -77,6 +77,7 @@ const pageContext = [
 	activeNav="blog"
 	pageContext={pageContext}
 	contentLayout="edge"
+	floatingCliDesktop={true}
 >
 	<article class="blog-post">
 		<header class:list={['blog-hero', !heroImageSrc && 'blog-hero-fallback']}>
@@ -169,6 +170,15 @@ const pageContext = [
 		font-weight: 760;
 		color: #fcfcf8;
 		text-wrap: balance;
+	}
+
+	@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+		.blog-hero h1 {
+			background: linear-gradient(102deg, #ffffff 20%, #f3ffe4 62%, var(--color-accent) 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
 	}
 
 	.blog-date {
