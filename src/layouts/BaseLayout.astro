@@ -21,7 +21,8 @@ const {
 	activeNav = 'home',
 	pageContext = '',
 	contentLayout = 'default',
-	floatingCliDesktop = false,
+	floatingCliDesktop = true,
+	showCli = true,
 	canonicalUrl,
 	ogImage = DEFAULT_OG_IMAGE,
 	ogType = 'website',
@@ -134,7 +135,11 @@ const navigation = [
 	</head>
 		<body>
 			<div
-				class:list={['shell', floatingCliDesktop && 'shell-cli-floating-desktop']}
+				class:list={[
+					'shell',
+					showCli && floatingCliDesktop && 'shell-cli-floating-desktop',
+					!showCli && 'shell-no-cli',
+				]}
 				data-sidebar-shell
 				data-sidebar-open="false"
 				data-home={currentPage === '/' ? 'true' : 'false'}
@@ -207,49 +212,53 @@ const navigation = [
 						</div>
 					</main>
 
-					<section
-						class="cli"
-						aria-label="Command line interface"
-						data-page={currentPage}
-						data-page-context={encodeURIComponent(pageContext)}
-					>
-						<div class="cli-panel">
-							<div class="cli-box">
-								<div class="cli-messages" id="cli-messages"></div>
-								<form class="cli-row" id="cli-form">
-									<span class="cli-prompt-marker" aria-hidden="true">
-										<svg viewBox="0 0 24 24">
-											<path
-												d="M12 5v14M5 12h14"
-												fill="none"
-												stroke="currentColor"
-												stroke-linecap="round"
-												stroke-width="1.8"
+					{
+						showCli && (
+							<section
+								class="cli"
+								aria-label="Command line interface"
+								data-page={currentPage}
+								data-page-context={encodeURIComponent(pageContext)}
+							>
+								<div class="cli-panel">
+									<div class="cli-box">
+										<div class="cli-messages" id="cli-messages"></div>
+										<form class="cli-row" id="cli-form">
+											<span class="cli-prompt-marker" aria-hidden="true">
+												<svg viewBox="0 0 24 24">
+													<path
+														d="M12 5v14M5 12h14"
+														fill="none"
+														stroke="currentColor"
+														stroke-linecap="round"
+														stroke-width="1.8"
+													/>
+												</svg>
+											</span>
+											<input
+												class="cli-input"
+												id="cli-input"
+												name="question"
+												type="text"
+												placeholder="Ask me anything..."
+												aria-label="Ask me anything"
+												autocomplete="off"
+												required
 											/>
-										</svg>
-									</span>
-									<input
-										class="cli-input"
-										id="cli-input"
-										name="question"
-										type="text"
-										placeholder="Ask me anything..."
-										aria-label="Ask me anything"
-										autocomplete="off"
-										required
-									/>
-									<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
-										<svg viewBox="0 0 24 24">
-											<use href="#icon-send" />
-										</svg>
-									</button>
-								</form>
-							</div>
-							<p class="cli-hint">
-								Try: <span>about</span>, <span>projects</span>, <span>experience</span>
-							</p>
-						</div>
-					</section>
+											<button class="cli-btn cli-btn-send" type="submit" aria-label="Send">
+												<svg viewBox="0 0 24 24">
+													<use href="#icon-send" />
+												</svg>
+											</button>
+										</form>
+									</div>
+									<p class="cli-hint">
+										Try: <span>about</span>, <span>projects</span>, <span>experience</span>
+									</p>
+								</div>
+							</section>
+						)
+					}
 				</div>
 
 				<svg class="icon-defs" aria-hidden="true" focusable="false">
@@ -1229,9 +1238,28 @@ const navigation = [
 			transform: translateY(1rem);
 		}
 
+		74% {
+			opacity: 1;
+			transform: translateY(-0.12rem);
+		}
+
 		to {
 			opacity: 1;
 			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 48rem) {
+		.shell-no-cli .workspace::after {
+			display: none;
+		}
+
+		.shell-no-cli .content {
+			padding-bottom: clamp(1.2rem, 5vw, 1.7rem);
+		}
+
+		.shell-no-cli .content-edge {
+			padding-bottom: clamp(1.2rem, 5vw, 1.7rem);
 		}
 	}
 </style>
