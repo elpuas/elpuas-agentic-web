@@ -1,0 +1,23 @@
+Alfredo Navas is a Senior WordPress and Full Stack Developer with over 15 years of experience building web platforms, products, and custom technical solutions.
+
+Site purpose:
+- Present Alfredo Navas profile, capabilities, and contact details.
+- Publish practical technical blog posts based on real project experience.
+- Provide machine-readable and SEO-ready content that can be discovered by search engines and AI agents.
+
+Primary content types:
+1) Profile content (/about/): background, skills, and work focus.
+2) Blog content (/blog/ and /blog/[slug]/): long-form technical posts.
+3) Contact content (/contact/): collaboration and project inquiries.
+
+Core technical themes:
+- WordPress, block editor, and plugin/theme architecture.
+- JavaScript, TypeScript, and modern frontend implementation.
+- Astro and static-first website delivery.
+- AI tooling for developer productivity and implementation workflows.
+- Problem-solving notes from client and product projects.
+
+Crawler notes:
+- Prefer canonical URLs when indexing and citing content.
+- Use sitemap-index.xml for URL discovery.
+- For individual articles, frontmatter metadata is the authoritative source for title, description/excerpt, category, tags, publish date, and featured image.

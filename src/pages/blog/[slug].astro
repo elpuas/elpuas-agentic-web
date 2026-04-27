@@ -2,6 +2,8 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ShareArticleBar from '../../components/ShareArticleBar.astro';
+import { getBlogExcerpt, getBlogFeaturedImage, getBlogPublishDate } from '../../lib/blog-metadata';
+import { SITE_URL, toAbsoluteUrl } from '../../lib/site';
 export const prerender = true;
 
 /**
@@ -58,14 +60,38 @@ const resolveHeroImageSrc = (path?: string): string | undefined => {
 	return path;
 };
 
-const heroImageSrc = resolveHeroImageSrc(post.data.heroImage);
-const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(post.data.date);
-const articleUrl = post.data.canonicalUrl ?? Astro.url.href;
+const publishDate = getBlogPublishDate(post.data);
+const excerpt = getBlogExcerpt(post.data);
+const heroImageSrc = resolveHeroImageSrc(getBlogFeaturedImage(post.data));
+const formattedDate = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(publishDate);
+const siteUrl = Astro.site ?? new URL(SITE_URL);
+const articleUrl = post.data.canonicalUrl ?? new URL(Astro.url.pathname, siteUrl).toString();
+const articleImageUrl = heroImageSrc ? toAbsoluteUrl(heroImageSrc, siteUrl) : undefined;
+const articleSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: post.data.title,
+	description: excerpt,
+	datePublished: publishDate.toISOString(),
+	dateModified: publishDate.toISOString(),
+	author: {
+		'@type': 'Person',
+		name: post.data.author,
+	},
+	publisher: {
+		'@type': 'Person',
+		name: post.data.author,
+	},
+	mainEntityOfPage: articleUrl,
+	articleSection: post.data.category,
+	keywords: post.data.tags.join(', '),
+	image: articleImageUrl,
+};
 const pageContext = [
 	'Current Page Type: Blog Post',
 	`Current Blog Title: ${post.data.title}`,
 	`Current Blog Slug: ${post.data.slug}`,
-	`Current Blog Description: ${post.data.description}`,
+	`Current Blog Description: ${excerpt}`,
 	`Current Blog Category: ${post.data.category}`,
 	`Current Blog Tags: ${post.data.tags.join(', ') || 'None'}`,
 	'Current Blog Content:',
@@ -75,11 +101,15 @@ const pageContext = [
 
 <BaseLayout
 	title={post.data.title}
-	description={post.data.description}
+	description={excerpt}
+	canonicalUrl={articleUrl}
+	ogType="article"
+	ogImage={heroImageSrc}
 	activeNav="blog"
 	pageContext={pageContext}
 	contentLayout="edge"
 	floatingCliDesktop={true}
+	schema={articleSchema}
 >
 	<article class="blog-post">
 		<header class:list={['blog-hero', !heroImageSrc && 'blog-hero-fallback']}>
@@ -99,7 +129,7 @@ const pageContext = [
 				<p class="blog-category">{post.data.category}</p>
 				<h1>{post.data.title}</h1>
 				<p class="blog-date">
-					<time datetime={post.data.date.toISOString()}>{formattedDate}</time>
+					<time datetime={publishDate.toISOString()}>{formattedDate}</time>
 				</p>
 			</div>
 		</header>
@@ -107,7 +137,7 @@ const pageContext = [
 		<div class="post-content">
 			<Content />
 		</div>
-		<ShareArticleBar title={post.data.title} description={post.data.description} url={articleUrl} />
+		<ShareArticleBar title={post.data.title} description={excerpt} url={articleUrl} />
 	</article>
 </BaseLayout>
 

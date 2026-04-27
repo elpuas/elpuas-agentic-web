@@ -3,10 +3,11 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import logo from '../../assets/logo.svg';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPublishDate } from '../../lib/blog-metadata';
 
 const posts = (await getCollection('blog'))
 	.filter((post) => !post.data.draft)
-	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+	.sort((a, b) => getBlogPublishDate(b.data).getTime() - getBlogPublishDate(a.data).getTime());
 ---
 
 <BaseLayout

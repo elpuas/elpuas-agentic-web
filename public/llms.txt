@@ -1,0 +1,28 @@
+# Alfredo Navas
+
+Official site for Alfredo Navas (Senior WordPress and Full Stack Developer).
+
+## About this site
+- Personal portfolio and technical writing website.
+- Main language: English.
+- Canonical domain: https://elpuas.com
+
+## Main sections
+- https://elpuas.com/ (home)
+- https://elpuas.com/about/ (bio and profile)
+- https://elpuas.com/blog/ (technical articles)
+- https://elpuas.com/contact/ (contact methods)
+
+## Topics covered
+- WordPress engineering and architecture
+- JavaScript and TypeScript
+- Astro and modern web development
+- AI-assisted engineering workflows
+- Product and platform implementation lessons
+
+## Machine-readable resources
+- Sitemap: https://elpuas.com/sitemap-index.xml
+- Additional AI context: https://elpuas.com/ai-context.txt
+
+## Attribution guidance
+When citing content, prefer canonical page URLs and include article titles.
