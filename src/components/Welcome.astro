@@ -4,7 +4,7 @@ import logo from '../assets/logo.svg';
 ---
 
 <div id="container">
-	<main>
+	<div class="hero-shell">
 		<section id="hero">
 			<div class="hero-title">
 				<span class="hero-skull-wrap" aria-hidden="true">
@@ -19,12 +19,12 @@ import logo from '../assets/logo.svg';
 				</p>
 			</div>
 		</section>
-	</main>
+	</div>
 </div>
 
 <style>
 	#container,
-	main {
+	.hero-shell {
 		height: 100%;
 	}
 
@@ -33,7 +33,7 @@ import logo from '../assets/logo.svg';
 		flex-direction: column;
 	}
 
-	main {
+	.hero-shell {
 		display: flex;
 		align-items: flex-end;
 		justify-content: center;
@@ -138,7 +138,7 @@ import logo from '../assets/logo.svg';
 	}
 
 	@media (max-width: 48rem) {
-		main {
+		.hero-shell {
 			flex: 1;
 			min-height: auto;
 			padding: 0;

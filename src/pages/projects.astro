@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import logo from '../assets/logo.svg';
+import ProjectsContent from '../../content/knowledge/projects.mdx';
+---
+
+<BaseLayout
+	title="Projects"
+	description="Explore selected projects by Alfredo Navas, including WordPress platform builds, product engineering work, and long-term client solutions."
+	ogTitle="Projects by Alfredo Navas - WordPress and Product Engineering"
+	ogDescription="Selected project highlights from Alfredo Navas across WordPress platforms, React interfaces, and scalable digital product work."
+	activeNav="projects"
+>
+	<section class="projects">
+		<header class="projects-title">
+			<Image src={logo} width={63} height={63} alt="" aria-hidden="true" />
+			<h1>Projects</h1>
+		</header>
+
+		<div class="projects-content">
+			<ProjectsContent />
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.projects {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		color: var(--color-text);
+		padding: var(--space-12) 0 var(--space-8);
+	}
+
+	.projects-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.projects-title img {
+		width: 3.9375rem;
+		height: 3.9375rem;
+		flex: 0 0 auto;
+	}
+
+	.projects-title h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		line-height: 1.15;
+		font-weight: 700;
+	}
+
+	.projects-content {
+		margin-top: var(--space-6);
+	}
+
+	.projects-content :global(h2) {
+		margin: var(--space-6) 0 var(--space-2);
+		font-size: 1.55rem;
+		line-height: 1.2;
+	}
+
+	.projects-content :global(h3) {
+		margin: var(--space-5) 0 var(--space-2);
+		font-size: 1.2rem;
+		line-height: 1.25;
+	}
+
+	.projects-content :global(p),
+	.projects-content :global(ul) {
+		margin: 0;
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+	}
+
+	.projects-content :global(* + p),
+	.projects-content :global(* + ul) {
+		margin-top: var(--space-3);
+	}
+
+	.projects-content :global(ul) {
+		padding-left: 1.2rem;
+	}
+
+	.projects-content :global(li + li) {
+		margin-top: 0.2rem;
+	}
+
+	.projects-content :global(a) {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.projects-content :global(hr) {
+		margin: var(--space-6) 0;
+		border: 0;
+		height: var(--space-px);
+		background: var(--color-border);
+	}
+
+	@media (max-width: 48rem) {
+		.projects {
+			padding: var(--space-8) 0 var(--space-6);
+		}
+
+		.projects-title {
+			gap: var(--space-4);
+		}
+
+		.projects-title img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		.projects-title h1 {
+			font-size: 1.75rem;
+			line-height: 1.2;
+		}
+	}
+</style>

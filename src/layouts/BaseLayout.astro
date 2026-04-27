@@ -16,6 +16,8 @@ import {
 const {
 	title = DEFAULT_TITLE,
 	description = DEFAULT_DESCRIPTION,
+	ogTitle,
+	ogDescription,
 	activeNav = 'home',
 	pageContext = '',
 	contentLayout = 'default',
@@ -30,6 +32,8 @@ const {
 const currentPage = Astro.url.pathname;
 const isEdgeContentLayout = contentLayout === 'edge';
 const pageTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+const socialTitle = ogTitle ?? pageTitle;
+const socialDescription = ogDescription ?? description;
 const siteUrl = Astro.site ?? new URL(SITE_URL);
 const canonical = resolveCanonicalUrl({
 	canonicalUrl,
@@ -83,6 +87,7 @@ const pageSchemas = [...defaultSchemas, ...customSchemas];
 const navigation = [
 	{ href: '/', label: 'Home', key: 'home' },
 	{ href: '/about/', label: 'About', key: 'about' },
+	{ href: '/projects/', label: 'Projects', key: 'projects' },
 	{ href: '/blog/', label: 'Blog', key: 'blog' },
 	{ href: '/contact/', label: 'Contact', key: 'contact' },
 ];
@@ -100,14 +105,14 @@ const navigation = [
 
 		<meta property="og:site_name" content={SITE_NAME} />
 		<meta property="og:type" content={ogType} />
-		<meta property="og:title" content={pageTitle} />
-		<meta property="og:description" content={description} />
+		<meta property="og:title" content={socialTitle} />
+		<meta property="og:description" content={socialDescription} />
 		<meta property="og:url" content={canonical} />
 		<meta property="og:image" content={ogImageAbsolute} />
 
 		<meta name="twitter:card" content={twitterCard} />
-		<meta name="twitter:title" content={pageTitle} />
-		<meta name="twitter:description" content={description} />
+		<meta name="twitter:title" content={socialTitle} />
+		<meta name="twitter:description" content={socialDescription} />
 		<meta name="twitter:image" content={ogImageAbsolute} />
 
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
