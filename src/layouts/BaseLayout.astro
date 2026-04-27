@@ -799,7 +799,7 @@ const navigation = [
 
 		.shell-cli-floating-desktop .cli {
 			position: fixed;
-			left: 0;
+			left: 16rem;
 			right: 0;
 			bottom: 0;
 			padding: 0 var(--space-8) 1.35rem;
@@ -808,6 +808,7 @@ const navigation = [
 		}
 
 		.shell-cli-floating-desktop .cli-panel {
+			width: min(100%, 48rem);
 			pointer-events: auto;
 			animation: desktop-cli-enter 260ms ease-out 140ms both;
 		}
