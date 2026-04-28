@@ -41,7 +41,7 @@ To create Block Variations using PHP, we’ll use the [get\_block\_type\_variati
 
 Let’s start by registering a simple Call-to-Action (CTA) block variation
 
-```
+```js
 function custom_block_variations( $variations, $block_type ) {
     if ( 'core/columns' === $block_type->name ) {
         $variations[] = [
@@ -173,7 +173,7 @@ Now that we have our Team custom post type set up and the team members created, 
 
 We’ll use the `get_block_type_variations` hook in PHP, just like we did with the CTA Block Variation. This time, we’ll create a variation of the Query block that’s specifically crafted to display posts from the “Team” custom post type.
 
-```
+```js
 if ( 'core/query' === $block_type->name ) {
       $variations[] = [
           'name'        => 'team-query-grid',

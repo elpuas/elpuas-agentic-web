@@ -41,7 +41,7 @@ As I embarked on my journey to fetch the JWT token, I decided to use the tried-a
 
 For those unacquainted, here's a brief example of the POST call I attempted:
 
-```
+```ts
 fetch('https://api.example.com/auth/login', {
     method: 'POST',
     headers: {
@@ -75,7 +75,7 @@ In essence, while browsers enforce strict security protocols like CORS to safegu
 
 Once the CORS issue was circumvented, the next step was to obtain the JWT and store it securely for easy access. I chose to use cookies for this purpose, and here's how I went about it:
 
-```
+```php
 // Function to fetch and store JWT
 function fetch_and_store_jwt() {
 
@@ -136,7 +136,7 @@ After obtaining the JWT and storing it securely as a cookie, I encountered anoth
 
 Here's a conceptual example solution:
 
-```
+```php
 // Register a custom endpoint to retrieve make data
 function register_custom_api_endpoints() {
     register_rest_route('customapi/v1', '/make', [
@@ -185,7 +185,7 @@ With the server-side solution in place, I circled back to the original plan: usi
 
 Here's a conceptual example:
 
-```
+```js
 // Fetch the make data for a specific year
 function getMake(year) {
     fetch(`/wp-json/customapi/v1/make?year=${year}`)

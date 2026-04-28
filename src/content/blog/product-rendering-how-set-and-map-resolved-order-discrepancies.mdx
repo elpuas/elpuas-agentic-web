@@ -53,7 +53,7 @@ After pondering on how to resolve the order discrepancy between server-side and 
 
 Here's how I tackled the issue, presented through a simplified example:
 
-```
+```ts
 // Step 1: Create an empty Set and Map
 const productSet = new Set();
 const serverRenderedOrder = new Map();
@@ -88,7 +88,7 @@ To resolve the order discrepancy challenge between server-side and client-side r
 
 **Step 1: Create an Empty Set and Map**
 
-```
+```js
 const productSet = new Set();
 const serverRenderedOrder = new Map();
 ```
@@ -99,7 +99,7 @@ In this step, we initialize two crucial data structures.
 
 **Step 2: Populate the Set and Map during Server-Side Rendering**
 
-```
+```js
 function serverSideRender() {
     const products = fetchProductsFromServer(); // Fetch products from the server
     products.forEach((product, index) => {
@@ -115,7 +115,7 @@ Add its unique ID to the productSet to ensure no duplicates. Use the `serverRend
 
 **Step 3: Maintain Order during Client-Side Rendering**
 
-```
+```js
 function clientSideRender() {
     const products = fetchProductsFromClient(); // Fetch products on the client side
     const sortedProducts = [];

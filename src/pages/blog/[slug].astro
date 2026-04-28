@@ -321,6 +321,24 @@ const pageContext = [
 		margin-top: var(--space-4);
 	}
 
+	.post-content :global(h2 + pre),
+	.post-content :global(h3 + pre),
+	.post-content :global(h4 + pre),
+	.post-content :global(h2 + .astro-code),
+	.post-content :global(h3 + .astro-code),
+	.post-content :global(h4 + .astro-code) {
+		margin-top: var(--space-3);
+	}
+
+	.post-content :global(pre + p),
+	.post-content :global(.astro-code + p),
+	.post-content :global(pre + ul),
+	.post-content :global(pre + ol),
+	.post-content :global(.astro-code + ul),
+	.post-content :global(.astro-code + ol) {
+		margin-top: var(--space-6);
+	}
+
 	.post-content :global(ul),
 	.post-content :global(ol) {
 		padding-left: 1.35rem;
@@ -367,24 +385,32 @@ const pageContext = [
 		color: #eceff2;
 	}
 
-	.post-content :global(code) {
-		font-size: 0.95em;
-		padding: 0.08em 0.38em;
-		border-radius: var(--radius-sm);
-		background: rgba(255, 255, 255, 0.08);
+	.post-content :global(:not(pre) > code) {
+		display: inline-block;
+		font-family: var(--font-family-mono);
+		font-size: 0.82em;
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		padding: 0.16em 0.48em;
+		border-radius: 0.36rem;
+		background: rgba(16, 20, 24, 0.84);
+		border: var(--space-px) solid rgba(216, 255, 0, 0.24);
+		color: #e9f3bf;
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 	}
 
 	.post-content :global(pre) {
-		padding: var(--space-4);
-		border-radius: var(--radius-md);
-		border: var(--space-px) solid var(--color-border);
-		background: #151717;
-		overflow-x: auto;
+		margin: 0;
 	}
 
 	.post-content :global(pre code) {
+		font-family: var(--font-family-mono);
+		font-size: 0.82rem;
+		line-height: 1.62;
+		letter-spacing: -0.01em;
 		padding: 0;
-		background: transparent;
+		background: none;
+		border: 0;
 	}
 
 	.post-content :global(hr) {
@@ -398,8 +424,48 @@ const pageContext = [
 		border-radius: var(--radius-md);
 	}
 
+	.post-content :global(pre.astro-code),
 	.post-content :global(.astro-code) {
 		margin-top: var(--space-4);
+		padding: 1rem 1.05rem;
+		border-radius: 0.78rem;
+		border: var(--space-px) solid rgba(255, 255, 255, 0.12);
+		background: linear-gradient(180deg, #11171f 0%, #0c1118 100%) !important;
+		box-shadow:
+			0 10px 26px rgba(0, 0, 0, 0.32),
+			inset 0 1px 0 rgba(255, 255, 255, 0.03);
+		overflow-x: auto;
+		overflow-y: hidden;
+		tab-size: 2;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(153, 165, 185, 0.38) transparent;
+	}
+
+	.post-content :global(pre.astro-code code),
+	.post-content :global(.astro-code code) {
+		background: transparent;
+		color: inherit;
+	}
+
+	.post-content :global(pre.astro-code::-webkit-scrollbar),
+	.post-content :global(.astro-code::-webkit-scrollbar) {
+		height: 0.5rem;
+	}
+
+	.post-content :global(pre.astro-code::-webkit-scrollbar-track),
+	.post-content :global(.astro-code::-webkit-scrollbar-track) {
+		background: transparent;
+	}
+
+	.post-content :global(pre.astro-code::-webkit-scrollbar-thumb),
+	.post-content :global(.astro-code::-webkit-scrollbar-thumb) {
+		background: rgba(153, 165, 185, 0.35);
+		border-radius: 999px;
+	}
+
+	.post-content :global(pre.astro-code::-webkit-scrollbar-thumb:hover),
+	.post-content :global(.astro-code::-webkit-scrollbar-thumb:hover) {
+		background: rgba(153, 165, 185, 0.5);
 	}
 
 	.related-posts {

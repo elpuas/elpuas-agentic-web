@@ -50,7 +50,7 @@ No extra UI frameworks or build tools: just a folder picker, a format selector, 
 
 The project is structured in a simple, clear way:
 
-```
+```text
 image-optimizer-electron/
 ├── dist/                  # Packaged app output
 ├── scripts/               # optimize.js (core logic for image processing)
@@ -74,7 +74,7 @@ The core flow looks like this:
 
 ### Example: Forking the Script in main.js
 
-```
+```js
 const child = fork(
   scriptPath,
   ['--input', inputPath, '--format', format],
@@ -94,7 +94,7 @@ This approach helps the main process stay responsive and handles logs and errors
 
 ### **Example: Processing Images in optimize.js**
 
-```
+```js
 const sharp = require('sharp');
 
 sharp(inputFile)
@@ -105,7 +105,7 @@ sharp(inputFile)
 
 If the output directory doesn’t exist, it gets created on the fly:
 
-```
+```js
 const outputPath = path.join(inputPath, 'optimized');
 if (!fs.existsSync(outputPath)) {
   fs.mkdirSync(outputPath);

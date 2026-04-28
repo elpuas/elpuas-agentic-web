@@ -45,7 +45,7 @@ I began by researching how reusable blocks function and exploring methods for cr
 
 Again been a post-type makes thing better, we can use WP core functions and work as a regular post, so the first thing is create a variable for the block title, and check if the block exists.
 
-```
+```php
 $block_title = 'My Block';
 
 // Check if the block already exists.
@@ -60,7 +60,7 @@ $block_exist = get_posts(
 
 Next, we verify if the block exists; if it does, we return early.
 
-```
+```php
 if ( $block_exist ) {
   return;
 } else {
@@ -72,7 +72,7 @@ Next we are going to create a new post object, and insert it into the database.
 
 I’m using the **`wp_insert_post()`** function, which is a WordPress function designed to create a new post or update an existing one in the database.
 
-```
+```php
 } else {
 // Create a new post object.
   $new_block_post = [
@@ -88,7 +88,7 @@ I’m using the **`wp_insert_post()`** function, which is a WordPress function d
 
 To generate the post content, I first constructed my block within the editor. Then, I simply selected the `Copy Block` option to access the block markup. In order to keep my content organized, I created a separate file to house the block content. As an example, I copied the core paragraph block and incorporated it into this file:
 
-```
+```php
 <?php
 /**
  * Reusable Block Content
@@ -106,7 +106,7 @@ EOD;
 
 Finally I’m ensuring that the newly created post becomes a reusable block by setting its post type to `wp_block`. first check if `$new_block` is valid and not an instance of `WP_Error`. If the condition is met, I use the `wp_set_post_terms()` function to set the post\_type term for the new post.
 
-```
+```php
 // Make the new post a reusable block.
   if ( 0 !== $new_block && ! is_wp_error( $new_block ) ) {
     $saved = wp_set_post_terms( $new_block, 'wp_block', 'post_type' );
@@ -121,7 +121,7 @@ Before incorporating this reusable block into your template, let's explore how t
 
 To incorporate the reusable block into my template, the first step is to retrieve the block using the following code
 
-```
+```php
 $new_block = get_page_by_path( 'my-block', OBJECT, 'wp_block' );
 ```
 
@@ -131,7 +131,7 @@ By using this function, I’m able to retrieve the reusable block with the speci
 
 In this final part of my post, I show how to display the content of the retrieved reusable block in the template.
 
-```
+```php
 $my_block_id = $new_block->ID;
 
 if ( $my_block_id ) {

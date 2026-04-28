@@ -9,6 +9,15 @@
     format("woff2-variations");
 }
 
+@font-face {
+  font-family: "JetBrains Mono Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2")
+    format("woff2-variations");
+}
+
 :root {
   background-color: var(--color-canvas);
   color: var(--color-text);
@@ -20,6 +29,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-synthesis: none;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-family-mono);
 }
 
 *,

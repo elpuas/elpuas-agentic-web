@@ -50,7 +50,7 @@ One of the features that truly stands out is `register_block_bindings_source()`.
 
 To register a custom source, we use the function:
 
-```
+```php
 register_block_bindings_source( string $source_name, array $source_properties );
 ```
 
@@ -69,7 +69,7 @@ It accepts two parameters:
 
 When WordPress encounters the source, it runs the `get_value_callback` function, which looks like this:
 
-```
+```js
 function projectslug_bindings_callback( array $source_args, WP_Block $block_instance, string $attribute_name ) {
   // Custom logic to fetch data
 }
@@ -83,7 +83,7 @@ In this example, we’ll demonstrate how to use **block bindings** and **block v
 
 The first step in creating our block variation is defining the callback function that will fetch data from the **Star Wars API**. Here’s the code for our callback:
 
-```
+```php
 function get_star_wars_character( array $source_args, $block_instance, string $attribute_name ) {
     // Get the character ID or name from source_args.
     $character_id = isset( $source_args['character_id'] ) ? $source_args['character_id'] : 1;
@@ -126,7 +126,7 @@ function get_star_wars_character( array $source_args, $block_instance, string $a
 
 Now that we’ve defined our callback to fetch Star Wars character data, the next step is to register our custom source using `register_block_bindings_source()`. Here’s the code:
 
-```
+```php
 function register_star_wars_source() {
     register_block_bindings_source( 'sandbox/star-wars-character', array(
         'label'              => __( 'Star Wars Character', 'metasandbox' ),
@@ -161,7 +161,7 @@ Now that we’ve set up the foundation, it’s time to take it one step further 
 
 Now that we have our custom source set up, let’s create a **block variation** for the paragraph block that fetches Star Wars character data. Here’s the code:
 
-```
+```js
 function star_wars_block_variations( $variations, $block_type ) {
 	if ( 'core/paragraph' === $block_type->name ) {
 		$variations[] = array(

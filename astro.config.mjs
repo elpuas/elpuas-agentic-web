@@ -10,4 +10,11 @@ export default defineConfig({
 	output: 'server',
 	adapter: netlify(),
 	integrations: [mdx(), sitemap(), react()],
+	markdown: {
+		syntaxHighlight: 'shiki',
+		shikiConfig: {
+			theme: 'github-dark',
+			wrap: false,
+		},
+	},
 })

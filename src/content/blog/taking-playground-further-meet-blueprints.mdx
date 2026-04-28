@@ -50,7 +50,7 @@ Why use Blueprints? Instead of manually installing plugins or configuring settin
 
 Here’s how a basic Blueprint looks:
 
-```
+```json
 {
   "preferredVersions": {
     "wp": "6.5",
@@ -72,7 +72,7 @@ This simple Blueprint specifies that we want WordPress version 6.5 and PHP 7.4, 
 
 **How do you use a Blueprint?** Just add it to the Playground URL as a fragment. For example:
 
-```
+```html
 <https://playground.wordpress.net/#{"preferredVersions":{"wp":"6.5","php":"7.4"}>}
 ```
 
@@ -82,7 +82,7 @@ Paste your JSON after the # as shown above (make sure it’s all one line). You 
 
 Now that we’ve covered the basics, let’s take it a step further. In the next example, we’ll modify the Blueprint to install a theme and configure the site automatically.
 
-```
+```json
 {
   "steps": [
     {
@@ -122,7 +122,7 @@ Here’s an advanced but practical example. This **full Blueprint** will do the 
 *   Automatically insert a sample blog post and a page.
     
 
-```
+```json
 {
   "landingPage": "/wp-admin/edit.php",
   "login": true,
@@ -182,13 +182,13 @@ For more complex Blueprints (like the one above), WordPress Playground officiall
 2.  Take that Base64 string and append it to the Playground URL after the #. For example:
     
 
-```
+```html
 <https://playground.wordpress.net/#YOUR_BASE64_ENCODED_STRING>
 ```
 
 Here’s an example of an encoded Blueprint URL (already Base64 encoded) for the full Blueprint above. Clicking this URL will instantly launch Playground with the exact setup we defined (custom site title, theme, plugin, and content all loaded):
 
-```
+```html
 <https://playground.wordpress.net/#ewogICJsYW5kaW5nUGFnZSI6ICIvd3AtYWRtaW4vZWRpdC5waHAiLAogICJsb2dpbiI6IHRydWUsCiAgInN0ZXBzIjogW3sic3RlcCI6ICJzZXRTaXRlT3B0aW9ucyIsICJvcHRpb25zIjogeyJibG9nbmFtZSI6ICJNeSBBd2Vzb21lIFBsYXlncm91bmQiLCAiYmxvZ2Rlc2NyaXB0aW9uIjogIlRlc3RpbmcgV29yZFByZXNzIFBsYXlncm91bmQgQmx1ZXByaW50cyEifX0sIHsic3RlcCI6ICJpbnN0YWxsUGx1Z2luIiwgInBsdWdpbkRhdGEiOiB7ICJyZXNvdXJjZSI6ICJ3b3JkcHJlc3Mub3JnL3BsdWdpbnMiLCAic2x1ZyI6ICJjb2Jsb2NrcyIgfX0sIHsic3RlcCI6ICJpbnN0YWxsVGhlbWUiLCAidGhlbWVEYXRhIjogeyAicmVzb3VyY2UiOiAid29yZHByZXNzLm9yZy90aGVtZXMiLCAic2x1ZyI6ICJ0d2VudHl0d2VudHlmb3VyIiB9fSwgeyJzdGVwIjogImFjdGl2YXRlVGhlbWUiLCAidGhlbWVGb2xkZXJOYW1lIjogInR3ZW50eXR3ZW50eWZvdXIifSwgeyJzdGVwIjogInJ1blBIUCIsICJjb2RlIjogIjw/cGhwIHJlcXVpcmVfb25jZSAnd29yZHByZXNzL3dwLWxvYWQucGhwJzsgd3BfaW5zZXJ0X3Bvc3QoYXJyYXkoJ3Bvc3RfdGl0bGUnID0+ICdIZWxsbyBmcm9tIFBsYXlncm91bmQhJywgJ3Bvc3RfY29udGVudCcgID0+ICc8IS0tIHdwOnBhcmFncmFwaCAtLT48cD5UaGlzIGlzIG15IGZpcnN0IGJsb2cgcG9zdCB1c2luZyBQbGF5Z3JvdW5kITwvcD48IS0tIC93cDpwYXJhZ3JhcGggLS0+JywgJ3Bvc3Rfc3RhdHVzJyA9PiAncHVibGlzaCcsICdwb3N0X2F1dGhvcicgPT4gMSkpOyA/PiJ9LCB7InN0ZXAiOiAicnVuUEhQIiwgImNvZGUiOiAiPD9waHAgcmVxdWlyZV9vbmNlICd3b3JkcHJlc3Mvd3AtbG9hZC5waHAnOyB3cF9pbnNlcnRfcG9zdChhcnJheSgncG9zdF90aXRsZScgPT4gJ0Fib3V0IFBsYXlncm91bmQnLCAncG9zdF9jb250ZW50JyAgPT4gJzwhLS0gd3A6cGFyYWdyYXBoIC0tPjxwPlBsYXlncm91bmQgaXMgYXdlc29tZSE8L3A+PCEtLSAtL3dwOnBhcmFncmFwaCAtLT4nLCAncG9zdF9zdGF0dXMnID0+ICdwdWJsaXNoJywgJ3Bvc3RfdHlwZScgPT4gJ3BhZ2UnLCAncG9zdF9hdXRob3InID0+IDEpKTsgPz4ifV19>
 ```
 
@@ -222,7 +222,7 @@ With Playground’s GitHub Proxy, you can install any plugin from a GitHub repo 
 
 Let’s say we want to install a plugin called `Gridify` from a GitHub repository. We can do this by specifying a Blueprint step with a **resource:** **`url`** and pointing it to the GitHub proxy URL for that repo. For example:
 
-```
+```json
 {
   "landingPage": "/wp-admin/plugins.php",
   "login": true,
@@ -247,7 +247,7 @@ Let’s say we want to install a plugin called `Gridify` from a GitHub repositor
 
 **Quickly Test It Yourself:** Try this one-click Playground URL to instantly launch a WordPress instance with the plugin fetched from GitHub:
 
-```
+```html
 <https://playground.wordpress.net/#{"landingPage":"/wp-admin/plugins.php","login":true,"steps":[{"step":"installPlugin","pluginData":{"resource":"url","url":"https://github-proxy.com/proxy/?repo=elpuas/gridify"}>}]}
 ```
 
@@ -262,7 +262,7 @@ Copy and paste the above URL into your browser’s address bar. After a moment, 
 *   **Optional: specify branches or versions:** By default, the proxy fetches the default branch (usually “main” or “master”). If you want to load a specific branch or commit, you can add parameters to the URL. For example, to get the develop branch of the `Gridify` repo, use:
     
 
-```
+```html
 <https://github-proxy.com/proxy/?repo=elpuas/gridify&branch=develop>
 ```
 
@@ -283,7 +283,7 @@ To customize your `wp-now` setup, you’ll create a blueprint.json file and plac
 *   **If you’re working on a plugin**, your project structure should look like this:
     
 
-```
+```text
 /my-plugin
   ├── blueprint.json   ← Blueprint file here
   ├── my-plugin.php
@@ -293,7 +293,7 @@ To customize your `wp-now` setup, you’ll create a blueprint.json file and plac
 *   **If you’re working on a theme**, your structure would be:
     
 
-```
+```js
 /my-theme
   ├── blueprint.json   ← Blueprint file here
   ├── style.css
@@ -307,7 +307,7 @@ When blueprint.json is in place at the root, `wp-now` will detect it and apply t
 
 You don’t need to install anything globally if you don’t want to. Using **`npx`** (which comes with Node.js ), you can run `wp-now` on demand. Just navigate to your project’s root directory in your terminal and run:
 
-```
+```bash
 npx @wp-now/wp-now start
 ```
 
@@ -330,7 +330,7 @@ Blueprints allow you to define things like:
 
 Let’s create an example **blueprint.json** for a plugin project. This Blueprint will ensure our local `wp-now` environment uses WordPress 6.5, PHP 8.2, sets a custom site title, and activates a specific theme:
 
-```
+```json
 {
   "$schema": "<https://playground.wordpress.net/blueprint-schema.json>",
   "login": true,
@@ -363,7 +363,7 @@ Here’s what this Blueprint does: it logs you in automatically ("login": true g
 
 Once your blueprint.json file is in the root of your project, start wp-now with the Blueprint flag:
 
-```
+```bash
 cd my-plugin   # or cd my-theme
 npx @wp-now/wp-now start --blueprint=blueprint.json
 ```

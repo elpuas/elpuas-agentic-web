@@ -31,7 +31,7 @@ I was working with a page dynamically generated through [Gravity Forms](https://
 
 Here’s a function I did for this purpose:
 
-```
+```php
 function render_audio_blocks($repeater_field) {
     $blocks_markup = '';
     foreach ($repeater_field as $item) {
@@ -56,7 +56,7 @@ Let's break down this function, the `render_audio_blocks` function takes one arg
 
 And this is how I implemented my template:
 
-```
+```php
 <head>
   <meta charset="<?php bloginfo( 'charset' ); ?>">
   <?php

@@ -43,7 +43,7 @@ Here’s how you can do it:
 
 **Register the Plugin and Button Styles**
 
-```
+```php
 <?php
 /*
 Plugin Name: Custom Block Styles
@@ -74,7 +74,7 @@ In this example, we’re using the server-side registration method for our custo
 
 To register a block style server-side, we use the `register_block_style()` function. Here’s how we can register a custom button style:
 
-```
+```php
 register_block_style(
         'core/button',
         [
@@ -117,7 +117,7 @@ These are the key parameters we’re using in our example. There are additional 
 
 Now that we’ve set up our custom block style using the server-side function, it’s time to put it to the test. Here’s the complete function with our first custom button style:
 
-```
+```php
 <?php
 /*
 Plugin Name: Custom Block Styles
@@ -172,7 +172,7 @@ For the icon, we’ll use an SVG encoded in Base64, which is a neat way to inclu
 
 Here’s the updated `inline_style`:
 
-```
+```css
 'inline_style' => '
     .wp-block-button:is(.is-style-custom-primary-button) {
         .wp-block-button__link {
@@ -214,7 +214,7 @@ Since creating a new button style follows the same process as the first one, you
 
 For example, to create a **Secondary Button**, just modify the name and label to something like custom-secondary-button and Custom Secondary. Then, adjust the inline\_style to match your desired design, such as changing the background color, icon, and hover effects.
 
-```
+```php
 register_block_style(
     'core/button',
     array(
@@ -239,7 +239,7 @@ Customizing headers with unique styles like gradients and glowing effects can ma
 
 Just like with the button styles, we’ll use the register\_block\_style() function to register our new header styles. Let’s start with the **Gradient Header**.
 
-```
+```php
 register_block_style(
     'core/heading',
     array(
