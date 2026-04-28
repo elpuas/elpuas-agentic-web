@@ -882,6 +882,21 @@ const navigation = [
 	}
 
 	@media (min-width: 48.0625rem) {
+		.shell[data-home='true'] .content {
+			display: flex;
+			align-items: stretch;
+			padding-top: clamp(2.8rem, 8vh, 5.25rem);
+			padding-bottom: clamp(7rem, 16vh, 9.25rem);
+		}
+
+		.shell[data-home='true'] .content-inner {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			min-height: clamp(17rem, 38vh, 24rem);
+			margin: 0 auto;
+		}
+
 		.shell-cli-floating-desktop .workspace::after {
 			content: '';
 			position: fixed;

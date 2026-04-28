@@ -18,3 +18,8 @@
 
 ## Follow-up adjustment (same day)
 - Further reduced homepage hero vertical height and bottom padding in `src/components/Welcome.astro` so the hero block sits directly above the chatbot dock with tighter visual coupling on desktop.
+
+## Parent layout distribution correction
+- Added homepage-only desktop parent layout rules in `src/layouts/BaseLayout.astro` to remove the centered feel at wrapper level.
+- Homepage `.content` now uses a lowered top/bottom distribution, and homepage `.content-inner` is bottom-anchored (`justify-content: flex-end`) with controlled min-height.
+- Scope is limited to `data-home='true'` on desktop; About/Blog/Contact remain unchanged.
