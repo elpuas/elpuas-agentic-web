@@ -347,6 +347,8 @@ const navigation = [
 				</svg>
 			</div>
 			<script>
+				const MAX_HISTORY_EXCHANGES = 3;
+				const MAX_HISTORY_MESSAGES = MAX_HISTORY_EXCHANGES * 2;
 				const form = document.querySelector('#cli-form');
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
@@ -366,9 +368,26 @@ const navigation = [
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
+					const conversationHistory = [];
 					const assistantLinkPattern =
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
+
+					const addHistoryMessage = (role, content) => {
+						const normalizedRole = role === 'user' || role === 'assistant' ? role : null;
+						const normalizedContent = typeof content === 'string' ? content.trim() : '';
+
+						if (!normalizedRole || !normalizedContent) {
+							return;
+						}
+
+						conversationHistory.push({ role: normalizedRole, content: normalizedContent });
+						if (conversationHistory.length > MAX_HISTORY_MESSAGES) {
+							conversationHistory.splice(0, conversationHistory.length - MAX_HISTORY_MESSAGES);
+						}
+					};
+
+					const getHistoryForRequest = () => conversationHistory.slice(-MAX_HISTORY_MESSAGES);
 
 					/**
 					 * Renders assistant text into a container and converts URL-like substrings
@@ -488,18 +507,23 @@ const navigation = [
 						}
 
 						appendMessage('user', question);
+						addHistoryMessage('user', question);
 						const assistantMessage = appendMessage('assistant', '', true);
 						input.value = '';
 						input.disabled = true;
 						submitButton.disabled = true;
 
 						try {
-							const requestBody = pageContext ? { question, page, pageContext } : { question, page };
+							const conversationHistoryPayload = getHistoryForRequest();
+							const requestBody = pageContext
+								? { question, page, pageContext, conversationHistory: conversationHistoryPayload }
+								: { question, page, conversationHistory: conversationHistoryPayload };
 							if (import.meta.env.DEV) {
 								console.debug('[cli] /api/ask payload', {
 									question,
 									page,
 									pageContextPreview: pageContext.slice(0, 240),
+									historyCount: conversationHistoryPayload.length,
 								});
 							}
 
@@ -511,6 +535,7 @@ const navigation = [
 							const payload = await response.json();
 							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";
 							renderMessageContent(assistantMessage, 'assistant', text);
+							addHistoryMessage('assistant', text);
 							scrollMessages();
 						} catch {
 							renderMessageContent(assistantMessage, 'assistant', 'Something went wrong. Please try again.');

@@ -1,4 +1,13 @@
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
+const MAX_HISTORY_MESSAGES = 6;
+const MAX_HISTORY_MESSAGE_LENGTH = 600;
+
+type ConversationRole = 'user' | 'assistant';
+
+type ConversationMessage = {
+	role: ConversationRole;
+	content: string;
+};
 
 /**
  * Reads the OpenAI API key from the server runtime.
@@ -32,11 +41,14 @@ Rules:
 - For broad questions (experience, projects, clients, technical strengths, community, public work), synthesize relevant context sections into a representative answer
 - Use concrete examples from context when helpful, but avoid repetitive overuse of the same examples
 - Keep it natural, conversational, clear, and confident
+- Follow-up questions can refer to earlier turns; use recent conversation naturally when relevant
 - Avoid chronological life-story responses unless explicitly requested
 - Do not sound like a biography, resume, or profile summary
 - Vary sentence openings naturally across turns
 - Avoid canned starters like "Sure!" or other templated intros
 - Keep a human, relaxed tone
+- Avoid repeating the same named examples, enterprise client lists, or explanations unless the user asks to revisit them
+- When the new question is semantically related to recent turns, build on what was already said instead of restarting from scratch
 
 Context:
 
@@ -100,11 +112,32 @@ Good (blog reference):
 export async function askAI({
 	question,
 	context,
+	conversationHistory = [],
 }: {
 	question: string;
 	context: string;
+	conversationHistory?: ConversationMessage[];
 }): Promise<string> {
 	const apiKey = getApiKey();
+	const boundedHistory = sanitizeConversationHistory(conversationHistory);
+	const input = [
+		{
+			role: 'system',
+			content: SYSTEM_PROMPT,
+		},
+		{
+			role: 'user',
+			content: `Global Context:\n${context}`,
+		},
+		...boundedHistory.map((message) => ({
+			role: message.role,
+			content: message.content,
+		})),
+		{
+			role: 'user',
+			content: question,
+		},
+	] as const;
 
 	const response = await fetch(OPENAI_RESPONSES_URL, {
 		method: 'POST',
@@ -118,16 +151,7 @@ export async function askAI({
 			text: {
 				format: { type: 'text' },
 			},
-			input: [
-				{
-					role: 'system',
-					content: SYSTEM_PROMPT,
-				},
-				{
-					role: 'user',
-					content: `Context:\n${context}\n\nQuestion:\n${question}`,
-				},
-			],
+			input,
 		}),
 	});
 
@@ -237,4 +261,31 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  */
 function getOpenAIErrorMessage(payload: ResponsesPayload): string {
 	return payload.error?.message || 'Unknown OpenAI API error.';
+}
+
+/**
+ * Enforces role/content validity and keeps a short rolling history window.
+ */
+function sanitizeConversationHistory(history: ConversationMessage[]): ConversationMessage[] {
+	if (!Array.isArray(history)) {
+		return [];
+	}
+
+	const sanitized = history
+		.filter((message) => message?.role === 'user' || message?.role === 'assistant')
+		.map((message) => ({
+			role: message.role,
+			content: typeof message.content === 'string' ? message.content.trim() : '',
+		}))
+		.filter((message) => Boolean(message.content))
+		.map((message) => ({
+			role: message.role,
+			content: message.content.slice(0, MAX_HISTORY_MESSAGE_LENGTH),
+		}));
+
+	if (sanitized.length <= MAX_HISTORY_MESSAGES) {
+		return sanitized;
+	}
+
+	return sanitized.slice(-MAX_HISTORY_MESSAGES);
 }

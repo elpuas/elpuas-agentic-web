@@ -5,7 +5,16 @@ import { loadContext } from '../../lib/context';
 export const prerender = false;
 const MAX_QUESTION_LENGTH = 450;
 const COOLDOWN_MS = 4000;
+const MAX_HISTORY_MESSAGES = 6;
+const MAX_HISTORY_MESSAGE_LENGTH = 600;
 const requestCooldownByIp = new Map<string, number>();
+
+type ConversationRole = 'user' | 'assistant';
+
+type ConversationMessage = {
+	role: ConversationRole;
+	content: string;
+};
 
 /**
  * Handles CLI chat requests from the client-side interface.
@@ -33,13 +42,15 @@ export const POST: APIRoute = async ({ request }) => {
 			return jsonResponse(400, { error: 'Please send a valid JSON request body.' });
 		}
 
-		const { question, pageContext } = (payload ?? {}) as {
+		const { question, pageContext, conversationHistory } = (payload ?? {}) as {
 			question?: unknown;
 			pageContext?: unknown;
+			conversationHistory?: unknown;
 		};
 
 		const normalizedQuestion = typeof question === 'string' ? question.trim() : '';
 		const normalizedPageContext = typeof pageContext === 'string' ? pageContext.trim() : '';
+		const normalizedConversationHistory = normalizeConversationHistory(conversationHistory);
 
 		if (normalizedQuestion.length === 0) {
 			return jsonResponse(400, { error: 'Please enter a question before sending.' });
@@ -69,6 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
 			text = await askAI({
 				question: normalizedQuestion,
 				context,
+				conversationHistory: normalizedConversationHistory,
 			});
 		} catch (error) {
 			const message = getErrorMessage(error);
@@ -99,10 +111,55 @@ function jsonResponse(status: number, body: { error?: string; text?: string }): 
 }
 
 /**
+ * Normalizes optional client-sent chat history into a bounded list of safe text messages.
+ */
+function normalizeConversationHistory(value: unknown): ConversationMessage[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	const normalized: ConversationMessage[] = [];
+
+	for (const item of value) {
+		if (!isRecord(item)) {
+			continue;
+		}
+
+		const role = item.role;
+		if (role !== 'user' && role !== 'assistant') {
+			continue;
+		}
+
+		const content = typeof item.content === 'string' ? item.content.trim() : '';
+		if (!content) {
+			continue;
+		}
+
+		normalized.push({
+			role,
+			content: content.slice(0, MAX_HISTORY_MESSAGE_LENGTH),
+		});
+	}
+
+	if (normalized.length <= MAX_HISTORY_MESSAGES) {
+		return normalized;
+	}
+
+	return normalized.slice(-MAX_HISTORY_MESSAGES);
+}
+
+/**
  * Converts unknown throwables into log-safe messages.
  */
 function getErrorMessage(error: unknown): string {
 	return error instanceof Error ? error.message : 'Unknown error';
+}
+
+/**
+ * Narrowing helper for object-like request payload values.
+ */
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
 }
 
 /**
