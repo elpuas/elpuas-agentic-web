@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-WordPressCode
-
-# Hook into WP All Export Plugin to Customize Export Data
-
-El Puas 07/23/2024
 
 WP All Export is a powerful plugin that allows you to easily export WordPress data. However, there are times when you may need to customize the export process to suit your specific needs. After looking for a plugin that could export some custom repeater fields, I found that WP All Export was the tool I needed, mostly because I could hook into the plugin’s actions and customize the export. This use case involves a very nested repeater field, requiring additional logic. In this blog post, we’ll explore how to hook into WP All Export and customize the data before it’s exported. We will use a generic custom post type with a repeater field.
 
@@ -375,35 +370,3 @@ if ( ! in_array( $export_id, $allowed_export_ids ) ) {
 **Conclusion**
 
 This post is based on my experience and how I solved specific challenges using WP All Export and custom functions. If you found this post helpful or think it could benefit someone else, please don’t hesitate to share it. Sharing is caring! Happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/&text=Based on my experience, how I customize WP All Export to handle nested repeater fields in WordPress with detailed steps and examples.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhook-into-wp-all-export-plugin-to-customize-export-data%2F&title=Customizing WP All Export for Nested Repeater Fields>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)
