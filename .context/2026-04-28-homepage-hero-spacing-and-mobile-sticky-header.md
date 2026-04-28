@@ -23,3 +23,8 @@
 - Added homepage-only desktop parent layout rules in `src/layouts/BaseLayout.astro` to remove the centered feel at wrapper level.
 - Homepage `.content` now uses a lowered top/bottom distribution, and homepage `.content-inner` is bottom-anchored (`justify-content: flex-end`) with controlled min-height.
 - Scope is limited to `data-home='true'` on desktop; About/Blog/Contact remain unchanged.
+
+## Dock breathing-space adjustment
+- Kept lowered homepage desktop hero position and added extra reserved lower spacing in homepage-only desktop layout rules.
+- Increased homepage desktop `.content` bottom padding and added homepage desktop `.content-inner` bottom padding to create a protected breathing zone above the floating chatbot dock.
+- Scope remains desktop + homepage only.
