@@ -19,17 +19,12 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-WordPressCode
-
-# Hook into WP All Export Plugin to Customize Export Data
-
-El Puas 07/23/2024
 
 WP All Export is a powerful plugin that allows you to easily export WordPress data. However, there are times when you may need to customize the export process to suit your specific needs. After looking for a plugin that could export some custom repeater fields, I found that WP All Export was the tool I needed, mostly because I could hook into the plugin’s actions and customize the export. This use case involves a very nested repeater field, requiring additional logic. In this blog post, we’ll explore how to hook into WP All Export and customize the data before it’s exported. We will use a generic custom post type with a repeater field.
 
 This is an example of what the repeater looks like:
 
-```
+```text
 Array
 (
     [0] => Array
@@ -99,7 +94,7 @@ The `pmxe_after_export` hook provides two parameters:
 
 To better understand the structure and content of the `$exportObj`, you can log it for debugging purposes, Here is an example of how to use the `pmxe_after_export` hook:
 
-```
+```php
 function wp_all_export_after_export( $export_id, $exportObj ) {
     // Run for export 5 only
     if ( '5' === $export_id) {
@@ -136,7 +131,7 @@ To solve this, I realized that WP All Export saves export data in the database. 
 
 Let’s take a look at the code:
 
-```
+```php
 add_action( 'pmxe_after_export', 'custom_wp_all_export_after_export', 10, 2 );
 
 function custom_wp_all_export_after_export( $export_id, $exportObject ) {
@@ -164,7 +159,7 @@ A database query is executed to fetch the post IDs associated with the given exp
 
 Once you have the post IDs, you can create a function to iterate over this data, extract the repeater field values, and format them as needed. We will create a function called `gather_and_format_data` that takes a post ID, retrieves the repeater field data, and formats it into an array of CSV rows.
 
-```
+```php
 function gather_and_format_data( $post_id ) {
     // Retrieve the repeater field data for the post
     $project_data = get_field( 'project', $post_id );
@@ -216,7 +211,7 @@ Once we had the post IDs, we created a function to gather and format the nested 
 
 With the exported post IDs captured, the next step is to process these IDs, gather the necessary data, and format it into CSV rows. Here’s what I did:
 
-```
+```php
 if ( ! empty( $exported_post_ids ) ) {
     $csv_rows = [];
 
@@ -262,7 +257,7 @@ Adds each row of formatted data to the `csv_rows` array, converting the array of
 
 After constructing the CSV content, the next step is to determine the file path where the export will be saved and write the CSV content to this file. Here’s how we do it:
 
-```
+```php
 // Get the export file path
 $is_secure_export = PMXE_Plugin::getInstance()->getOption('secure');
 if ( ! $is_secure_export ) {
@@ -287,7 +282,7 @@ This code ensures that the CSV content is correctly saved to the export file, ha
 
 Here’s the complete export function including capturing post IDs, gathering and formatting the data, and writing the CSV content to the export file:
 
-```
+```php
 add_action( 'pmxe_after_export', 'custom_wp_all_export_after_export', 10, 2);
 
 function custom_wp_all_export_after_export($export_id, $exportObject) {
@@ -343,7 +338,7 @@ function custom_wp_all_export_after_export($export_id, $exportObject) {
 
 With the above code and the example repeater field data, the resulting CSV will look like this:
 
-```
+```csv
 project_name,project_id,milestone_name,milestone_date,assigned_to,status
 Project One,123,Milestone One,2024-06-01,John Doe,Completed
 Project One,123,Milestone Two,2024-07-01,Jane Smith,In Progress
@@ -357,7 +352,7 @@ This example demonstrates how you can use WP All Export and custom functions to 
 
 To ensure the custom export function runs only for specific exports, you can add a condition to check the export ID. Here are a couple of ways to do it:
 
-```
+```php
 // On a single export.
 if ( $export_id === '5' ) {
     // Do something
@@ -375,35 +370,3 @@ if ( ! in_array( $export_id, $allowed_export_ids ) ) {
 **Conclusion**
 
 This post is based on my experience and how I solved specific challenges using WP All Export and custom functions. If you found this post helpful or think it could benefit someone else, please don’t hesitate to share it. Sharing is caring! Happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/&text=Based on my experience, how I customize WP All Export to handle nested repeater fields in WordPress with detailed steps and examples.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/hook-into-wp-all-export-plugin-to-customize-export-data/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhook-into-wp-all-export-plugin-to-customize-export-data%2F&title=Customizing WP All Export for Nested Repeater Fields>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)

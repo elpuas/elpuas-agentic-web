@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-Code
-
-# Master wizard-worthy code with TypeScript: Learn the basics
-
-El Puas 01/30/2023
 
 Have you ever casted spells before? You know, those mystical incantations that you can use to summon elements and create different effects? Well, TypeScript is kind of like that, but instead of spells, it's code and instead of incantations, it's types.
 
@@ -51,7 +46,7 @@ For example, a number type can be used to store the amount of mana you have or t
 
 TypeScript helps make sure that you're using the right types in the right places so your spellcasting runs smoothly! TypeScript has several built-in types, such as string, number, and boolean.
 
-```
+```js
 // Type string
 let name: string = "Filippo!";
 
@@ -66,7 +61,7 @@ let isSpellCast: boolean = false;
 
 Union types in TypeScript are like having a magic spell book that can hold different types of magic spells. For example, a wizard class might have a property for magic spells that can be either a string or a number. This allows the wizard to use either a spell name or a spell ID to cast a spell.
 
-```
+```ts
 type StringOrNumber = string | number;
 
 let spell: StringOrNumber;
@@ -82,7 +77,7 @@ We might have different types of magic spells that a wizard can cast. Instead of
   
 This way, when we want to refer to a spell, we can use the label instead of the numerical value, making the code more readable and easier to understand.
 
-```
+```ts
 enum SpellType {
   FIRE = 'fire',
   ICE = 'ice',
@@ -100,7 +95,7 @@ An "enum" is like if you had a wizard's chest with only one type of spell compon
 
 An "interface" is like a set of instructions for casting a spell. It tells you what spell components you need and how to put them together to cast a spell. Interfaces in TypeScript are like a blueprint for making sure your code is built correctly and works the way it should.
 
-```
+```ts
 interface Wizard {
     name: string;
     age: number;
@@ -136,7 +131,7 @@ That's similar to what we do with "type annotations" in TypeScript. When we're w
 
 For example, let's say we have a variable called "spellPower" and we know it should only have a number, we can label it with the "number" type. Or, if we have a function called "castSpell" that should only take in a string as the spell name and an object with specific properties, we can label its input types.
 
-```
+```css
 let spellPower: number = 10;
 
 function castSpell(spellName: string, spellIngredients: { potion: string, wand: string }): void {
@@ -152,7 +147,7 @@ Type inference is a feature of TypeScript that allows the compiler to automatica
 
 For example, in the wizard game, let's say you have a variable called "manaPoints" that should only hold a number. With type inference, you can just write:
 
-```
+```js
 let manaPoints = 100;
 ```
 
@@ -160,7 +155,7 @@ TypeScript will automatically infer that the type of "manaPoints" is a number ba
 
 It's worth noting that TypeScript's type inference is not limited to just variables, you also can use it on functions. For example, if you have a function called "castSpell" that takes an argument called "spellName" which should be a string and returns a number, you can write:
 
-```
+```js
 function castSpell(spellName:string): number {
     // function logic
     return spellPower;
@@ -177,7 +172,7 @@ In TypeScript, you can use type annotations and type inference to make sure that
 
 For example, let's say you have a function called "castSpell" that takes in a string as an argument and returns a string. You can annotate the input and output types like this
 
-```
+```js
 function castSpell(spell: string): string {
     // code to cast spell
     return spell;
@@ -198,7 +193,7 @@ For example, let's say we're building a game where we have different types of ch
 
 By using classes, we can make sure that all of our characters have the right things and can do the right things, just like how a blueprint makes sure a castle is built correctly.
 
-```
+```js
 class Wizard {
     spells: string[];
 
@@ -226,7 +221,7 @@ A class can use an interface as a blueprint to make sure it has the right method
 
 The interface, in this case, would define what a wizard should be able to do. For example, it might specify that a wizard should have an array of known spells, and a method for casting those spells.
 
-```
+```ts
 interface SpellCaster {
     spells: string[];
     castSpell(spell: string): void;
@@ -255,7 +250,7 @@ In addition to using interfaces, classes can also be extended to share common fu
 
 Let's continue with the wizard example. Let's say we want to create a new type of wizard called "Fire Wizard" that has some unique abilities in addition to the abilities of a regular wizard. We can extend the `Wizard` class to create the `FireWizard` class.
 
-```
+```js
 class Wizard {
     spells: string[];
 
@@ -294,7 +289,7 @@ class FireWizard extends Wizard {
 
 Generics allow you to create classes, interfaces, and functions that can work with multiple types. In the case of our wizard example, we could use generics to create a Spell class that can hold different types of spells. For example, you could have a Spell class that holds an array of spells that can be of any type: strings, numbers, objects, etc.
 
-```
+```ts
 class Spell<T> {
     spells: T[];
     constructor(spells: T[]) {
@@ -307,7 +302,7 @@ class Spell<T> {
 
 Decorators are a way to add additional functionality to a class, method, or property by attaching a decorator function to it. In the case of our wizard example, we could use a decorator to log the name of the spell whenever it is cast.
 
-```
+```ts
 function logSpell(target: any, key: string, descriptor: PropertyDescriptor) {
     const original = descriptor.value;
     descriptor.value = function(...args: any[]) {
@@ -336,7 +331,7 @@ class Wizard {
 
 JSX is a syntax extension for JavaScript that allows you to write HTML-like elements in your JavaScript code. In the case of our wizard example, we could use JSX to create a spellbook component that displays a list of the wizard's spells.
 
-```
+```ts
 interface Props {
     name: string;
     level: number;
@@ -375,35 +370,3 @@ Some of the advanced features that TypeScript offers include generics, which all
 In short, TypeScript is like a magic wand that helps you write better and more reliable code. It's definitely worth learning and using in your next project.
 
 Thanks for reading and happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/master-wizard-worthy-code-with-typescript-learn-the-basics/&text=Learn how TypeScript can help you build reliable and error-free code.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/master-wizard-worthy-code-with-typescript-learn-the-basics/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/master-wizard-worthy-code-with-typescript-learn-the-basics/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fmaster-wizard-worthy-code-with-typescript-learn-the-basics%2F&title=Unlock the magic of TypeScript: Another beginner's guide>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### Building My Own Image Optimizer with Electron, Node.js, and Sharp
-
-El Puas
-
-CodeAI - Artificial Intelligence
-
-](/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp)[
-
-##### How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding
-
-El Puas
-
-CodeAI - Artificial Intelligence
-
-](/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding)

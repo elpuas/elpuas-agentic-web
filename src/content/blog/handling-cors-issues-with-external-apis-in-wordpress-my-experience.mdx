@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-CodeWordPress
-
-# Handling CORS Issues with External APIs in WordPress: My Experience
-
-El Puas 08/09/2023
 
 If you’re into web development, you might have encountered CORS (Cross-Origin Resource Sharing) problems. Especially challenging when dealing with external APIs, these issues can create unexpected roadblocks. While WordPress often simplifies website creation, it's not immune to CORS complexities. In this article, I'll walk you through my journey, might offer some insights for your own projects... or, who knows, maybe I've been doing it all wrong!
 
@@ -41,7 +36,7 @@ As I embarked on my journey to fetch the JWT token, I decided to use the tried-a
 
 For those unacquainted, here's a brief example of the POST call I attempted:
 
-```
+```ts
 fetch('https://api.example.com/auth/login', {
     method: 'POST',
     headers: {
@@ -75,7 +70,7 @@ In essence, while browsers enforce strict security protocols like CORS to safegu
 
 Once the CORS issue was circumvented, the next step was to obtain the JWT and store it securely for easy access. I chose to use cookies for this purpose, and here's how I went about it:
 
-```
+```php
 // Function to fetch and store JWT
 function fetch_and_store_jwt() {
 
@@ -136,7 +131,7 @@ After obtaining the JWT and storing it securely as a cookie, I encountered anoth
 
 Here's a conceptual example solution:
 
-```
+```php
 // Register a custom endpoint to retrieve make data
 function register_custom_api_endpoints() {
     register_rest_route('customapi/v1', '/make', [
@@ -185,7 +180,7 @@ With the server-side solution in place, I circled back to the original plan: usi
 
 Here's a conceptual example:
 
-```
+```js
 // Fetch the make data for a specific year
 function getMake(year) {
     fetch(`/wp-json/customapi/v1/make?year=${year}`)
@@ -215,35 +210,3 @@ By targeting the custom WordPress endpoints, I could retrieve the data I needed 
 Web development often feels like navigating through a maze, full of unexpected twists and turns. My solution to the CORS challenge with the WordPress REST API was no different. Through trial and error, and a lot of learning in the process, I devised a strategy using custom endpoints and server-side requests.
 
 Remember, while this approach worked for me (and yes, it does work on my computer!), it's not the only path. Each challenge is an opportunity for learning and growth. If my journey has offered any insights or sparked a chuckle, please share this post and stay connected for more adventures in code.
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/&text=Join me as I navigate CORS errors in WordPress, turning challenges into solutions with custom API endpoints. Dive into my real-world journey and insights!>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/handling-cors-issues-with-external-apis-in-wordpress-my-experience/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fhandling-cors-issues-with-external-apis-in-wordpress-my-experience%2F&title=WordPress & CORS: How I Tackled Tricky API Errors>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)

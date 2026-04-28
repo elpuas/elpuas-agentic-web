@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-WordPressCode
-
-# You Might Not Need a Custom Block: The Block Variations API
-
-El Puas 10/16/2024
 
 When working with WordPress blocks, you don’t always need to create something brand new to get the look or functionality you want. Sometimes, just a few tweaks can make all the difference. That’s where **Block Styles** and **Block Variations** come in.
 
@@ -41,7 +36,7 @@ To create Block Variations using PHP, we’ll use the [get\_block\_type\_variati
 
 Let’s start by registering a simple Call-to-Action (CTA) block variation
 
-```
+```js
 function custom_block_variations( $variations, $block_type ) {
     if ( 'core/columns' === $block_type->name ) {
         $variations[] = [
@@ -173,7 +168,7 @@ Now that we have our Team custom post type set up and the team members created, 
 
 We’ll use the `get_block_type_variations` hook in PHP, just like we did with the CTA Block Variation. This time, we’ll create a variation of the Query block that’s specifically crafted to display posts from the “Team” custom post type.
 
-```
+```js
 if ( 'core/query' === $block_type->name ) {
       $variations[] = [
           'name'        => 'team-query-grid',
@@ -261,35 +256,3 @@ In this post, we created two useful block variations: a **CTA Block Variation** 
 Even though we hit a snag with setting layouts directly in the query variation, using custom styles solved the problem. These examples show how block variations can make your WordPress site more consistent and save you time.
 
 You can find the complete code for these variations [here](https://github.com/elpuas/elpuas-custom-block-styles/tree/post/block-variations). If you found this post helpful, please share it. Sharing is caring. Happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-variations-api/&text=Learn how to build WordPress block variations for call-to-action sections and team displays.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-variations-api/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-variations-api/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fyou-might-not-need-a-custom-block-the-block-variations-api%2F&title=Simplify WordPress Blocks with the Block Variations API>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)

@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-CodeAI - Artificial Intelligence
-
-# Building My Own Image Optimizer with Electron, Node.js, and Sharp
-
-El Puas 06/20/2025
 
 You might ask, “Why create an image optimizer when so many already exist?” It’s a valid question. For me, this project was about having full control, learning through the process, and keeping things simple.
 
@@ -50,7 +45,7 @@ No extra UI frameworks or build tools: just a folder picker, a format selector, 
 
 The project is structured in a simple, clear way:
 
-```
+```text
 image-optimizer-electron/
 ├── dist/                  # Packaged app output
 ├── scripts/               # optimize.js (core logic for image processing)
@@ -74,7 +69,7 @@ The core flow looks like this:
 
 ### Example: Forking the Script in main.js
 
-```
+```js
 const child = fork(
   scriptPath,
   ['--input', inputPath, '--format', format],
@@ -94,7 +89,7 @@ This approach helps the main process stay responsive and handles logs and errors
 
 ### **Example: Processing Images in optimize.js**
 
-```
+```js
 const sharp = require('sharp');
 
 sharp(inputFile)
@@ -105,7 +100,7 @@ sharp(inputFile)
 
 If the output directory doesn’t exist, it gets created on the fly:
 
-```
+```js
 const outputPath = path.join(inputPath, 'optimized');
 if (!fs.existsSync(outputPath)) {
   fs.mkdirSync(outputPath);
@@ -147,37 +142,3 @@ This project became a tool I use daily, and I hope it proves useful for others a
 The app is open source and available on GitHub. You can explore the code, suggest improvements, or use it as a base for your own Electron experiments.
 
 🔗 [https://github.com/elpuas/image-optimizer-electron](https://github.com/elpuas/image-optimizer-electron)
-
-If you liked this post, share it — and happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp/&text=A simple, offline image optimizer built with Electron, Node.js, and Sharp. Open source, fast, and designed to run with just one click.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fbuilding-my-own-image-optimizer-with-electron-node-js-and-sharp%2F&title=Build a Fast Local Image Optimizer with Electron & Sharp>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding
-
-El Puas
-
-CodeAI - Artificial Intelligence
-
-](/blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding)[
-
-##### You Might Not Need a Custom Block: The Block Variations API
-
-El Puas
-
-WordPressCode
-
-](/blog/you-might-not-need-a-custom-block-the-block-variations-api)

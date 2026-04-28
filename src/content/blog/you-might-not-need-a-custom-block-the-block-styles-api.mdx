@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-WordPressCode
-
-# You Might Not Need a Custom Block: The Block Styles API
-
-El Puas 08/17/2024
 
 When you’re building a WordPress site, getting your blocks to look just right can be a bit of a challenge. Whether it’s buttons, headers, or other elements, you might find yourself adding custom CSS or even creating new blocks just to match your design. But there’s a simpler way—using the Block Styles API.
 
@@ -43,7 +38,7 @@ Here’s how you can do it:
 
 **Register the Plugin and Button Styles**
 
-```
+```php
 <?php
 /*
 Plugin Name: Custom Block Styles
@@ -74,7 +69,7 @@ In this example, we’re using the server-side registration method for our custo
 
 To register a block style server-side, we use the `register_block_style()` function. Here’s how we can register a custom button style:
 
-```
+```php
 register_block_style(
         'core/button',
         [
@@ -117,7 +112,7 @@ These are the key parameters we’re using in our example. There are additional 
 
 Now that we’ve set up our custom block style using the server-side function, it’s time to put it to the test. Here’s the complete function with our first custom button style:
 
-```
+```php
 <?php
 /*
 Plugin Name: Custom Block Styles
@@ -172,7 +167,7 @@ For the icon, we’ll use an SVG encoded in Base64, which is a neat way to inclu
 
 Here’s the updated `inline_style`:
 
-```
+```css
 'inline_style' => '
     .wp-block-button:is(.is-style-custom-primary-button) {
         .wp-block-button__link {
@@ -214,7 +209,7 @@ Since creating a new button style follows the same process as the first one, you
 
 For example, to create a **Secondary Button**, just modify the name and label to something like custom-secondary-button and Custom Secondary. Then, adjust the inline\_style to match your desired design, such as changing the background color, icon, and hover effects.
 
-```
+```php
 register_block_style(
     'core/button',
     array(
@@ -239,7 +234,7 @@ Customizing headers with unique styles like gradients and glowing effects can ma
 
 Just like with the button styles, we’ll use the register\_block\_style() function to register our new header styles. Let’s start with the **Gradient Header**.
 
-```
+```php
 register_block_style(
     'core/heading',
     array(
@@ -267,38 +262,4 @@ We used server-side functions to register these styles, but you can also do it w
 
 Now that you’ve seen how easy it is, try experimenting with more styles to make your content stand out even more. If you like this post or know someone who will help, please share. Sharing is caring. Happy coding!
 
-\--
-
 The gradient header style was inspired by [Text Gradients on Figma](https://www.figma.com/community/file/1023971621563915829/text-gradients). The [button gradient](https://www.figma.com/community/file/1089137245850262953) style was based on the same design principles.
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-styles-api/&text=Learn how to use the Block Styles API in WordPress to create custom styles for buttons and headers. Easy steps with examples.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-styles-api/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/you-might-not-need-a-custom-block-the-block-styles-api/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fyou-might-not-need-a-custom-block-the-block-styles-api%2F&title=You Might Not Need a Custom Block: Block Styles API>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)

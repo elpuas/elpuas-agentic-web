@@ -3,6 +3,7 @@
 
   /* Typography */
   --font-family-sans: "Mona Sans VF", "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-family-mono: "JetBrains Mono Variable", "JetBrains Mono", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-size-xs: 0.875rem;

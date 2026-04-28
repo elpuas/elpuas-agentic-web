@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-WordPressCode
-
-# Gravity Forms' Repeater API a Lifesaver
-
-El Puas 03/06/2024
 
 I'm excited to share a recent project challenge I faced, which turned into a pretty cool discovery, a little-known gem in [Gravity Forms](https://www.gravityforms.com/).
 
@@ -51,7 +46,7 @@ For those seeking further information, [Gravity Forms' official documentation](h
 
 After carefully reading the docs and some examples found on the internet, it's time to roll up our sleeves and dive into the code. In this section, we'll walk through the process of implementing the repeater field for songs and musicians in our Gravity Form. Let's get started!
 
-```
+```js
 /**
  * Registers the repeater field for songs and musicians in the specified Gravity Form.
  *
@@ -75,7 +70,7 @@ Inside the function, we use a conditional statement (`if`) to check if the ID of
 
 If the form ID doesn't match, we use an early return statement to exit the function and return the unmodified form object.
 
-```
+```php
 // Create the field for song name
 $song_name_field = GF_Fields::create( 
     [
@@ -106,7 +101,7 @@ It's important to note that the Repeater Field supports various field types, and
 
 Now that we've set up the individual fields, it's time to bring them together within a repeater field. This allows users to register multiple songs within the same form submission, providing a seamless experience. Let's dive into the code and create the repeater field for our song registration form:
 
-```
+```php
 // Create a repeater for song registration and specify the fields to display inside the repeater.
 $songs_repeater = GF_Fields::create( 
     [
@@ -139,7 +134,7 @@ The fields parameter specifies the fields to be included within the repeater, in
 
 We are going to add another repeater field to our newly created repeater for songs. For simplicity, we'll assume the existence of other fields and dive straight into creating this repeater for musicians and performers:
 
-```
+```php
 // Create a repeater for musicians and performers
 $musicians_repeater = GF_Fields::create( 
     [
@@ -161,7 +156,7 @@ $musicians_repeater = GF_Fields::create(
 
 Now, we'll integrate the newly created repeater for musicians and performers into the $songs\_repeater field array. This enables users to register both songs and associated musicians seamlessly within the same form submission. Here's how we'll update the `$songs_repeater` field array:
 
-```
+```php
 // Update the fields array of $songs_repeater to include the musicians repeater
 $fields_array = [
     $song_name_field,       // Field for song name
@@ -185,48 +180,16 @@ And that's how you can create nested repeaters, allowing for a structured and fl
   
 To place the repeater field at a specific position in your form, you can use the `array_splice()` function. The fields array in Gravity Forms starts with an index of 0. By adding the repeater field at a certain index, you control its placement in the form. For example:
 
-```
+```php
 array_splice( $form['fields'], 10, 0, array( $songs_repeater ) );
 ```
 
 To complete our form set up, we simply return our modified form and hook it into the `gform_form_post_get_meta_YOUR_FORM_ID` filter. This ensures that our repeater fields are seamlessly integrated into the form. Here's the hook to add to your code:
 
-```
+```php
 add_filter( 'gform_form_post_get_meta_YOUR_FORM_ID', 'register_songs_repeater' );
 ```
 
 With this hook in place, our form is ready to capture song registrations along with associated musicians, providing a robust solution for our client's needs.
 
 As always, this is how I found a solution to my challenges. Through careful planning and implementation, we've crafted a customized solution that perfectly meets our client's requirements. Happy coding!
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/gravity-forms-repeater-api-a-lifesaver/&text=Discover how to simplify form creation using the powerful Gravity Forms Repeater API.>) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/gravity-forms-repeater-api-a-lifesaver/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/gravity-forms-repeater-api-a-lifesaver/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fgravity-forms-repeater-api-a-lifesaver%2F&title=Simplify Form Creation: Gravity Forms Repeater API>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)

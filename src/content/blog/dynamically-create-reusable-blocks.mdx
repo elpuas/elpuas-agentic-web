@@ -19,11 +19,6 @@ tags:
 featuredImage: "/favicon.svg"
 draft: false
 ---
-CodeWordPress
-
-# Dynamically Create Reusable Blocks
-
-El Puas 03/01/2023
 
 Reusable blocks in WordPress can be a fantastic time-saver when creating content. They allow you to create a block once and reuse it multiple times throughout your website. However, creating reusable blocks manually can be a tedious and time-consuming process. In this post, we'll explore how to dynamically create reusable blocks in WordPress.
 
@@ -45,7 +40,7 @@ I began by researching how reusable blocks function and exploring methods for cr
 
 Again been a post-type makes thing better, we can use WP core functions and work as a regular post, so the first thing is create a variable for the block title, and check if the block exists.
 
-```
+```php
 $block_title = 'My Block';
 
 // Check if the block already exists.
@@ -60,7 +55,7 @@ $block_exist = get_posts(
 
 Next, we verify if the block exists; if it does, we return early.
 
-```
+```php
 if ( $block_exist ) {
   return;
 } else {
@@ -72,7 +67,7 @@ Next we are going to create a new post object, and insert it into the database.
 
 I’m using the **`wp_insert_post()`** function, which is a WordPress function designed to create a new post or update an existing one in the database.
 
-```
+```php
 } else {
 // Create a new post object.
   $new_block_post = [
@@ -88,7 +83,7 @@ I’m using the **`wp_insert_post()`** function, which is a WordPress function d
 
 To generate the post content, I first constructed my block within the editor. Then, I simply selected the `Copy Block` option to access the block markup. In order to keep my content organized, I created a separate file to house the block content. As an example, I copied the core paragraph block and incorporated it into this file:
 
-```
+```php
 <?php
 /**
  * Reusable Block Content
@@ -106,7 +101,7 @@ EOD;
 
 Finally I’m ensuring that the newly created post becomes a reusable block by setting its post type to `wp_block`. first check if `$new_block` is valid and not an instance of `WP_Error`. If the condition is met, I use the `wp_set_post_terms()` function to set the post\_type term for the new post.
 
-```
+```php
 // Make the new post a reusable block.
   if ( 0 !== $new_block && ! is_wp_error( $new_block ) ) {
     $saved = wp_set_post_terms( $new_block, 'wp_block', 'post_type' );
@@ -121,7 +116,7 @@ Before incorporating this reusable block into your template, let's explore how t
 
 To incorporate the reusable block into my template, the first step is to retrieve the block using the following code
 
-```
+```php
 $new_block = get_page_by_path( 'my-block', OBJECT, 'wp_block' );
 ```
 
@@ -131,7 +126,7 @@ By using this function, I’m able to retrieve the reusable block with the speci
 
 In this final part of my post, I show how to display the content of the retrieved reusable block in the template.
 
-```
+```php
 $my_block_id = $new_block->ID;
 
 if ( $my_block_id ) {
@@ -158,35 +153,3 @@ Throughout this post, I have demonstrated how to create a reusable block dynamic
 By following these steps, I can efficiently utilize reusable blocks in my WordPress projects, allowing for more organized and maintainable content.
 
 With this knowledge, I am able to harness the full potential of reusable blocks to enhance my website-building experience.
-
-##### Give and Share
-
-Enjoyed this article? Share it with your friends and colleagues!
-
-[X](<https://twitter.com/intent/tweet?url=https://elpuas.com/blog/dynamically-create-reusable-blocks/&text=Dive into my personal strategy for harnessing the power of dynamic reusable blocks in WordPress. >) [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://elpuas.com/blog/dynamically-create-reusable-blocks/) [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https://elpuas.com/blog/dynamically-create-reusable-blocks/) [Reddit](<https://www.reddit.com/submit?url=https%3A%2F%2Felpuas.com%2Fblog%2Fdynamically-create-reusable-blocks%2F&title=Create and Use Dynamic Reusable Blocks in WordPress>)
-
-##### Buy Me a Coffee
-
-If you found this article helpful, consider buying me a coffee!
-
-[](https://buymeacoffee.com/elpuas)
-
-## Recent Posts
-
-[
-
-##### A Year with the WordPress Community
-
-El Puas
-
-WordPress
-
-](/blog/a-year-with-the-wordpress-community)[
-
-##### WordCamp US 2025 – Portland, Oregon
-
-El Puas
-
-WordPress
-
-](/blog/wordcamp-us-2025-portland-oregon)
