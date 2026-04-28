@@ -28,3 +28,7 @@
 - Kept lowered homepage desktop hero position and added extra reserved lower spacing in homepage-only desktop layout rules.
 - Increased homepage desktop `.content` bottom padding and added homepage desktop `.content-inner` bottom padding to create a protected breathing zone above the floating chatbot dock.
 - Scope remains desktop + homepage only.
+
+## Expanded dock-state reserve
+- Increased homepage desktop-only lower reserve to account for chatbot dock expansion during active conversation, not only collapsed idle height.
+- Enlarged homepage `.content` bottom spacing budget and `.content-inner` bottom breathing padding to preserve visual separation when the dock grows upward.
