@@ -23,6 +23,12 @@ canonicalUrl: "https://elpuas.com/blog/a-year-with-the-wordpress-community/"
 draft: false
 ---
 
+import StoryGallery from '../../components/content/StoryGallery';
+import galleryImageOne from '../../assets/blog/a-year-with-the-wordpress-community/gallery/1665942128-32748975_2045489799108471_4756559637598175232_n.jpeg';
+import galleryImageTwo from '../../assets/blog/a-year-with-the-wordpress-community/gallery/1665942148-37654654_10160573459925317_3922431706874773504_n.jpeg';
+import galleryImageThree from '../../assets/blog/a-year-with-the-wordpress-community/gallery/1725237618-img_5374.jpeg';
+import galleryImageFour from '../../assets/blog/a-year-with-the-wordpress-community/gallery/1725237634-img_8396.jpg';
+
 2025 has been one of the best and busiest years of my life in the WordPress community.
 
 From the first event in February to the last one in November, I had the chance to travel, teach, and share great moments with amazing people.
@@ -38,6 +44,40 @@ It was the perfect moment to introduce WordPress Playground, since many people h
 Instead of installing Local or WP Studio, everyone used Playground right in their browsers and followed the entire session without any problems.
 
 It worked perfectly and showed how easy it is to start building with WordPress today.
+
+<StoryGallery
+	client:visible
+	items={[
+		{
+			id: 'miami-10th-anniversary',
+			src: galleryImageOne.src,
+			alt: 'Selfie at WordCamp Miami 10th Anniversary with @phtomatt',
+			title: 'With @phtomatt at WordCamp Miami 10th Anniversary',
+			caption: 'A snapshot from the journey, sharing ideas with the community in person.',
+		},
+		{
+			id: 'portland-campus-connect',
+			src: galleryImageTwo.src,
+			alt: 'Costa Rican team moment during WordCamp US in Portland',
+			title: 'WordCamp US Portland Campus Connect Story',
+			caption: 'Our team represented Campus Connect and shared how the initiative grew in Costa Rica.',
+		},
+		{
+			id: 'community-conversation',
+			src: galleryImageThree.src,
+			alt: 'Conversation and networking moment at a WordPress event',
+			title: 'Community Conversations That Sparked Ideas',
+			caption: 'Some of the best lessons came from informal talks between sessions.',
+		},
+		{
+			id: 'road-to-2026',
+			src: galleryImageFour.src,
+			alt: 'WordPress event atmosphere from the 2025 community tour',
+			title: 'On the Road Through 2025 Events',
+			caption: 'Each city brought new collaborators, students, and stories to keep building together.',
+		},
+	]}
+/>
 
 ## **WordCamp US – Portland, August**
 
