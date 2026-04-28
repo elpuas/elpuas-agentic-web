@@ -1,6 +1,6 @@
 import { getBlogIndexContext } from './blog-context';
 
-const KNOWLEDGE_GLOB = import.meta.glob('../../content/knowledge/*.mdx', {
+const KNOWLEDGE_GLOB = import.meta.glob('../../content/knowledge/**/*.mdx', {
 	query: '?raw',
 	import: 'default',
 });
