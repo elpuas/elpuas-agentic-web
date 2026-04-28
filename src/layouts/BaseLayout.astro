@@ -882,6 +882,22 @@ const navigation = [
 	}
 
 	@media (min-width: 48.0625rem) {
+		.shell[data-home='true'] .content {
+			display: flex;
+			align-items: stretch;
+			padding-top: clamp(2.8rem, 8vh, 5.25rem);
+			padding-bottom: clamp(11rem, 25vh, 14.5rem);
+		}
+
+		.shell[data-home='true'] .content-inner {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			min-height: clamp(17rem, 38vh, 24rem);
+			padding-bottom: clamp(2.8rem, 6vh, 4.4rem);
+			margin: 0 auto;
+		}
+
 		.shell-cli-floating-desktop .workspace::after {
 			content: '';
 			position: fixed;
@@ -1018,6 +1034,7 @@ const navigation = [
 			--mobile-cli-inline: clamp(0.85rem, 4.8vw, 1.25rem);
 			--mobile-cli-bottom-gap: clamp(0.55rem, 2.8vh, 0.95rem);
 			--mobile-cli-reserve: clamp(9.5rem, 31vh, 12rem);
+			--mobile-header-height: calc(clamp(3.2rem, 13vw, 3.8rem) + env(safe-area-inset-top, 0px));
 		}
 
 		.mobile-header {
@@ -1025,7 +1042,16 @@ const navigation = [
 			align-items: center;
 			justify-content: space-between;
 			gap: var(--space-3);
-			padding: clamp(0.65rem, 3vw, 0.9rem) clamp(1rem, 4.8vw, 1.25rem) 0;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 1210;
+			padding: calc(env(safe-area-inset-top, 0px) + clamp(0.55rem, 2.6vw, 0.75rem))
+				clamp(1rem, 4.8vw, 1.25rem) clamp(0.45rem, 2.4vw, 0.65rem);
+			background: rgba(8, 9, 12, 0.86);
+			backdrop-filter: blur(10px);
+			border-bottom: var(--space-px) solid rgba(255, 255, 255, 0.08);
 		}
 
 		.mobile-brand {
@@ -1126,7 +1152,7 @@ const navigation = [
 		}
 
 		.workspace {
-			padding-top: 0;
+			padding-top: var(--mobile-header-height);
 		}
 
 		.workspace::after {

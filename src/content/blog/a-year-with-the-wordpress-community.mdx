@@ -23,6 +23,13 @@ canonicalUrl: "https://elpuas.com/blog/a-year-with-the-wordpress-community/"
 draft: false
 ---
 
+import StoryGallery from '../../components/content/StoryGallery';
+import galleryImageOne from '../../assets/blog/a-year-with-the-wordpress-community/gallery/portland.webp';
+import galleryImageTwo from '../../assets/blog/a-year-with-the-wordpress-community/gallery/wp-youth-day.webp';
+import galleryImageThree from '../../assets/blog/a-year-with-the-wordpress-community/gallery/wc-guate.webp';
+import galleryImageFour from '../../assets/blog/a-year-with-the-wordpress-community/gallery/wc-san-jose.webp';
+import galleryImageFive from '../../assets/blog/a-year-with-the-wordpress-community/gallery/gdg-pura-vida.webp';
+
 2025 has been one of the best and busiest years of my life in the WordPress community.
 
 From the first event in February to the last one in November, I had the chance to travel, teach, and share great moments with amazing people.
@@ -38,6 +45,54 @@ It was the perfect moment to introduce WordPress Playground, since many people h
 Instead of installing Local or WP Studio, everyone used Playground right in their browsers and followed the entire session without any problems.
 
 It worked perfectly and showed how easy it is to start building with WordPress today.
+
+<StoryGallery
+
+	client:visible
+	items={[
+		{
+			id: 'wordcamp-us-portland',
+			src: galleryImageOne.src,
+			alt: 'Alfredo Navas at the WordCamp US Portland venue',
+			title: 'WordCamp US Portland, Campus Connect Goes Global',
+			caption:
+				'Our Costa Rican team was invited to share the Campus Connect story and show how local community initiatives can scale internationally.',
+		},
+		{
+			id: 'wp-youth-day-nicaragua',
+			src: galleryImageTwo.src,
+			alt: 'Workshop session during WordPress Youth Day Nicaragua',
+			title: 'WordPress Youth Day Nicaragua, Teaching the Next Builders',
+			caption:
+				'I joined the Nicaragua community to teach students how to build a professional portfolio using the WordPress Block Editor.',
+		},
+		{
+			id: 'wordcamp-guatemala',
+			src: galleryImageThree.src,
+			alt: 'Presentation and networking during WordCamp Guatemala',
+			title: 'WordCamp Guatemala, Sharing the Future of AI in WordPress',
+			caption:
+				'This event gave me the chance to present the Abilities API, the MCP Adapter, and Automattic’s growing AI ecosystem to the local community.',
+		},
+		{
+			id: 'wordcamp-san-jose',
+			src: galleryImageFour.src,
+			alt: 'Lead organizer team photo at WordCamp San José',
+			title: 'WordCamp San José, Leading the Community at Home',
+			caption:
+				'One of the most meaningful moments of the year was serving as Lead Organizer and helping bring our local WordPress community together again.',
+		},
+		{
+			id: 'gdg-pura-vida-devfest',
+			src: galleryImageFive.src,
+			alt: 'Audience during GDG Pura Vida DevFest Costa Rica',
+			title: 'GDG Pura Vida DevFest, Bringing AI Beyond WordPress',
+			caption:
+				'I closed part of the year speaking to a broader developer audience about artificial intelligence, product thinking, and the future of building with AI.',
+		},
+	]}
+
+/>
 
 ## **WordCamp US – Portland, August**
 

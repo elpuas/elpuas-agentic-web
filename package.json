@@ -14,9 +14,15 @@
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
     "@astrojs/netlify": "^7.0.8",
+    "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "^3.7.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "astro": "^6.1.9",
-    "openai": "^6.34.0"
+    "framer-motion": "^12.38.0",
+    "openai": "^6.34.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
     "@types/node": "^25.6.0"
