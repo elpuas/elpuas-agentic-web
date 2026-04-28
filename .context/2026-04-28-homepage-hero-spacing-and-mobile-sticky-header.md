@@ -15,3 +15,6 @@
 ## Next steps
 - Validate in-browser at desktop and mobile breakpoints for final optical balance.
 - If desired, fine-tune homepage-only desktop spacing by a few pixels after visual QA.
+
+## Follow-up adjustment (same day)
+- Further reduced homepage hero vertical height and bottom padding in `src/components/Welcome.astro` so the hero block sits directly above the chatbot dock with tighter visual coupling on desktop.
