@@ -164,20 +164,22 @@ export default function StoryGallery({ items, className = '' }: StoryGalleryProp
 				</AnimatePresence>
 
 				<div className="story-gallery__mobile-stack" role="list" aria-label="Select another photo">
-					{stackItems.map(({ item, itemIndex }) => (
-						<motion.button
-							key={`mobile-${item.id}`}
-							type="button"
-							className="story-gallery__mobile-thumb"
-							onClick={() => promoteToActive(itemIndex)}
-							whileHover={{ y: -3, scale: 1.01 }}
-							whileTap={{ scale: 0.98 }}
-							transition={springTransition}
-							aria-label={`Show image: ${item.title}`}
-						>
-							<img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
-						</motion.button>
-					))}
+					<div className="story-gallery__mobile-track">
+						{stackItems.map(({ item, itemIndex }) => (
+							<motion.button
+								key={`mobile-${item.id}`}
+								type="button"
+								className="story-gallery__mobile-thumb"
+								onClick={() => promoteToActive(itemIndex)}
+								whileHover={{ y: -3, scale: 1.01 }}
+								whileTap={{ scale: 0.98 }}
+								transition={springTransition}
+								aria-label={`Show image: ${item.title}`}
+							>
+								<img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
+							</motion.button>
+						))}
+					</div>
 				</div>
 			</div>
 		</section>
