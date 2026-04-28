@@ -1,4 +1,7 @@
 .story-gallery {
+	--story-gallery-thumb-ratio: 4 / 5;
+	--story-gallery-thumb-width-desktop: clamp(8.4rem, 12vw, 10rem);
+	--story-gallery-thumb-width-mobile: clamp(5.8rem, 23vw, 6.9rem);
 	margin: clamp(2rem, 7vw, 4.75rem) 0;
 	width: 100%;
 }
@@ -106,8 +109,8 @@
 	left: 0;
 	margin: 0;
 	padding: 0;
-	width: clamp(8.4rem, 12vw, 10rem);
-	aspect-ratio: 4 / 5;
+	width: var(--story-gallery-thumb-width-desktop);
+	aspect-ratio: var(--story-gallery-thumb-ratio);
 	border-radius: 0.95rem;
 	border: 1.35px solid rgba(216, 255, 0, 0.76);
 	overflow: hidden;
@@ -156,8 +159,8 @@
 
 .story-gallery__mobile-thumb {
 	flex: 0 0 auto;
-	width: clamp(5.8rem, 23vw, 6.9rem);
-	aspect-ratio: 4 / 5;
+	width: var(--story-gallery-thumb-width-mobile);
+	aspect-ratio: var(--story-gallery-thumb-ratio);
 	border: 1.25px solid rgba(216, 255, 0, 0.72);
 	border-radius: 0.85rem;
 	overflow: hidden;

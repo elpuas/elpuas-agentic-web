@@ -121,7 +121,6 @@ export default function StoryGallery({ items, className = '' }: StoryGalleryProp
 										y: stackIndex * 10,
 										rotate: rotation,
 										opacity: 1,
-										scale: 1 - stackIndex * 0.05,
 									}}
 									whileHover={{ y: stackIndex * 10 - 8, scale: 1.02, zIndex: 30 }}
 									whileFocus={{ y: stackIndex * 10 - 8, scale: 1.02, zIndex: 30 }}
