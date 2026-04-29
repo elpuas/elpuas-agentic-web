@@ -835,9 +835,22 @@ const navigation = [
 		border-color: rgba(216, 255, 0, 0.2);
 	}
 
+	:global(.cli-message-user .cli-message-paragraph) {
+		color: var(--color-accent);
+	}
+
 	.cli-message-assistant {
 		color: var(--color-text-subtle);
+		line-height: 1.65;
 		border-color: var(--color-border);
+	}
+
+	.cli-message-user + .cli-message-assistant {
+		margin-top: var(--space-2);
+	}
+
+	:global(.cli-message-assistant .cli-message-paragraph + .cli-message-paragraph) {
+		margin-top: var(--space-4);
 	}
 
 	:global(.cli-message-assistant a) {
