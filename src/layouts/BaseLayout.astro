@@ -142,6 +142,7 @@ const navigation = [
 				]}
 				data-sidebar-shell
 				data-sidebar-open="false"
+				data-cli-expanded="false"
 				data-home={currentPage === '/' ? 'true' : 'false'}
 			>
 				<aside class="sidebar" id="primary-sidebar" aria-label="Primary navigation" data-mobile-sidebar>
@@ -353,6 +354,8 @@ const navigation = [
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
 				const cliRoot = document.querySelector('.cli');
+				const cliPanel = cliRoot?.querySelector('.cli-panel');
+				const shellRoot = document.querySelector('[data-sidebar-shell]');
 				const page = cliRoot?.dataset.page ?? '/';
 				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
 				let pageContext = '';
@@ -369,6 +372,13 @@ const navigation = [
 
 				if (form && input && messages && submitButton) {
 					const conversationHistory = [];
+					let activeRevealId = 0;
+					let isCliExpanded = false;
+					let idleDockHeight = 0;
+					let heroOffsetFrame = 0;
+					const desktopHeroQuery = window.matchMedia('(max-width: 48rem)');
+					const heroBreathingRoom = 18;
+					const maxHeroLift = 180;
 					const assistantLinkPattern =
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
@@ -443,6 +453,61 @@ const navigation = [
 						messages.scrollTop = messages.scrollHeight;
 					};
 
+					const setCliExpanded = (expanded) => {
+						isCliExpanded = expanded;
+						if (shellRoot) {
+							shellRoot.dataset.cliExpanded = expanded ? 'true' : 'false';
+						}
+					};
+
+					const applyHeroDockCompensation = () => {
+						if (!shellRoot || !cliPanel) {
+							return;
+						}
+
+						const isDesktop = !desktopHeroQuery.matches;
+						const isHomePage = shellRoot.dataset.home === 'true';
+
+						if (!isDesktop || !isHomePage) {
+							shellRoot.style.setProperty('--home-hero-lift', '0px');
+							return;
+						}
+
+						const currentDockHeight = cliPanel.getBoundingClientRect().height;
+						if (!messages.children.length) {
+							idleDockHeight = currentDockHeight;
+							shellRoot.style.setProperty('--home-hero-lift', '0px');
+							return;
+						}
+
+						if (idleDockHeight <= 0) {
+							idleDockHeight = currentDockHeight;
+						}
+
+						const dockGrowth = Math.max(0, currentDockHeight - idleDockHeight);
+						const heroLift = Math.min(maxHeroLift, dockGrowth + heroBreathingRoom);
+						shellRoot.style.setProperty('--home-hero-lift', `${heroLift}px`);
+					};
+
+					const scheduleHeroDockCompensation = () => {
+						if (heroOffsetFrame) {
+							window.cancelAnimationFrame(heroOffsetFrame);
+						}
+
+						heroOffsetFrame = window.requestAnimationFrame(() => {
+							heroOffsetFrame = 0;
+							applyHeroDockCompensation();
+						});
+					};
+
+					const syncDockExpandedState = () => {
+						const hasConversation = messages.children.length > 0;
+						if (hasConversation !== isCliExpanded) {
+							setCliExpanded(hasConversation);
+						}
+						scheduleHeroDockCompensation();
+					};
+
 					/**
 					 * Replaces a message node with either loading feedback or paragraph content.
 					 * Assistant messages support multiline formatting and inline link detection.
@@ -495,8 +560,52 @@ const navigation = [
 						renderMessageContent(item, role, text, isLoading);
 						messages.append(item);
 						scrollMessages();
+						syncDockExpandedState();
 						return item;
 					};
+
+					const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+					const revealAssistantResponse = async (item, text) => {
+						activeRevealId += 1;
+						const revealId = activeRevealId;
+						const response = typeof text === 'string' ? text : '';
+						const normalized = response.trim();
+
+						if (!normalized) {
+							renderMessageContent(item, 'assistant', response);
+							scrollMessages();
+							return response;
+						}
+
+						const totalLength = normalized.length;
+						let visibleLength = 0;
+
+						while (visibleLength < totalLength && revealId === activeRevealId) {
+							const remaining = totalLength - visibleLength;
+							const chunk = Math.min(remaining, Math.max(6, Math.round(totalLength / 26)));
+							visibleLength += chunk;
+							renderMessageContent(item, 'assistant', normalized.slice(0, visibleLength));
+							scrollMessages();
+							await wait(22);
+						}
+
+						renderMessageContent(item, 'assistant', normalized);
+						scrollMessages();
+						return normalized;
+					};
+
+					if (cliPanel) {
+						scheduleHeroDockCompensation();
+						if ('ResizeObserver' in window) {
+							const panelResizeObserver = new ResizeObserver(() => {
+								scheduleHeroDockCompensation();
+							});
+							panelResizeObserver.observe(cliPanel);
+						}
+						window.addEventListener('resize', scheduleHeroDockCompensation);
+						desktopHeroQuery.addEventListener('change', scheduleHeroDockCompensation);
+					}
 
 					form.addEventListener('submit', async (event) => {
 						event.preventDefault();
@@ -506,6 +615,7 @@ const navigation = [
 							return;
 						}
 
+						setCliExpanded(true);
 						appendMessage('user', question);
 						addHistoryMessage('user', question);
 						const assistantMessage = appendMessage('assistant', '', true);
@@ -534,10 +644,10 @@ const navigation = [
 							});
 							const payload = await response.json();
 							const text = typeof payload.text === 'string' ? payload.text : "I don't know.";
-							renderMessageContent(assistantMessage, 'assistant', text);
-							addHistoryMessage('assistant', text);
-							scrollMessages();
+							const finalText = await revealAssistantResponse(assistantMessage, text);
+							addHistoryMessage('assistant', finalText);
 						} catch {
+							activeRevealId += 1;
 							renderMessageContent(assistantMessage, 'assistant', 'Something went wrong. Please try again.');
 							scrollMessages();
 						} finally {
@@ -650,6 +760,7 @@ const navigation = [
 		display: grid;
 		grid-template-columns: 16rem minmax(0, 1fr);
 		background: var(--color-canvas);
+		--home-hero-lift: 0px;
 	}
 
 	.sidebar-toggle {
@@ -833,6 +944,7 @@ const navigation = [
 		color: var(--color-accent);
 		background: var(--color-accent-soft);
 		border-color: rgba(216, 255, 0, 0.2);
+		line-height: 1.58;
 	}
 
 	:global(.cli-message-user .cli-message-paragraph) {
@@ -841,7 +953,7 @@ const navigation = [
 
 	.cli-message-assistant {
 		color: var(--color-text-subtle);
-		line-height: 1.65;
+		line-height: 1.72;
 		border-color: var(--color-border);
 	}
 
@@ -934,6 +1046,9 @@ const navigation = [
 			min-height: clamp(17rem, 38vh, 24rem);
 			padding-bottom: clamp(2.8rem, 6vh, 4.4rem);
 			margin: 0 auto;
+			transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+			will-change: transform;
+			transform: translateY(calc(var(--home-hero-lift) * -1));
 		}
 
 		.shell-cli-floating-desktop .workspace::after {
