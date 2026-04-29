@@ -354,6 +354,7 @@ const navigation = [
 				const input = document.querySelector('#cli-input');
 				const messages = document.querySelector('#cli-messages');
 				const cliRoot = document.querySelector('.cli');
+				const cliPanel = cliRoot?.querySelector('.cli-panel');
 				const shellRoot = document.querySelector('[data-sidebar-shell]');
 				const page = cliRoot?.dataset.page ?? '/';
 				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
@@ -373,6 +374,11 @@ const navigation = [
 					const conversationHistory = [];
 					let activeRevealId = 0;
 					let isCliExpanded = false;
+					let idleDockHeight = 0;
+					let heroOffsetFrame = 0;
+					const desktopHeroQuery = window.matchMedia('(max-width: 48rem)');
+					const heroBreathingRoom = 18;
+					const maxHeroLift = 180;
 					const assistantLinkPattern =
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
@@ -454,11 +460,52 @@ const navigation = [
 						}
 					};
 
+					const applyHeroDockCompensation = () => {
+						if (!shellRoot || !cliPanel) {
+							return;
+						}
+
+						const isDesktop = !desktopHeroQuery.matches;
+						const isHomePage = shellRoot.dataset.home === 'true';
+
+						if (!isDesktop || !isHomePage) {
+							shellRoot.style.setProperty('--home-hero-lift', '0px');
+							return;
+						}
+
+						const currentDockHeight = cliPanel.getBoundingClientRect().height;
+						if (!messages.children.length) {
+							idleDockHeight = currentDockHeight;
+							shellRoot.style.setProperty('--home-hero-lift', '0px');
+							return;
+						}
+
+						if (idleDockHeight <= 0) {
+							idleDockHeight = currentDockHeight;
+						}
+
+						const dockGrowth = Math.max(0, currentDockHeight - idleDockHeight);
+						const heroLift = Math.min(maxHeroLift, dockGrowth + heroBreathingRoom);
+						shellRoot.style.setProperty('--home-hero-lift', `${heroLift}px`);
+					};
+
+					const scheduleHeroDockCompensation = () => {
+						if (heroOffsetFrame) {
+							window.cancelAnimationFrame(heroOffsetFrame);
+						}
+
+						heroOffsetFrame = window.requestAnimationFrame(() => {
+							heroOffsetFrame = 0;
+							applyHeroDockCompensation();
+						});
+					};
+
 					const syncDockExpandedState = () => {
 						const hasConversation = messages.children.length > 0;
 						if (hasConversation !== isCliExpanded) {
 							setCliExpanded(hasConversation);
 						}
+						scheduleHeroDockCompensation();
 					};
 
 					/**
@@ -547,6 +594,18 @@ const navigation = [
 						scrollMessages();
 						return normalized;
 					};
+
+					if (cliPanel) {
+						scheduleHeroDockCompensation();
+						if ('ResizeObserver' in window) {
+							const panelResizeObserver = new ResizeObserver(() => {
+								scheduleHeroDockCompensation();
+							});
+							panelResizeObserver.observe(cliPanel);
+						}
+						window.addEventListener('resize', scheduleHeroDockCompensation);
+						desktopHeroQuery.addEventListener('change', scheduleHeroDockCompensation);
+					}
 
 					form.addEventListener('submit', async (event) => {
 						event.preventDefault();
@@ -701,6 +760,7 @@ const navigation = [
 		display: grid;
 		grid-template-columns: 16rem minmax(0, 1fr);
 		background: var(--color-canvas);
+		--home-hero-lift: 0px;
 	}
 
 	.sidebar-toggle {
@@ -988,10 +1048,7 @@ const navigation = [
 			margin: 0 auto;
 			transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 			will-change: transform;
-		}
-
-		.shell[data-home='true'][data-cli-expanded='true'] .content-inner {
-			transform: translateY(clamp(-1.4rem, -3.2vh, -2.2rem));
+			transform: translateY(calc(var(--home-hero-lift) * -1));
 		}
 
 		.shell-cli-floating-desktop .workspace::after {
