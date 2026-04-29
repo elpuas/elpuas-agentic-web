@@ -372,6 +372,7 @@ const navigation = [
 				if (form && input && messages && submitButton) {
 					const conversationHistory = [];
 					let activeRevealId = 0;
+					let isCliExpanded = false;
 					const assistantLinkPattern =
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
@@ -446,13 +447,18 @@ const navigation = [
 						messages.scrollTop = messages.scrollHeight;
 					};
 
-					const syncDockExpandedState = () => {
-						if (!shellRoot) {
-							return;
+					const setCliExpanded = (expanded) => {
+						isCliExpanded = expanded;
+						if (shellRoot) {
+							shellRoot.dataset.cliExpanded = expanded ? 'true' : 'false';
 						}
+					};
 
+					const syncDockExpandedState = () => {
 						const hasConversation = messages.children.length > 0;
-						shellRoot.dataset.cliExpanded = hasConversation ? 'true' : 'false';
+						if (hasConversation !== isCliExpanded) {
+							setCliExpanded(hasConversation);
+						}
 					};
 
 					/**
@@ -550,6 +556,7 @@ const navigation = [
 							return;
 						}
 
+						setCliExpanded(true);
 						appendMessage('user', question);
 						addHistoryMessage('user', question);
 						const assistantMessage = appendMessage('assistant', '', true);
@@ -979,12 +986,12 @@ const navigation = [
 			min-height: clamp(17rem, 38vh, 24rem);
 			padding-bottom: clamp(2.8rem, 6vh, 4.4rem);
 			margin: 0 auto;
-			transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+			transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 			will-change: transform;
 		}
 
 		.shell[data-home='true'][data-cli-expanded='true'] .content-inner {
-			transform: translateY(clamp(-0.65rem, -1.8vh, -1.1rem));
+			transform: translateY(clamp(-1.4rem, -3.2vh, -2.2rem));
 		}
 
 		.shell-cli-floating-desktop .workspace::after {
