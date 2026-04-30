@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import logo from '../assets/logo.svg';
@@ -22,8 +24,23 @@ import logo from '../assets/logo.svg';
 			Have a project in mind, need technical help, or just want to connect? Send me a message.
 		</p>
 
-		<form class="contact-form" name="contact" method="POST" data-netlify="true">
+		<form
+			class="contact-form"
+			name="contact"
+			method="POST"
+			netlify
+			data-netlify="true"
+			data-netlify-honeypot="bot-field"
+			netlify-honeypot="bot-field"
+			action="/contact/success/"
+		>
 			<input type="hidden" name="form-name" value="contact" />
+			<p class="form-honeypot">
+				<label>
+					Don’t fill this out if you’re human:
+					<input name="bot-field" />
+				</label>
+			</p>
 
 			<div class="contact-grid">
 				<label class="field">
@@ -159,6 +176,17 @@ import logo from '../assets/logo.svg';
 		margin-top: var(--space-6);
 		font-size: var(--font-size-sm);
 		color: var(--color-text-muted);
+	}
+
+	.form-honeypot {
+		position: absolute;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		height: 1px;
+		width: 1px;
+		margin: -1px;
+		padding: 0;
+		border: 0;
 	}
 
 	.contact-note a {
