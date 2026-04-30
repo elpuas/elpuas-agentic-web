@@ -20,7 +20,7 @@ function getApiKey(): string {
 		throw new Error('OpenAI calls can only be initialized in the server runtime.');
 	}
 
-	const apiKey = process.env.ELPUAS_OPENAI_API_KEY;
+	const apiKey = process.env.ELPUAS_OPENAI_API_KEY || import.meta.env.ELPUAS_OPENAI_API_KEY;
 
 	if (!apiKey) {
 		throw new Error('Missing ELPUAS_OPENAI_API_KEY.');
