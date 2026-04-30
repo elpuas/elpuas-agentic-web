@@ -44,7 +44,7 @@ const canonical = resolveCanonicalUrl({
 });
 const ogImageAbsolute = toAbsoluteUrl(ogImage, siteUrl);
 const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
-const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? 'G-TESTMEASID0';
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
 const searchIndex = await buildSearchIndex();
 
 const defaultSchemas: Array<Record<string, unknown>> = [
@@ -125,15 +125,19 @@ const navigation = [
 			<script type="application/ld+json" set:html={JSON.stringify(schemaNode)} />
 		))}
 
-		<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
-		<script is:inline define:vars={{ gaMeasurementId }}>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-			gtag('config', gaMeasurementId);
-		</script>
+		{gaMeasurementId && (
+			<>
+				<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+				<script is:inline define:vars={{ gaMeasurementId }}>
+					window.dataLayer = window.dataLayer || [];
+					function gtag() {
+						dataLayer.push(arguments);
+					}
+					gtag('js', new Date());
+					gtag('config', gaMeasurementId);
+				</script>
+			</>
+		)}
 	</head>
 		<body>
 			<div
