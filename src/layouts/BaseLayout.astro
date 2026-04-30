@@ -44,7 +44,7 @@ const canonical = resolveCanonicalUrl({
 });
 const ogImageAbsolute = toAbsoluteUrl(ogImage, siteUrl);
 const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
-const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? 'G-TESTMEASID0';
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
 const searchIndex = await buildSearchIndex();
 
 const defaultSchemas: Array<Record<string, unknown>> = [
@@ -125,15 +125,19 @@ const navigation = [
 			<script type="application/ld+json" set:html={JSON.stringify(schemaNode)} />
 		))}
 
-		<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
-		<script is:inline define:vars={{ gaMeasurementId }}>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-			gtag('config', gaMeasurementId);
-		</script>
+		{gaMeasurementId && (
+			<>
+				<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+				<script is:inline define:vars={{ gaMeasurementId }}>
+					window.dataLayer = window.dataLayer || [];
+					function gtag() {
+						dataLayer.push(arguments);
+					}
+					gtag('js', new Date());
+					gtag('config', gaMeasurementId);
+				</script>
+			</>
+		)}
 	</head>
 		<body>
 			<div
@@ -691,16 +695,6 @@ const navigation = [
 				const normalizeSearchValue = (value) =>
 					(typeof value === 'string' ? value.toLowerCase().trim() : '');
 
-				const getSearchTypeLabel = (type) => {
-					if (type === 'blog') {
-						return 'Blog';
-					}
-					if (type === 'project') {
-						return 'Project';
-					}
-					return 'Page';
-				};
-
 				sidebarRoots.forEach((root) => {
 					if (root.dataset.sidebarBound === 'true') {
 						return;
@@ -724,7 +718,9 @@ const navigation = [
 						searchDropdown instanceof HTMLElement &&
 						searchResults instanceof HTMLElement
 					) {
-						const hideSearchDropdown = () => {
+						const searchWrap = searchInput.closest('.search-wrap');
+						const closeAndResetSearch = () => {
+							searchInput.value = '';
 							searchDropdown.hidden = true;
 							searchResults.replaceChildren();
 						};
@@ -765,7 +761,6 @@ const navigation = [
 								const item = document.createElement('li');
 								const link = document.createElement('a');
 								const label = document.createElement('span');
-								const type = document.createElement('span');
 
 								link.href = entry.url;
 								link.className = 'search-result-link';
@@ -773,10 +768,7 @@ const navigation = [
 								label.className = 'search-result-title';
 								label.textContent = entry.title;
 
-								type.className = 'search-result-type';
-								type.textContent = getSearchTypeLabel(entry.type);
-
-								link.append(label, type);
+								link.append(label);
 								item.append(link);
 								searchResults.append(item);
 							});
@@ -792,14 +784,30 @@ const navigation = [
 
 						searchInput.addEventListener('keydown', (event) => {
 							if (event.key === 'Escape') {
-								hideSearchDropdown();
+								closeAndResetSearch();
 								searchInput.blur();
 							}
 						});
 
+						searchResults.addEventListener('click', (event) => {
+							const target = event.target;
+							if (!(target instanceof Element)) {
+								return;
+							}
+
+							const selectedResult = target.closest('.search-result-link');
+							if (selectedResult) {
+								closeAndResetSearch();
+							}
+						});
+
 						document.addEventListener('pointerdown', (event) => {
-							if (!root.contains(event.target)) {
-								hideSearchDropdown();
+							if (!(event.target instanceof Node)) {
+								return;
+							}
+
+							if (searchWrap && !searchWrap.contains(event.target)) {
+								closeAndResetSearch();
 							}
 						});
 					}
@@ -958,41 +966,38 @@ const navigation = [
 		z-index: 1310;
 	}
 
-	.search-results {
+	:global(.search-results) {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		display: grid;
-		gap: 0.15rem;
+		display: block;
 	}
 
-	.search-result-link {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-2);
-		padding: 0.45rem 0.55rem;
+	:global(.search-results > li + li) {
+		border-top: var(--space-px) solid rgba(255, 255, 255, 0.08);
+	}
+
+	:global(.search-result-link) {
+		display: grid;
+		gap: 0;
+		padding: 0.65rem 0.72rem;
 		border-radius: 0.5rem;
 	}
 
-	.search-result-link:hover,
-	.search-result-link:focus-visible {
-		background: rgba(255, 255, 255, 0.04);
+	:global(.search-result-link:hover),
+	:global(.search-result-link:focus-visible) {
+		background: rgba(255, 255, 255, 0.07);
 		outline: none;
 	}
 
-	.search-result-title {
+	:global(.search-result-title) {
 		color: var(--color-text);
-		font-size: var(--font-size-sm);
-		line-height: 1.3;
-	}
-
-	.search-result-type {
-		flex: 0 0 auto;
-		color: var(--color-text-muted);
-		font-size: 0.68rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
+		font-size: 0.875rem;
+		line-height: 1.35;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	.search-empty {
