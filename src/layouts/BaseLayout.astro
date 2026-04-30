@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
 import logo from '../assets/logo.svg';
+import { buildSearchIndex } from '../lib/search-index';
 import {
 	DEFAULT_DESCRIPTION,
 	DEFAULT_OG_IMAGE,
@@ -44,6 +45,7 @@ const canonical = resolveCanonicalUrl({
 const ogImageAbsolute = toAbsoluteUrl(ogImage, siteUrl);
 const robotsContent = noindex ? 'noindex, nofollow' : 'index, follow';
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? 'G-TESTMEASID0';
+const searchIndex = await buildSearchIndex();
 
 const defaultSchemas: Array<Record<string, unknown>> = [
 	{
@@ -157,7 +159,19 @@ const navigation = [
 								stroke-width="1.8"
 							/>
 						</svg>
-						<input type="text" value="" placeholder="Search" aria-label="Search" readonly />
+						<input
+							type="text"
+							value=""
+							placeholder="Search"
+							aria-label="Search content"
+							autocomplete="off"
+							spellcheck="false"
+							data-sidebar-search-input
+						/>
+						<div class="search-dropdown" data-sidebar-search-dropdown hidden>
+							<ul class="search-results" data-sidebar-search-results></ul>
+						</div>
+						<script type="application/json" id="sidebar-search-index" set:html={JSON.stringify(searchIndex)} />
 					</div>
 
 					<nav class="sidebar-nav">
@@ -660,6 +674,32 @@ const navigation = [
 
 				const sidebarRoots = document.querySelectorAll('[data-sidebar-shell]');
 				const mobileSidebarQuery = window.matchMedia('(max-width: 48rem)');
+				const sidebarSearchIndexNode = document.querySelector('#sidebar-search-index');
+				let sidebarSearchIndex = [];
+
+				if (sidebarSearchIndexNode?.textContent) {
+					try {
+						const parsed = JSON.parse(sidebarSearchIndexNode.textContent);
+						if (Array.isArray(parsed)) {
+							sidebarSearchIndex = parsed;
+						}
+					} catch {
+						sidebarSearchIndex = [];
+					}
+				}
+
+				const normalizeSearchValue = (value) =>
+					(typeof value === 'string' ? value.toLowerCase().trim() : '');
+
+				const getSearchTypeLabel = (type) => {
+					if (type === 'blog') {
+						return 'Blog';
+					}
+					if (type === 'project') {
+						return 'Project';
+					}
+					return 'Page';
+				};
 
 				sidebarRoots.forEach((root) => {
 					if (root.dataset.sidebarBound === 'true') {
@@ -671,9 +711,97 @@ const navigation = [
 					const toggle = root.querySelector('[data-sidebar-toggle]');
 					const backdrop = root.querySelector('[data-sidebar-backdrop]');
 					const navLinks = root.querySelectorAll('.nav-link');
+					const searchInput = root.querySelector('[data-sidebar-search-input]');
+					const searchDropdown = root.querySelector('[data-sidebar-search-dropdown]');
+					const searchResults = root.querySelector('[data-sidebar-search-results]');
 
 					if (!(sidebar instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) {
 						return;
+					}
+
+					if (
+						searchInput instanceof HTMLInputElement &&
+						searchDropdown instanceof HTMLElement &&
+						searchResults instanceof HTMLElement
+					) {
+						const hideSearchDropdown = () => {
+							searchDropdown.hidden = true;
+							searchResults.replaceChildren();
+						};
+
+						const renderSearchResults = (query) => {
+							const normalizedQuery = normalizeSearchValue(query);
+							searchResults.replaceChildren();
+
+							if (!normalizedQuery) {
+								searchDropdown.hidden = true;
+								return;
+							}
+
+							const matches = sidebarSearchIndex
+								.filter((entry) => {
+									const title = normalizeSearchValue(entry.title);
+									const description = normalizeSearchValue(entry.description);
+									const tags = Array.isArray(entry.tags)
+										? entry.tags.map((tag) => normalizeSearchValue(tag)).join(' ')
+										: '';
+									const type = normalizeSearchValue(entry.type);
+									const haystack = `${title} ${description} ${tags} ${type}`;
+									return haystack.includes(normalizedQuery);
+								})
+								.slice(0, 7);
+
+							searchDropdown.hidden = false;
+
+							if (!matches.length) {
+								const emptyItem = document.createElement('li');
+								emptyItem.className = 'search-empty';
+								emptyItem.textContent = 'No direct matches. Try asking me below.';
+								searchResults.append(emptyItem);
+								return;
+							}
+
+							matches.forEach((entry) => {
+								const item = document.createElement('li');
+								const link = document.createElement('a');
+								const label = document.createElement('span');
+								const type = document.createElement('span');
+
+								link.href = entry.url;
+								link.className = 'search-result-link';
+
+								label.className = 'search-result-title';
+								label.textContent = entry.title;
+
+								type.className = 'search-result-type';
+								type.textContent = getSearchTypeLabel(entry.type);
+
+								link.append(label, type);
+								item.append(link);
+								searchResults.append(item);
+							});
+						};
+
+						searchInput.addEventListener('focus', () => {
+							renderSearchResults(searchInput.value);
+						});
+
+						searchInput.addEventListener('input', () => {
+							renderSearchResults(searchInput.value);
+						});
+
+						searchInput.addEventListener('keydown', (event) => {
+							if (event.key === 'Escape') {
+								hideSearchDropdown();
+								searchInput.blur();
+							}
+						});
+
+						document.addEventListener('pointerdown', (event) => {
+							if (!root.contains(event.target)) {
+								hideSearchDropdown();
+							}
+						});
 					}
 
 					/**
@@ -815,6 +943,63 @@ const navigation = [
 		height: 1rem;
 		color: var(--color-text-placeholder);
 		pointer-events: none;
+	}
+
+	.search-dropdown {
+		position: absolute;
+		top: calc(100% + 0.375rem);
+		left: 0;
+		right: 0;
+		padding: 0.35rem;
+		background: rgba(12, 13, 17, 0.98);
+		border: var(--space-px) solid var(--color-border);
+		border-radius: var(--radius-lg);
+		box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+		z-index: 1310;
+	}
+
+	.search-results {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.15rem;
+	}
+
+	.search-result-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-2);
+		padding: 0.45rem 0.55rem;
+		border-radius: 0.5rem;
+	}
+
+	.search-result-link:hover,
+	.search-result-link:focus-visible {
+		background: rgba(255, 255, 255, 0.04);
+		outline: none;
+	}
+
+	.search-result-title {
+		color: var(--color-text);
+		font-size: var(--font-size-sm);
+		line-height: 1.3;
+	}
+
+	.search-result-type {
+		flex: 0 0 auto;
+		color: var(--color-text-muted);
+		font-size: 0.68rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.search-empty {
+		padding: 0.55rem;
+		color: var(--color-text-muted);
+		font-size: 0.78rem;
+		line-height: 1.35;
 	}
 
 	.sidebar-nav {
