@@ -1,0 +1,47 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+	title="Message Sent | Alfredo Navas"
+	description="Your contact message was sent successfully."
+	ogTitle="Message Sent"
+	ogDescription="Thanks for your message."
+	activeNav="contact"
+	showCli={false}
+>
+	<section class="contact-success">
+		<h1>Thanks for reaching out</h1>
+		<p>Your message was sent successfully. I’ll get back to you soon.</p>
+		<p><a href="/contact/">Back to contact form</a></p>
+	</section>
+</BaseLayout>
+
+<style>
+	.contact-success {
+		width: min(100%, 56rem);
+		margin: 0 auto;
+		color: var(--color-text);
+		padding: var(--space-12) 0 var(--space-8);
+	}
+
+	.contact-success h1 {
+		margin: 0;
+		font-size: 2rem;
+		line-height: 1.2;
+	}
+
+	.contact-success p {
+		margin-top: var(--space-4);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+	}
+
+	.contact-success a {
+		color: var(--color-accent);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+</style>
