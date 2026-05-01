@@ -1,0 +1,135 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "Primary navigation" [ref=e3]:
+      - generic [ref=e4]:
+        - img
+        - textbox "Search content" [ref=e5]:
+          - /placeholder: Search
+      - navigation [ref=e6]:
+        - list [ref=e7]:
+          - listitem [ref=e8]:
+            - link "Home" [ref=e9] [cursor=pointer]:
+              - /url: /
+              - img [ref=e10]
+              - generic [ref=e12]: Home
+          - listitem [ref=e13]:
+            - link "About" [ref=e14] [cursor=pointer]:
+              - /url: /about/
+              - img [ref=e15]
+              - generic [ref=e17]: About
+          - listitem [ref=e18]:
+            - link "Blog" [ref=e19] [cursor=pointer]:
+              - /url: /blog/
+              - img [ref=e20]
+              - generic [ref=e22]: Blog
+          - listitem [ref=e23]:
+            - link "Contact" [ref=e24] [cursor=pointer]:
+              - /url: /contact/
+              - img [ref=e25]
+              - generic [ref=e27]: Contact
+      - button "Alfredo Navas Product Builder" [ref=e29] [cursor=pointer]:
+        - generic [ref=e32]:
+          - paragraph [ref=e33]: Alfredo Navas
+          - paragraph [ref=e34]: Product Builder
+    - generic [ref=e35]:
+      - main [ref=e36]:
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - img [ref=e40]
+            - heading "Blog" [level=1] [ref=e41]
+          - paragraph [ref=e42]: Welcome to my blog. Explore my experiences as a developer, solving problems, facing challenges, and sharing what I’ve learned along the way.
+          - heading "Latest Posts" [level=2] [ref=e43]
+          - region "Latest posts carousel" [ref=e44]:
+            - button "Show newer posts" [disabled] [ref=e45]:
+              - generic [ref=e46]: ←
+            - region "Posts page 1 of 4" [ref=e49]:
+              - list [ref=e50]:
+                - listitem [ref=e51]:
+                  - link "A Year with the WordPress Community WordPress A Year with the WordPress Community 2025 has been one of the best and busiest years of my life in the WordPress community. Nov 2, 2025" [ref=e52] [cursor=pointer]:
+                    - /url: /blog/a-year-with-the-wordpress-community/
+                    - img "A Year with the WordPress Community" [ref=e54]
+                    - generic [ref=e55]:
+                      - paragraph [ref=e56]: WordPress
+                      - heading "A Year with the WordPress Community" [level=3] [ref=e57]
+                      - paragraph [ref=e58]: 2025 has been one of the best and busiest years of my life in the WordPress community.
+                      - paragraph [ref=e59]:
+                        - time [ref=e60]: Nov 2, 2025
+                - listitem [ref=e61]:
+                  - link "WordCamp US 2025 – Portland, Oregon WordPress WordCamp US 2025 – Portland, Oregon This year I had the opportunity to attend WordCamp US in Portland, Oregon, thanks to the invitation from Automattic and WordPre... Aug 31, 2025" [ref=e62] [cursor=pointer]:
+                    - /url: /blog/wordcamp-us-2025-portland-oregon/
+                    - img "WordCamp US 2025 – Portland, Oregon" [ref=e64]
+                    - generic [ref=e65]:
+                      - paragraph [ref=e66]: WordPress
+                      - heading "WordCamp US 2025 – Portland, Oregon" [level=3] [ref=e67]
+                      - paragraph [ref=e68]: This year I had the opportunity to attend WordCamp US in Portland, Oregon, thanks to the invitation from Automattic and WordPre...
+                      - paragraph [ref=e69]:
+                        - time [ref=e70]: Aug 31, 2025
+                - listitem [ref=e71]:
+                  - link "Building My Own Image Optimizer with Electron, Node.js, and Sharp JavaScript Building My Own Image Optimizer with Electron, Node.js, and Sharp You might ask, “Why create an image optimizer when so many already exist?” It’s a valid question. For me, this project was abou... Jun 19, 2025" [ref=e72] [cursor=pointer]:
+                    - /url: /blog/building-my-own-image-optimizer-with-electron-node-js-and-sharp/
+                    - img "Building My Own Image Optimizer with Electron, Node.js, and Sharp" [ref=e74]
+                    - generic [ref=e75]:
+                      - paragraph [ref=e76]: JavaScript
+                      - heading "Building My Own Image Optimizer with Electron, Node.js, and Sharp" [level=3] [ref=e77]
+                      - paragraph [ref=e78]: You might ask, “Why create an image optimizer when so many already exist?” It’s a valid question. For me, this project was abou...
+                      - paragraph [ref=e79]:
+                        - time [ref=e80]: Jun 19, 2025
+                - listitem [ref=e81]:
+                  - link "How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding AI How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding My wife runs a small web development boutique, and we team up on most projects. From day one, we’ve wanted to do things differe... May 1, 2025" [ref=e82] [cursor=pointer]:
+                    - /url: /blog/how-i-rebuilt-a-multilingual-website-in-one-week-using-ai-cursor-and-vibe-coding/
+                    - img "How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding" [ref=e84]
+                    - generic [ref=e85]:
+                      - paragraph [ref=e86]: AI
+                      - heading "How I Rebuilt a Multilingual Website in One Week Using AI, ChatGPT, Cursor, and Vibe Coding" [level=3] [ref=e87]
+                      - paragraph [ref=e88]: My wife runs a small web development boutique, and we team up on most projects. From day one, we’ve wanted to do things differe...
+                      - paragraph [ref=e89]:
+                        - time [ref=e90]: May 1, 2025
+                - listitem [ref=e91]:
+                  - 'link "Taking Playground Further: Meet Blueprints! WordPress Taking Playground Further: Meet Blueprints! WordPress Playground lets you run a fully functional WordPress site directly in your browser — no setup needed. It’s a great to... Mar 9, 2025" [ref=e92] [cursor=pointer]':
+                    - /url: /blog/taking-playground-further-meet-blueprints/
+                    - 'img "Taking Playground Further: Meet Blueprints!" [ref=e94]'
+                    - generic [ref=e95]:
+                      - paragraph [ref=e96]: WordPress
+                      - 'heading "Taking Playground Further: Meet Blueprints!" [level=3] [ref=e97]'
+                      - paragraph [ref=e98]: WordPress Playground lets you run a fully functional WordPress site directly in your browser — no setup needed. It’s a great to...
+                      - paragraph [ref=e99]:
+                        - time [ref=e100]: Mar 9, 2025
+                - listitem [ref=e101]:
+                  - 'link "You Might Not Need a Custom Block: The Block Bindings API WordPress You Might Not Need a Custom Block: The Block Bindings API Welcome to the latest chapter of our series, “You Might Not Need a Custom Block: ”. If you’ve been following along, we’ve alrea... Nov 3, 2024" [ref=e102] [cursor=pointer]':
+                    - /url: /blog/you-might-not-need-a-custom-block-the-block-bindings-api/
+                    - 'img "You Might Not Need a Custom Block: The Block Bindings API" [ref=e104]'
+                    - generic [ref=e105]:
+                      - paragraph [ref=e106]: WordPress
+                      - 'heading "You Might Not Need a Custom Block: The Block Bindings API" [level=3] [ref=e107]'
+                      - paragraph [ref=e108]: "Welcome to the latest chapter of our series, “You Might Not Need a Custom Block: ”. If you’ve been following along, we’ve alrea..."
+                      - paragraph [ref=e109]:
+                        - time [ref=e110]: Nov 3, 2024
+            - button "Show older posts" [ref=e111] [cursor=pointer]:
+              - generic [ref=e112]: →
+            - generic "Carousel pagination":
+              - button "Go to page 1"
+              - button "Go to page 2"
+              - button "Go to page 3"
+              - button "Go to page 4"
+      - region "Command line interface":
+        - generic [ref=e113]:
+          - generic [ref=e116]:
+            - img [ref=e118]
+            - textbox "Ask me anything" [ref=e120]:
+              - /placeholder: Ask me anything...
+            - button "Send" [ref=e121]:
+              - img [ref=e122]
+          - paragraph [ref=e124]: "Try: about, projects, experience"
+  - generic [ref=e127]:
+    - button "Menu" [ref=e128]:
+      - img [ref=e130]
+      - generic: Menu
+    - button "Inspect" [ref=e134]:
+      - img [ref=e136]
+      - generic: Inspect
+    - button "Audit" [ref=e138]:
+      - img [ref=e140]
+      - generic: Audit
+    - button "Settings" [ref=e143]:
+      - img [ref=e145]
+      - generic: Settings
