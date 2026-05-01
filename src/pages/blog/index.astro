@@ -213,8 +213,8 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 		--neon-accent: #ccff0a;
 		--card-bg: rgba(11, 14, 18, 0.74);
 		position: relative;
-		margin-top: var(--space-6);
-		padding: 0 0 2.5rem;
+		margin-top: var(--space-4);
+		padding: 0 0 2.1rem;
 	}
 
 	.carousel-viewport {
@@ -236,13 +236,14 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 		list-style: none;
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 0.8rem;
+		column-gap: 0.8rem;
+		row-gap: 0.62rem;
 	}
 
 	.post-card {
 		display: block;
-		padding: 0.95rem 1.05rem;
-		min-height: 9.75rem;
+		padding: 0.84rem 0.95rem;
+		min-height: 9.15rem;
 		border-radius: 0.85rem;
 		background: var(--card-bg);
 		text-decoration: none;
@@ -264,7 +265,7 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 	.post-body {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.42rem;
 		min-width: 0;
 	}
 
@@ -359,7 +360,7 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 	.carousel-dots {
 		position: absolute;
 		left: 50%;
-		bottom: 1.05rem;
+		bottom: 0.82rem;
 		transform: translateX(-50%);
 		display: inline-flex;
 		align-items: center;
@@ -407,8 +408,28 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 	}
 
 	@media (max-width: 64rem) {
+		.posts-carousel {
+			padding-bottom: 1.95rem;
+		}
+
 		.post-grid {
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-height: 940px) and (min-width: 64.01rem) {
+		.posts-carousel {
+			margin-top: var(--space-3);
+			padding-bottom: 1.8rem;
+		}
+
+		.post-grid {
+			row-gap: 0.56rem;
+		}
+
+		.post-card {
+			padding: 0.8rem 0.9rem;
+			min-height: 8.95rem;
 		}
 	}
 
@@ -429,10 +450,6 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 		.blog-title h1 {
 			font-size: 1.75rem;
 			line-height: 1.2;
-		}
-
-		.latest-heading {
-			margin-top: var(--space-6);
 		}
 
 		.posts-carousel {
