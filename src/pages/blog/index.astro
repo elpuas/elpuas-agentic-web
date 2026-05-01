@@ -17,6 +17,42 @@ const postPages = Array.from({ length: Math.ceil(posts.length / POSTS_PER_PAGE) 
 });
 
 const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(date);
+
+const heroImageModules = import.meta.glob('../../assets/blog/**/*.{avif,gif,jpeg,jpg,png,svg,webp}', {
+	eager: true,
+});
+
+const resolveImageSrc = (path?: string): string | undefined => {
+	if (!path) {
+		return undefined;
+	}
+
+	const getModuleSrc = (assetPath: string): string | undefined => {
+		const assetModule = heroImageModules[assetPath] as
+			| { default?: { src?: string } }
+			| undefined;
+		return assetModule?.default?.src;
+	};
+
+	if (path.startsWith('../../assets/')) {
+		const webpPath = path.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+		return getModuleSrc(webpPath) ?? getModuleSrc(path) ?? path;
+	}
+
+	if (path.startsWith('/src/assets/')) {
+		const relativePath = `../../assets/${path.replace('/src/assets/', '')}`;
+		const webpPath = relativePath.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+		return getModuleSrc(webpPath) ?? getModuleSrc(relativePath) ?? path;
+	}
+
+	if (path.startsWith('/assets/')) {
+		const relativePath = `../../assets/${path.replace('/assets/', '')}`;
+		const webpPath = relativePath.replace(/\.(avif|gif|jpe?g|png|svg)$/i, '.webp');
+		return getModuleSrc(webpPath) ?? getModuleSrc(relativePath) ?? path;
+	}
+
+	return path;
+};
 ---
 
 <BaseLayout
@@ -32,7 +68,10 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 			<h1>Blog</h1>
 		</header>
 
-		<p class="blog-intro">Notes on building products, AI workflows, and lessons from real projects.</p>
+		<p class="blog-intro">
+			Welcome to my blog. Explore my experiences as a developer, solving problems, facing
+			challenges, and sharing what I’ve learned along the way.
+		</p>
 
 		<h2 class="latest-heading">Latest Posts</h2>
 
@@ -55,6 +94,8 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 							<section
 								class="carousel-page"
 								data-page
+								data-page-index={pageIndex}
+								hidden={pageIndex !== 0}
 								aria-label={`Posts page ${pageIndex + 1} of ${postPages.length}`}
 							>
 								<ul class="post-grid" role="list">
@@ -62,6 +103,7 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 										const publishDate = getBlogPublishDate(post.data);
 										const excerpt = getBlogExcerpt(post.data);
 										const featuredImage = getBlogFeaturedImage(post.data);
+										const imageSrc = resolveImageSrc(featuredImage) ?? featuredImage;
 										const label = post.data.category || post.data.tags[0] || 'General';
 										const trimmedExcerpt = excerpt.length > 130 ? `${excerpt.slice(0, 127).trimEnd()}...` : excerpt;
 
@@ -71,7 +113,7 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 													<div class="post-thumb-wrap">
 														<img
 															class="post-thumb"
-															src={featuredImage}
+															src={imageSrc}
 															alt={post.data.title}
 															loading="lazy"
 															decoding="async"
@@ -137,8 +179,6 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 			});
 
 			const render = () => {
-				track.style.transform = `translateX(-${activePage * 100}%)`;
-
 				prevButton.disabled = activePage === 0;
 				nextButton.disabled = activePage === totalPages - 1;
 
@@ -149,7 +189,9 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 				});
 
 				pageElements.forEach((page, index) => {
-					page.setAttribute('aria-hidden', index === activePage ? 'false' : 'true');
+					const isActive = index === activePage;
+					page.hidden = !isActive;
+					page.setAttribute('aria-hidden', isActive ? 'false' : 'true');
 				});
 			};
 
@@ -242,18 +284,16 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 	}
 
 	.carousel-viewport {
-		overflow: hidden;
+		overflow: visible;
 	}
 
 	.carousel-track {
-		display: flex;
-		transition: transform 340ms cubic-bezier(0.22, 0.61, 0.36, 1);
-		will-change: transform;
+		position: relative;
 	}
 
 	.carousel-page {
 		width: 100%;
-		flex: 0 0 100%;
+		animation: page-enter 220ms ease;
 	}
 
 	.post-grid {
@@ -434,6 +474,17 @@ const formatDate = (date: Date): string => new Intl.DateTimeFormat('en-US', { da
 	.carousel-dot.is-active {
 		background: var(--neon-accent);
 		transform: scale(1.14);
+	}
+
+	@keyframes page-enter {
+		from {
+			opacity: 0.88;
+			transform: translateY(4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	.blog-empty {
