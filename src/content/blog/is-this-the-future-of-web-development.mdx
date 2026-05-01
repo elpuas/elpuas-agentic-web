@@ -1,5 +1,5 @@
 ---
-title: "Is This the Future of Web Development? I Built a Conversational AI Website to Test the Idea"
+title: "The Renaissance Developer: Building Websites in the Age of AI"
 slug: "is-this-the-future-of-web-development"
 description: "I built a conversational AI-powered website in one weekend using Figma, Codex, Astro, and ChatGPT to test a bigger question: is this how modern web development will work from now on?"
 excerpt: "What started as a personal portfolio redesign turned into a real experiment in agentic development, conversational interfaces, and AI-assisted software production."
@@ -17,9 +17,16 @@ tags:
   - agentic-development
   - conversational-ui
   - developer-workflow
-featuredImage: "/favicon.svg"
+featuredImage: "../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-training.webp"
+heroImage: "../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-training.webp"
+heroAlt: "AI-assisted development setup used during the agentic portfolio build"
 draft: false
 ---
+
+import { Image } from 'astro:assets';
+import heroImage from '../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-training.webp';
+import workflowImage from '../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-workflow-clean.webp';
+import resultsImage from '../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-II.webp';
 
 For many years, building a website followed almost the same formula. You design a homepage, create an about page, add project sections, publish some articles, wire a contact form, and expect visitors to move through the information the way you planned it. That model still works, but I am starting to think it will not be enough for much longer.
 
@@ -103,6 +110,15 @@ Some tasks landed correctly on the first try, while others needed several correc
 
 Codex wrote almost all of the actual code in the project, from Astro components and layouts to styling, responsive adjustments, endpoints, and interactions. But this is the key distinction: Codex wrote the code, not the decisions.
 
+<figure style="margin: 2.5rem 0;">
+	<Image
+		src={workflowImage}
+		alt="Agentic development workflow showing planning, prompt refinement, implementation, and iterative review"
+		sizes="(max-width: 768px) 100vw, 820px"
+		style="width: 100%; height: auto; border-radius: 12px;"
+	/>
+</figure>
+
 Architecture, branch planning, feature sequencing, prompt refinement, and final approval were still mine.
 
 The AI handled implementation labor. I handled software direction.
@@ -162,6 +178,15 @@ Good context and a clear task definition change the quality of implementation dr
 If I had built this same website in the old manual way, during free hours between work and life, it probably would have dragged into several weeks, maybe even a month. Instead, it became a highly focused production sprint.
 
 That is not just a productivity improvement. That is a different working model.
+
+<figure style="margin: 2.5rem 0;">
+	<Image
+		src={resultsImage}
+		alt="Final portfolio experience with conversational interface and polished implementation details"
+		sizes="(max-width: 768px) 100vw, 820px"
+		style="width: 100%; height: auto; border-radius: 12px;"
+	/>
+</figure>
 
 ---
 
