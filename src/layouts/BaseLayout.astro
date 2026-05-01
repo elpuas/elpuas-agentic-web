@@ -241,6 +241,22 @@ const navigation = [
 							>
 								<div class="cli-panel">
 									<div class="cli-box">
+										<button
+											class="cli-dismiss"
+											id="cli-dismiss"
+											type="button"
+											aria-label="Collapse response panel"
+										>
+											<svg viewBox="0 0 24 24" aria-hidden="true">
+												<path
+													d="m7 7 10 10M17 7 7 17"
+													fill="none"
+													stroke="currentColor"
+													stroke-linecap="round"
+													stroke-width="1.8"
+												/>
+											</svg>
+										</button>
 										<div class="cli-messages" id="cli-messages"></div>
 										<form class="cli-row" id="cli-form">
 											<span class="cli-prompt-marker" aria-hidden="true">
@@ -374,6 +390,7 @@ const navigation = [
 				const cliRoot = document.querySelector('.cli');
 				const cliPanel = cliRoot?.querySelector('.cli-panel');
 				const shellRoot = document.querySelector('[data-sidebar-shell]');
+				const dismissButton = document.querySelector('#cli-dismiss');
 				const page = cliRoot?.dataset.page ?? '/';
 				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
 				let pageContext = '';
@@ -391,7 +408,7 @@ const navigation = [
 				if (form && input && messages && submitButton) {
 					const conversationHistory = [];
 					let activeRevealId = 0;
-					let isCliExpanded = false;
+					let isDockExpanded = false;
 					let idleDockHeight = 0;
 					let heroOffsetFrame = 0;
 					const desktopHeroQuery = window.matchMedia('(max-width: 48rem)');
@@ -471,11 +488,12 @@ const navigation = [
 						messages.scrollTop = messages.scrollHeight;
 					};
 
-					const setCliExpanded = (expanded) => {
-						isCliExpanded = expanded;
+					const setDockExpanded = (expanded) => {
+						isDockExpanded = expanded;
 						if (shellRoot) {
 							shellRoot.dataset.cliExpanded = expanded ? 'true' : 'false';
 						}
+						scheduleHeroDockCompensation();
 					};
 
 					const applyHeroDockCompensation = () => {
@@ -518,12 +536,8 @@ const navigation = [
 						});
 					};
 
-					const syncDockExpandedState = () => {
-						const hasConversation = messages.children.length > 0;
-						if (hasConversation !== isCliExpanded) {
-							setCliExpanded(hasConversation);
-						}
-						scheduleHeroDockCompensation();
+					const collapseCliDock = () => {
+						setDockExpanded(false);
 					};
 
 					/**
@@ -578,7 +592,7 @@ const navigation = [
 						renderMessageContent(item, role, text, isLoading);
 						messages.append(item);
 						scrollMessages();
-						syncDockExpandedState();
+						scheduleHeroDockCompensation();
 						return item;
 					};
 
@@ -633,7 +647,7 @@ const navigation = [
 							return;
 						}
 
-						setCliExpanded(true);
+						setDockExpanded(true);
 						appendMessage('user', question);
 						addHistoryMessage('user', question);
 						const assistantMessage = appendMessage('assistant', '', true);
@@ -674,6 +688,10 @@ const navigation = [
 							input.focus();
 						}
 					});
+
+					if (dismissButton instanceof HTMLButtonElement) {
+						dismissButton.addEventListener('click', collapseCliDock);
+					}
 				}
 
 				const sidebarRoots = document.querySelectorAll('[data-sidebar-shell]');
@@ -1095,20 +1113,101 @@ const navigation = [
 	}
 
 	.cli-box {
+		position: relative;
 		background: var(--color-surface);
 		border: var(--space-px) solid var(--color-border);
 		border-radius: 1rem;
 		padding: var(--space-px);
+		overflow: hidden;
 		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+		transition:
+			background-color 180ms ease,
+			box-shadow 220ms ease,
+			backdrop-filter 220ms ease;
+	}
+
+	.shell[data-cli-expanded='true'] .cli-box {
+		background: rgba(14, 16, 21, 0.95);
+		backdrop-filter: blur(20px);
+		box-shadow:
+			0 40px 84px rgba(0, 0, 0, 0.58),
+			0 14px 36px rgba(0, 0, 0, 0.42);
+	}
+
+	.cli-dismiss {
+		position: absolute;
+		top: 0.55rem;
+		right: 0.55rem;
+		width: 1.9rem;
+		height: 1.9rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		color: rgba(217, 223, 232, 0.72);
+		background: rgba(255, 255, 255, 0.02);
+		border: var(--space-px) solid transparent;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(-3px);
+		transition:
+			opacity 140ms ease,
+			transform 140ms ease,
+			color 140ms ease,
+			background-color 140ms ease,
+			border-color 140ms ease;
+	}
+
+	.cli-dismiss svg {
+		width: 0.95rem;
+		height: 0.95rem;
+	}
+
+	.shell[data-cli-expanded='true'] .cli-dismiss {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0);
+	}
+
+	.cli-dismiss:hover,
+	.cli-dismiss:focus-visible {
+		color: rgba(245, 248, 252, 0.96);
+		background: rgba(255, 255, 255, 0.07);
+		border-color: rgba(255, 255, 255, 0.14);
+		outline: none;
 	}
 
 	.cli-messages {
 		max-height: 13rem;
 		overflow: auto;
-		padding: var(--space-4);
+		padding: calc(var(--space-4) + 0.85rem) calc(var(--space-4) + 0.8rem) var(--space-4) var(--space-4);
+		scroll-padding-top: calc(var(--space-4) + 0.85rem);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
+	}
+
+	.shell[data-cli-expanded='false'] .cli-messages {
+		display: none;
+	}
+
+	.cli-messages::-webkit-scrollbar {
+		width: 0.55rem;
+	}
+
+	.cli-messages::-webkit-scrollbar-track {
+		margin: 0.4rem 0;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.cli-messages::-webkit-scrollbar-thumb {
+		border-radius: 999px;
+		background: rgba(218, 224, 234, 0.36);
+	}
+
+	.cli-messages::-webkit-scrollbar-thumb:hover {
+		background: rgba(218, 224, 234, 0.56);
 	}
 
 	.cli-message {
