@@ -241,6 +241,22 @@ const navigation = [
 							>
 								<div class="cli-panel">
 									<div class="cli-box">
+										<button
+											class="cli-dismiss"
+											id="cli-dismiss"
+											type="button"
+											aria-label="Collapse response panel"
+										>
+											<svg viewBox="0 0 24 24" aria-hidden="true">
+												<path
+													d="m7 7 10 10M17 7 7 17"
+													fill="none"
+													stroke="currentColor"
+													stroke-linecap="round"
+													stroke-width="1.8"
+												/>
+											</svg>
+										</button>
 										<div class="cli-messages" id="cli-messages"></div>
 										<form class="cli-row" id="cli-form">
 											<span class="cli-prompt-marker" aria-hidden="true">
@@ -374,6 +390,7 @@ const navigation = [
 				const cliRoot = document.querySelector('.cli');
 				const cliPanel = cliRoot?.querySelector('.cli-panel');
 				const shellRoot = document.querySelector('[data-sidebar-shell]');
+				const dismissButton = document.querySelector('#cli-dismiss');
 				const page = cliRoot?.dataset.page ?? '/';
 				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
 				let pageContext = '';
@@ -526,6 +543,15 @@ const navigation = [
 						scheduleHeroDockCompensation();
 					};
 
+					const collapseCliDock = () => {
+						activeRevealId += 1;
+						messages.replaceChildren();
+						conversationHistory.length = 0;
+						setCliExpanded(false);
+						scheduleHeroDockCompensation();
+						input.focus();
+					};
+
 					/**
 					 * Replaces a message node with either loading feedback or paragraph content.
 					 * Assistant messages support multiline formatting and inline link detection.
@@ -674,6 +700,10 @@ const navigation = [
 							input.focus();
 						}
 					});
+
+					if (dismissButton instanceof HTMLButtonElement) {
+						dismissButton.addEventListener('click', collapseCliDock);
+					}
 				}
 
 				const sidebarRoots = document.querySelectorAll('[data-sidebar-shell]');
@@ -1095,17 +1125,73 @@ const navigation = [
 	}
 
 	.cli-box {
+		position: relative;
 		background: var(--color-surface);
 		border: var(--space-px) solid var(--color-border);
 		border-radius: 1rem;
 		padding: var(--space-px);
 		box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+		transition:
+			background-color 180ms ease,
+			box-shadow 220ms ease,
+			backdrop-filter 220ms ease;
+	}
+
+	.shell[data-cli-expanded='true'] .cli-box {
+		background: rgba(19, 21, 26, 0.92);
+		backdrop-filter: blur(12px);
+		box-shadow:
+			0 34px 72px rgba(0, 0, 0, 0.5),
+			0 12px 32px rgba(0, 0, 0, 0.36);
+	}
+
+	.cli-dismiss {
+		position: absolute;
+		top: 0.55rem;
+		right: 0.55rem;
+		width: 1.9rem;
+		height: 1.9rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 999px;
+		color: rgba(217, 223, 232, 0.72);
+		background: rgba(255, 255, 255, 0.02);
+		border: var(--space-px) solid transparent;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(-3px);
+		transition:
+			opacity 140ms ease,
+			transform 140ms ease,
+			color 140ms ease,
+			background-color 140ms ease,
+			border-color 140ms ease;
+	}
+
+	.cli-dismiss svg {
+		width: 0.95rem;
+		height: 0.95rem;
+	}
+
+	.shell[data-cli-expanded='true'] .cli-dismiss {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(0);
+	}
+
+	.cli-dismiss:hover,
+	.cli-dismiss:focus-visible {
+		color: rgba(245, 248, 252, 0.96);
+		background: rgba(255, 255, 255, 0.07);
+		border-color: rgba(255, 255, 255, 0.14);
+		outline: none;
 	}
 
 	.cli-messages {
 		max-height: 13rem;
 		overflow: auto;
-		padding: var(--space-4);
+		padding: calc(var(--space-4) + 0.2rem) var(--space-4) var(--space-4);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
