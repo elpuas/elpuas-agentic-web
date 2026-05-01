@@ -1,0 +1,204 @@
+---
+title: "The Renaissance Developer: Building Websites in the Age of AI"
+slug: "is-this-the-future-of-web-development"
+description: "I built a conversational AI-powered website in one weekend using Figma, Codex, Astro, and ChatGPT to test a bigger question: is this how modern web development will work from now on?"
+excerpt: "What started as a personal portfolio redesign turned into a real experiment in agentic development, conversational interfaces, and AI-assisted software production."
+publishDate: "2026-05-01"
+date: "2026-05-01"
+author: "Alfredo Navas"
+category: "AI Development"
+tags:
+  - ai
+  - web-development
+  - codex
+  - chatgpt
+  - astro
+  - figma
+  - agentic-development
+  - conversational-ui
+  - developer-workflow
+featuredImage: "../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-II.webp"
+heroImage: "../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-II.webp"
+heroAlt: "AI-assisted development setup used during the agentic portfolio build"
+draft: false
+---
+
+import { Image } from 'astro:assets';
+import workflowImage from '../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-workflow-clean.webp';
+import resultsImage from '../../assets/blog/is-this-the-future-of-web-development/is-this-the-future-of-web-development-agentic-training.webp';
+
+For many years, building a website followed almost the same formula. You design a homepage, create an about page, add project sections, publish some articles, wire a contact form, and expect visitors to move through the information the way you planned it. That model still works, but I am starting to think it will not be enough for much longer.
+
+As conversational AI becomes part of daily digital behavior, people are getting used to a different relationship with software. They are getting used to asking instead of searching, querying instead of browsing, and expecting direct answers instead of manually digging through menus and pages.
+
+That idea stayed in my head for a while, and it led me to a simple question: what happens when websites stop behaving like static brochures and start behaving more like knowledge systems?
+
+Instead of simply redesigning my personal portfolio, I decided to use it as a real experiment to test that exact idea.
+
+---
+
+## Why This Was More Than a Portfolio Redesign
+
+My previous portfolio was not a bad website at all. In fact, it was solid, my articles were ranking, my work was represented correctly, and it still did what a normal portfolio is supposed to do. The problem was not that the old site had failed. The problem was that it no longer represented the way I actually work today.
+
+Over the last year, my development workflow has changed dramatically because of AI. I no longer approach software by sitting down and manually writing every single layer from scratch. Today, most of my work involves planning with AI, refining tasks with AI, supervising implementation with AI, and iterating much faster than I could manually. I am still making all the decisions, but the process itself is no longer tied only to my keyboard.
+
+Because of that, a traditional brochure-style portfolio no longer made sense to me. I did not need another prettier site. I needed a site that reflected a different way of thinking, building, and interacting with information.
+
+This project became less about redesigning my portfolio and more about validating two ideas I already had in mind: first, that websites are going to become more conversational, and second, that developers are going to work very differently from now on.
+
+---
+
+## Building a Website That People Could Ask, Not Just Browse
+
+From the beginning, the core concept was simple. I wanted visitors to ask instead of click.
+
+Rather than forcing someone to read a long bio, jump through project pages, or manually search through blog archives, I wanted them to type things like:
+
+Who is Alfredo Navas?  
+What kind of projects has he built?  
+What technologies does he use?  
+Summarize this article for me.  
+Tell me about his AI workflow.
+
+That changed the way I thought about the site completely. I stopped seeing it as a collection of pages and started seeing it as a body of knowledge that could be queried.
+
+The visual inspiration for this came naturally from tools I now use every day, especially interfaces like Codex and Claude. Those environments are centered less on navigation and more on intent. You go there to ask for something and get movement, not to click through ten different screens. I wanted to bring some of that same interaction model into a website.
+
+This was not just “let me add a chatbot to my portfolio.” It was me trying to see what a website feels like when the visitor can naturally query the information instead of hunting for it.
+
+---
+
+## Compressing the Design Process with Figma
+
+Once the concept was clear, I moved into Figma, but not in the traditional sense of spending days building polished mockups before touching code.
+
+I already had a strong idea in my head of what I wanted, so I used Figma Make mainly as a fast visual ideation tool. After several natural language prompts and a few rounds of iteration, I was able to get very close to the visual language I had in mind: the homepage composition, the conversational dock, the dark interface, the mobile direction, and the spacing system.
+
+In roughly two concentrated hours, I had enough.
+
+That was an important part of the workflow. I was not trying to create pixel-perfect design deliverables. I was trying to create a visual system clear enough that implementation could begin immediately. In an AI-assisted build, you do not always need a fully frozen design package before coding starts. You need enough certainty to establish direction, and then the browser becomes part of the design refinement.
+
+Using the Figma MCP connection, I was also able to feed screenshots, references, and visual targets directly into Codex prompts, which made the handoff much faster than a normal design-to-development process.
+
+---
+
+## Why Astro Was the Right Fit for This Project
+
+For the frontend, I chose Astro because it gave me the exact balance I needed for this type of experiment.
+
+I needed the simplicity of static content, the flexibility of server-rendered routes, the ability to use React only where interactivity was necessary, and a clean way to organize a growing body of Markdown-based knowledge files. Astro fits naturally into that middle ground, and together with Netlify the deployment friction was almost zero.
+
+Just as important, Astro allowed me to keep the entire knowledge layer file-based. This was not a CMS-heavy website and it did not need a database. The conversational assistant could read structured Markdown files far better than it needed a traditional content management backend.
+
+Humans can edit Markdown quickly, AI systems can ingest Markdown cleanly, and the whole architecture stays transparent and portable. That made Astro a much more practical choice for this than building a heavier backend.
+
+---
+
+## Codex Became the Production Engineer
+
+This is probably the part most people misunderstand when they hear that AI helped build the site.
+
+This was not one giant magical prompt where an entire website appeared out of nowhere.
+
+The whole build was handled through a very structured sequence of micro tasks, almost like running a solo agile sprint. I would define one narrow objective, discuss it first with ChatGPT, refine the exact implementation prompt, send that prompt to Codex, review the output, test the result visually, correct what was off, and then move to the next branch.
+
+I repeated that loop roughly fifty times across the full weekend.
+
+Some tasks landed correctly on the first try, while others needed several correction cycles, but every prompt had a defined target and every branch had a specific purpose.
+
+Codex wrote almost all of the actual code in the project, from Astro components and layouts to styling, responsive adjustments, endpoints, and interactions. But this is the key distinction: Codex wrote the code, not the decisions.
+
+<figure style="margin: 2.5rem 0;">
+	<Image
+		src={workflowImage}
+		alt="Agentic development workflow showing planning, prompt refinement, implementation, and iterative review"
+		sizes="(max-width: 768px) 100vw, 820px"
+		style="width: 100%; height: auto; border-radius: 12px;"
+	/>
+</figure>
+
+Architecture, branch planning, feature sequencing, prompt refinement, and final approval were still mine.
+
+The AI handled implementation labor. I handled software direction.
+
+At some point during that sprint, I realized I no longer felt like I was programming in the traditional sense. I felt like I was directing production.
+
+---
+
+## ChatGPT Was the Architectural Planning Layer
+
+If Codex was the one writing software, ChatGPT was the one helping me think through the software.
+
+I used ChatGPT from the first conceptual conversations all the way to the final refinements. It helped me challenge ideas, validate directions, rethink features when something did not feel right, and most importantly, sharpen prompts before they ever reached Codex.
+
+We worked together on project planning, flow diagrams, content structure, assistant behavior, rollout sequencing, and QA thinking.
+
+Whenever Codex failed to produce the exact outcome I wanted, the task came back to ChatGPT first so we could reframe the problem correctly.
+
+Very quickly, this stopped feeling like I was using two separate tools. It felt more like I was operating with a compact engineering team: one agent handling execution, another helping with reasoning, and me orchestrating the whole process from above.
+
+That shift alone says a lot about where software work is heading.
+
+---
+
+## The Hardest Part Was Training the AI Layer
+
+Ironically, the frontend was not the hardest part of the project.
+
+The hardest part was building the AI version of the website behind the interface.
+
+I created a private content layer accessible only to the conversational assistant, and inside it I structured a dedicated knowledge directory with multiple Markdown files covering my professional background, technical stack, selected projects, speaking history, blog articles, and other relevant context.
+
+Much of this information already existed, but it existed in fragments, so it had to be collected, cleaned, normalized, and reorganized into something the assistant could actually use well.
+
+Then came the difficult part: behavior.
+
+The first responses from the assistant were technically correct, but they did not feel right. They were too robotic, too long, too generic, and too willing to answer things outside the purpose of the site.
+
+I spent several hours tightening that layer, forcing shorter responses, pushing for a more natural tone, restricting hallucinations, rejecting unrelated prompts, and adding behavioral guardrails so the assistant stayed focused on what it was supposed to be.
+
+That process taught me something quickly. Building the chat interface took a few hours. Building the information architecture and behavioral boundaries behind the chat took much longer.
+
+The true engineering challenge was not frontend development. It was knowledge engineering.
+
+---
+
+## What This Project Confirmed for Me
+
+I have been using AI in development for quite some time now, so this was not my first attempt at agentic work, but this was the first project where the workflow felt genuinely mature.
+
+The correction loops were lower, the implementation quality was higher, and the amount of repeated explanation needed was much smaller than in earlier experiments. For the first time, it felt possible to take a very precise mental vision and ship it in one focused weekend without the whole thing collapsing into chaos.
+
+More than anything, this project reinforced a lesson I keep seeing again and again: the prompt still controls everything.
+
+Good context and a clear task definition change the quality of implementation dramatically. Weak prompts still create weak software.
+
+If I had built this same website in the old manual way, during free hours between work and life, it probably would have dragged into several weeks, maybe even a month. Instead, it became a highly focused production sprint.
+
+That is not just a productivity improvement. That is a different working model.
+
+<figure style="margin: 2.5rem 0;">
+	<Image
+		src={resultsImage}
+		alt="Final portfolio experience with conversational interface and polished implementation details"
+		sizes="(max-width: 768px) 100vw, 820px"
+		style="width: 100%; height: auto; border-radius: 12px;"
+	/>
+</figure>
+
+---
+
+## So, Is This the Future of Web Development?
+
+I believe at least part of it is.
+
+Not because developers are disappearing, and not because AI suddenly builds perfect software by itself, but because developers who know how to direct these systems can now operate at a speed and output level that was much harder to reach before.
+
+This website ended up becoming more than a portfolio for me. It became a personal validation that both of my original hypotheses were correct: websites are going to become more queryable, and developers are going to become more agentic.
+
+We are moving into a phase where writing code is only one layer of the job. The bigger layer is learning how to direct intelligence, structure information, define boundaries, and move ideas into production through systems.
+
+That is what this project really tested, and after finishing it, I am more convinced than ever that this is not just a different way to build websites.
+
+It is a different way to be a developer.
