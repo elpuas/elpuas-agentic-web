@@ -408,8 +408,7 @@ const navigation = [
 				if (form && input && messages && submitButton) {
 					const conversationHistory = [];
 					let activeRevealId = 0;
-					let isCliExpanded = false;
-					let isDockCollapsed = false;
+					let isDockExpanded = false;
 					let idleDockHeight = 0;
 					let heroOffsetFrame = 0;
 					const desktopHeroQuery = window.matchMedia('(max-width: 48rem)');
@@ -489,11 +488,12 @@ const navigation = [
 						messages.scrollTop = messages.scrollHeight;
 					};
 
-					const setCliExpanded = (expanded) => {
-						isCliExpanded = expanded;
+					const setDockExpanded = (expanded) => {
+						isDockExpanded = expanded;
 						if (shellRoot) {
 							shellRoot.dataset.cliExpanded = expanded ? 'true' : 'false';
 						}
+						scheduleHeroDockCompensation();
 					};
 
 					const applyHeroDockCompensation = () => {
@@ -536,24 +536,8 @@ const navigation = [
 						});
 					};
 
-					const syncDockExpandedState = () => {
-						const hasConversation = messages.children.length > 0;
-						if (!hasConversation) {
-							isDockCollapsed = false;
-							if (isCliExpanded) {
-								setCliExpanded(false);
-							}
-						} else if (!isCliExpanded && !isDockCollapsed) {
-							setCliExpanded(true);
-						}
-						scheduleHeroDockCompensation();
-					};
-
 					const collapseCliDock = () => {
-						isDockCollapsed = true;
-						setCliExpanded(false);
-						scheduleHeroDockCompensation();
-						input.focus();
+						setDockExpanded(false);
 					};
 
 					/**
@@ -608,7 +592,7 @@ const navigation = [
 						renderMessageContent(item, role, text, isLoading);
 						messages.append(item);
 						scrollMessages();
-						syncDockExpandedState();
+						scheduleHeroDockCompensation();
 						return item;
 					};
 
@@ -663,8 +647,7 @@ const navigation = [
 							return;
 						}
 
-						isDockCollapsed = false;
-						setCliExpanded(true);
+						setDockExpanded(true);
 						appendMessage('user', question);
 						addHistoryMessage('user', question);
 						const assistantMessage = appendMessage('assistant', '', true);
@@ -1197,11 +1180,15 @@ const navigation = [
 	.cli-messages {
 		max-height: 13rem;
 		overflow: auto;
-		padding: calc(var(--space-4) + 0.45rem) calc(var(--space-4) + 0.8rem) var(--space-4) var(--space-4);
-		scroll-padding-top: calc(var(--space-4) + 0.45rem);
+		padding: calc(var(--space-4) + 0.85rem) calc(var(--space-4) + 0.8rem) var(--space-4) var(--space-4);
+		scroll-padding-top: calc(var(--space-4) + 0.85rem);
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
+	}
+
+	.shell[data-cli-expanded='false'] .cli-messages {
+		display: none;
 	}
 
 	.cli-messages::-webkit-scrollbar {
