@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { askAI } from '../../lib/ai';
 import { loadContext } from '../../lib/context';
+import { getDeterministicAnswer } from '../../lib/deterministic/router';
 
 export const prerender = false;
 const MAX_QUESTION_LENGTH = 450;
@@ -60,6 +61,11 @@ export const POST: APIRoute = async ({ request }) => {
 			return jsonResponse(400, {
 				error: `Please keep your question under ${MAX_QUESTION_LENGTH} characters.`,
 			});
+		}
+
+		const deterministicAnswer = getDeterministicAnswer(normalizedQuestion);
+		if (deterministicAnswer) {
+			return jsonResponse(200, { text: deterministicAnswer });
 		}
 
 		let context: string;
