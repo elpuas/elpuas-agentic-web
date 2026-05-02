@@ -24,3 +24,11 @@
 
 - Optionally expand aliases/keyword clusters using real production query logs.
 - Add unit tests for deterministic intent matching and regression safety.
+
+---
+
+## Follow-up cleanup (same day)
+
+- Hardened deterministic answer payload text so responses are fixed, concise, and final.
+- Updated `PUBLIC_WORK_INTENT` to use full canonical URLs with `https://` from `content/knowledge/public-professional-profiles.mdx`.
+- Confirmed deterministic routing still returns immediately from `src/pages/api/ask.ts` before context loading and before `askAI()`, so deterministic answers are not AI-post-processed.
