@@ -14,6 +14,13 @@ const TOKEN_SYNONYMS: Record<string, string> = {
 
 const NON_DISTINCT_TOKENS = new Set(['where', 'what', 'how', 'who', 'are', 'is', 'do', 'does', 'did', 'you', 'your', 'i', 'me', 'my']);
 const BROAD_INTENT_TOKENS = new Set(['work', 'project', 'projects', 'portfolio', 'profile']);
+const PUBLIC_WORK_DESCRIPTIVE_PHRASES = [
+	'tell me about',
+	'explain',
+	'describe',
+	'talk about',
+	'what kind of',
+];
 
 export function getDeterministicAnswer(question: string): string | null {
 	const normalized = normalizeQuestion(question);
@@ -30,6 +37,10 @@ export function getDeterministicAnswer(question: string): string | null {
 	}
 
 	const strongIntentMatches = DETERMINISTIC_INTENTS.filter((intent) => {
+		if (intent.id === 'PUBLIC_WORK_INTENT' && isBroadDescriptivePrompt(normalized)) {
+			return false;
+		}
+
 		if (matchesAlias(normalized, questionTokens, intent.aliases)) {
 			return true;
 		}
@@ -51,6 +62,10 @@ export function getDeterministicAnswer(question: string): string | null {
 	}
 
 	return null;
+}
+
+function isBroadDescriptivePrompt(normalizedQuestion: string): boolean {
+	return PUBLIC_WORK_DESCRIPTIVE_PHRASES.some((phrase) => normalizedQuestion.includes(phrase));
 }
 
 export function normalizeQuestion(input: string): string {
