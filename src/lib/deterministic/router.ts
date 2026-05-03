@@ -21,6 +21,13 @@ export function getDeterministicAnswer(question: string): string | null {
 		return null;
 	}
 	const questionTokens = tokenize(normalized);
+	const hasDomainSignal = hasDomainKeywords(questionTokens);
+	const hasOutOfDomainSignal = hasOutOfDomainMarkers(normalized);
+
+	// If a prompt mixes in-domain and out-of-domain asks, refuse early.
+	if (hasOutOfDomainSignal && hasDomainSignal) {
+		return OUT_OF_DOMAIN_REFUSAL;
+	}
 
 	for (const intent of DETERMINISTIC_INTENTS) {
 		if (matchesAlias(normalized, questionTokens, intent.aliases)) {
@@ -40,7 +47,7 @@ export function getDeterministicAnswer(question: string): string | null {
 		return best.answer;
 	}
 
-	if (isClearlyOutOfDomain(normalized)) {
+	if (isClearlyOutOfDomain(normalized, questionTokens, hasDomainSignal, hasOutOfDomainSignal)) {
 		return OUT_OF_DOMAIN_REFUSAL;
 	}
 
@@ -183,11 +190,36 @@ function escapeRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function isClearlyOutOfDomain(normalizedQuestion: string): boolean {
-	const questionTokens = tokenize(normalizedQuestion);
-	const hasDomainSignal = DOMAIN_KEYWORDS.some((keyword) =>
+function hasDomainKeywords(questionTokens: string[]): boolean {
+	return DOMAIN_KEYWORDS.some((keyword) =>
 		questionTokens.some((token) => isNearTokenMatch(token, keyword)),
 	);
+}
+
+function hasOutOfDomainMarkers(normalizedQuestion: string): boolean {
+	if (/\bh2o\b/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/\bsolve\b.*\b\d+\b.*\b\d+\b/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/\b\d+\s*[\+\-*/]\s*\d+\b/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	return OUT_OF_DOMAIN_PATTERNS.some((pattern) =>
+		normalizedQuestion.includes(normalizeQuestion(pattern)),
+	);
+}
+
+function isClearlyOutOfDomain(
+	normalizedQuestion: string,
+	questionTokens: string[],
+	hasDomainSignal = hasDomainKeywords(questionTokens),
+	hasOutOfDomainSignal = hasOutOfDomainMarkers(normalizedQuestion),
+): boolean {
 	if (hasDomainSignal) {
 		return false;
 	}
@@ -200,7 +232,5 @@ function isClearlyOutOfDomain(normalizedQuestion: string): boolean {
 		return true;
 	}
 
-	return OUT_OF_DOMAIN_PATTERNS.some((pattern) =>
-		normalizedQuestion.includes(normalizeQuestion(pattern)),
-	);
+	return hasOutOfDomainSignal;
 }

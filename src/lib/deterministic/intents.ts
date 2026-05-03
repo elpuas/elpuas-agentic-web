@@ -40,6 +40,7 @@ export const OUT_OF_DOMAIN_PATTERNS = [
 	'world war',
 	'solve this math',
 	'solve this equation',
+	'science fact',
 	'who won',
 	'prime minister of',
 	'president of',
