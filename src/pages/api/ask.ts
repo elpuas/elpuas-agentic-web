@@ -173,6 +173,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * must wait before sending another request.
  */
 function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: number } {
+	if (ip === 'unknown-client') {
+		return { active: false, retryAfterMs: 0 };
+	}
+
 	const now = Date.now();
 	const lastRequestAt = requestCooldownByIp.get(ip);
 	if (typeof lastRequestAt === 'number') {

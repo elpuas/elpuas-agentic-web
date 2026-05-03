@@ -13,6 +13,7 @@ const TOKEN_SYNONYMS: Record<string, string> = {
 };
 
 const NON_DISTINCT_TOKENS = new Set(['where', 'what', 'how', 'who', 'are', 'is', 'do', 'does', 'did', 'you', 'your', 'i', 'me', 'my']);
+const BROAD_INTENT_TOKENS = new Set(['work', 'project', 'projects', 'portfolio', 'profile']);
 
 export function getDeterministicAnswer(question: string): string | null {
 	const normalized = normalizeQuestion(question);
@@ -89,10 +90,24 @@ function matchesAlias(normalizedQuestion: string, questionTokens: string[], alia
 			return false;
 		}
 
-		// Avoid matching mostly on filler words like "where are you".
-		return matchedAliasTokens.some(
-			(token) => token.length >= 4 && !NON_DISTINCT_TOKENS.has(token),
+		// Avoid matching mostly on filler or broad tokens (e.g. "show me your work")
+		// unless we have multiple informative matches.
+		const informativeMatches = matchedAliasTokens.filter(
+			(token) =>
+				token.length >= 4 &&
+				!NON_DISTINCT_TOKENS.has(token) &&
+				!BROAD_INTENT_TOKENS.has(token),
 		);
+
+		if (informativeMatches.length >= 1) {
+			return true;
+		}
+
+		// For one-token aliases like "github", allow broad fallback only when alias is tiny.
+		return aliasTokens.length <= 2 &&
+			matchedAliasTokens.some(
+				(token) => token.length >= 4 && !NON_DISTINCT_TOKENS.has(token),
+			);
 	});
 }
 
@@ -175,6 +190,14 @@ function isClearlyOutOfDomain(normalizedQuestion: string): boolean {
 	);
 	if (hasDomainSignal) {
 		return false;
+	}
+
+	if (/^(what|who|where|when|why|how)\s+is\s+[a-z0-9+\-]+$/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/^(what|who|where|when|why|how)\s+was\s+[a-z0-9+\-]+$/.test(normalizedQuestion)) {
+		return true;
 	}
 
 	return OUT_OF_DOMAIN_PATTERNS.some((pattern) =>
