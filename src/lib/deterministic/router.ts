@@ -159,6 +159,12 @@ function isNearTokenMatch(token: string, target: string): boolean {
 		return true;
 	}
 
+	// For short tokens, allow only exact match to avoid false positives
+	// like "what" accidentally matching "where".
+	if (token.length <= 4 || target.length <= 4) {
+		return false;
+	}
+
 	if (target.length >= 5 && token.length >= 4 && (target.startsWith(token) || token.startsWith(target))) {
 		return true;
 	}
