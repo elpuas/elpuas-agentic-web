@@ -13,6 +13,14 @@ const TOKEN_SYNONYMS: Record<string, string> = {
 };
 
 const NON_DISTINCT_TOKENS = new Set(['where', 'what', 'how', 'who', 'are', 'is', 'do', 'does', 'did', 'you', 'your', 'i', 'me', 'my']);
+const BROAD_INTENT_TOKENS = new Set(['work', 'project', 'projects', 'portfolio', 'profile']);
+const PUBLIC_WORK_DESCRIPTIVE_PHRASES = [
+	'tell me about',
+	'explain',
+	'describe',
+	'talk about',
+	'what kind of',
+];
 
 export function getDeterministicAnswer(question: string): string | null {
 	const normalized = normalizeQuestion(question);
@@ -20,30 +28,44 @@ export function getDeterministicAnswer(question: string): string | null {
 		return null;
 	}
 	const questionTokens = tokenize(normalized);
+	const hasDomainSignal = hasDomainKeywords(questionTokens);
+	const hasOutOfDomainSignal = hasOutOfDomainMarkers(normalized);
 
-	for (const intent of DETERMINISTIC_INTENTS) {
+	// If a prompt mixes in-domain and out-of-domain asks, refuse early.
+	if (hasOutOfDomainSignal && hasDomainSignal) {
+		return OUT_OF_DOMAIN_REFUSAL;
+	}
+
+	const strongIntentMatches = DETERMINISTIC_INTENTS.filter((intent) => {
+		if (intent.id === 'PUBLIC_WORK_INTENT' && isBroadDescriptivePrompt(normalized)) {
+			return false;
+		}
+
 		if (matchesAlias(normalized, questionTokens, intent.aliases)) {
-			return intent.answer;
+			return true;
 		}
+
+		return scoreKeywordClusters(questionTokens, intent) >= 2;
+	});
+
+	if (strongIntentMatches.length === 1) {
+		return strongIntentMatches[0].answer;
 	}
 
-	let best: { answer: string; score: number } | null = null;
-	for (const intent of DETERMINISTIC_INTENTS) {
-		const score = scoreKeywordClusters(questionTokens, intent);
-		if (score > 0 && (!best || score > best.score)) {
-			best = { answer: intent.answer, score };
-		}
+	// Compound multi-intent prompts should flow to the model so both parts can be answered.
+	if (strongIntentMatches.length > 1) {
+		return null;
 	}
 
-	if (best && best.score >= 2) {
-		return best.answer;
-	}
-
-	if (isClearlyOutOfDomain(normalized)) {
+	if (isClearlyOutOfDomain(normalized, questionTokens, hasDomainSignal, hasOutOfDomainSignal)) {
 		return OUT_OF_DOMAIN_REFUSAL;
 	}
 
 	return null;
+}
+
+function isBroadDescriptivePrompt(normalizedQuestion: string): boolean {
+	return PUBLIC_WORK_DESCRIPTIVE_PHRASES.some((phrase) => normalizedQuestion.includes(phrase));
 }
 
 export function normalizeQuestion(input: string): string {
@@ -89,10 +111,24 @@ function matchesAlias(normalizedQuestion: string, questionTokens: string[], alia
 			return false;
 		}
 
-		// Avoid matching mostly on filler words like "where are you".
-		return matchedAliasTokens.some(
-			(token) => token.length >= 4 && !NON_DISTINCT_TOKENS.has(token),
+		// Avoid matching mostly on filler or broad tokens (e.g. "show me your work")
+		// unless we have multiple informative matches.
+		const informativeMatches = matchedAliasTokens.filter(
+			(token) =>
+				token.length >= 4 &&
+				!NON_DISTINCT_TOKENS.has(token) &&
+				!BROAD_INTENT_TOKENS.has(token),
 		);
+
+		if (informativeMatches.length >= 1) {
+			return true;
+		}
+
+		// For one-token aliases like "github", allow broad fallback only when alias is tiny.
+		return aliasTokens.length <= 2 &&
+			matchedAliasTokens.some(
+				(token) => token.length >= 4 && !NON_DISTINCT_TOKENS.has(token),
+			);
 	});
 }
 
@@ -121,6 +157,12 @@ function scoreKeywordClusters(questionTokens: string[], intent: DeterministicInt
 function isNearTokenMatch(token: string, target: string): boolean {
 	if (token === target) {
 		return true;
+	}
+
+	// For short tokens, allow only exact match to avoid false positives
+	// like "what" accidentally matching "where".
+	if (token.length <= 4 || target.length <= 4) {
+		return false;
 	}
 
 	if (target.length >= 5 && token.length >= 4 && (target.startsWith(token) || token.startsWith(target))) {
@@ -168,16 +210,47 @@ function escapeRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function isClearlyOutOfDomain(normalizedQuestion: string): boolean {
-	const questionTokens = tokenize(normalizedQuestion);
-	const hasDomainSignal = DOMAIN_KEYWORDS.some((keyword) =>
+function hasDomainKeywords(questionTokens: string[]): boolean {
+	return DOMAIN_KEYWORDS.some((keyword) =>
 		questionTokens.some((token) => isNearTokenMatch(token, keyword)),
 	);
-	if (hasDomainSignal) {
-		return false;
+}
+
+function hasOutOfDomainMarkers(normalizedQuestion: string): boolean {
+	if (/\bh2o\b/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/\bsolve\b.*\b\d+\b.*\b\d+\b/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/\b\d+\s*[\+\-*/]\s*\d+\b/.test(normalizedQuestion)) {
+		return true;
 	}
 
 	return OUT_OF_DOMAIN_PATTERNS.some((pattern) =>
 		normalizedQuestion.includes(normalizeQuestion(pattern)),
 	);
+}
+
+function isClearlyOutOfDomain(
+	normalizedQuestion: string,
+	questionTokens: string[],
+	hasDomainSignal = hasDomainKeywords(questionTokens),
+	hasOutOfDomainSignal = hasOutOfDomainMarkers(normalizedQuestion),
+): boolean {
+	if (hasDomainSignal) {
+		return false;
+	}
+
+	if (/^(what|who|where|when|why|how)\s+is\s+[a-z0-9+\-]+$/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	if (/^(what|who|where|when|why|how)\s+was\s+[a-z0-9+\-]+$/.test(normalizedQuestion)) {
+		return true;
+	}
+
+	return hasOutOfDomainSignal;
 }

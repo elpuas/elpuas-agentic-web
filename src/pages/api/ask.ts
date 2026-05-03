@@ -8,6 +8,7 @@ const MAX_QUESTION_LENGTH = 450;
 const COOLDOWN_MS = 4000;
 const MAX_HISTORY_MESSAGES = 6;
 const MAX_HISTORY_MESSAGE_LENGTH = 600;
+const IS_DEV = import.meta.env.DEV;
 const requestCooldownByIp = new Map<string, number>();
 
 type ConversationRole = 'user' | 'assistant';
@@ -173,8 +174,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * must wait before sending another request.
  */
 function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: number } {
+	// Keep localhost QA smooth, but never fully disable cooldown in production.
+	if (ip === 'unknown-client' && IS_DEV) {
+		return { active: false, retryAfterMs: 0 };
+	}
+
+	const throttleKey = ip === 'unknown-client' ? 'fallback-unknown-client' : ip;
+
 	const now = Date.now();
-	const lastRequestAt = requestCooldownByIp.get(ip);
+	const lastRequestAt = requestCooldownByIp.get(throttleKey);
 	if (typeof lastRequestAt === 'number') {
 		const elapsed = now - lastRequestAt;
 		if (elapsed < COOLDOWN_MS) {
@@ -185,7 +193,7 @@ function registerAndGetCooldown(ip: string): { active: boolean; retryAfterMs: nu
 		}
 	}
 
-	requestCooldownByIp.set(ip, now);
+	requestCooldownByIp.set(throttleKey, now);
 	return { active: false, retryAfterMs: 0 };
 }
 
