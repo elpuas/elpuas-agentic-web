@@ -29,22 +29,21 @@ export function getDeterministicAnswer(question: string): string | null {
 		return OUT_OF_DOMAIN_REFUSAL;
 	}
 
-	for (const intent of DETERMINISTIC_INTENTS) {
+	const strongIntentMatches = DETERMINISTIC_INTENTS.filter((intent) => {
 		if (matchesAlias(normalized, questionTokens, intent.aliases)) {
-			return intent.answer;
+			return true;
 		}
+
+		return scoreKeywordClusters(questionTokens, intent) >= 2;
+	});
+
+	if (strongIntentMatches.length === 1) {
+		return strongIntentMatches[0].answer;
 	}
 
-	let best: { answer: string; score: number } | null = null;
-	for (const intent of DETERMINISTIC_INTENTS) {
-		const score = scoreKeywordClusters(questionTokens, intent);
-		if (score > 0 && (!best || score > best.score)) {
-			best = { answer: intent.answer, score };
-		}
-	}
-
-	if (best && best.score >= 2) {
-		return best.answer;
+	// Compound multi-intent prompts should flow to the model so both parts can be answered.
+	if (strongIntentMatches.length > 1) {
+		return null;
 	}
 
 	if (isClearlyOutOfDomain(normalized, questionTokens, hasDomainSignal, hasOutOfDomainSignal)) {
