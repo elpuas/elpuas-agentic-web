@@ -12,6 +12,8 @@ const TOKEN_SYNONYMS: Record<string, string> = {
 	ur: 'your',
 };
 
+const NON_DISTINCT_TOKENS = new Set(['where', 'what', 'how', 'who', 'are', 'is', 'do', 'does', 'did', 'you', 'your', 'i', 'me', 'my']);
+
 export function getDeterministicAnswer(question: string): string | null {
 	const normalized = normalizeQuestion(question);
 	if (!normalized) {
@@ -77,12 +79,20 @@ function matchesAlias(normalizedQuestion: string, questionTokens: string[], alia
 			return false;
 		}
 
-		const matchedTokens = aliasTokens.filter((aliasToken) =>
+		const matchedAliasTokens = aliasTokens.filter((aliasToken) =>
 			questionTokens.some((questionToken) => isNearTokenMatch(questionToken, aliasToken)),
-		).length;
+		);
+		const matchedTokens = matchedAliasTokens.length;
 
 		const ratio = matchedTokens / aliasTokens.length;
-		return ratio >= 0.75;
+		if (ratio < 0.75) {
+			return false;
+		}
+
+		// Avoid matching mostly on filler words like "where are you".
+		return matchedAliasTokens.some(
+			(token) => token.length >= 4 && !NON_DISTINCT_TOKENS.has(token),
+		);
 	});
 }
 
