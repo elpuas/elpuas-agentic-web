@@ -1,0 +1,163 @@
+---
+title: "From Prompt to Loop"
+slug: "from-prompt-to-loop"
+description: "After spending months working with tools like Codex and AI agents, I started noticing a shift: we're asking for fewer answers and more outcomes."
+excerpt: "Prompts aren't going away, but they're becoming part of something bigger. The interesting work is moving toward systems that can iterate, validate, and work toward a goal."
+publishDate: "2026-06-11"
+date: "2026-06-11"
+author: "Alfredo Navas"
+category: "AI Development"
+tags:
+  - ai
+  - loops
+  - agents
+  - codex
+  - software-development
+  - automation
+  - developer-workflow
+  - productivity
+featuredImage: "../../assets/blog/from-prompt-to-loop/hero.webp"
+heroImage: "../../assets/blog/from-prompt-to-loop/hero.webp"
+heroAlt: "From Prompt to Loop: The Evolution of AI Interactions in Software Development"
+canonicalUrl: "https://elpuas.com/blog/from-prompt-to-loop/"
+draft: false
+---
+
+For the last two years, we’ve spent a lot of time talking about prompts. We learned how to write them better, how to provide more context, how to break complex tasks into smaller instructions, and how to find the wording that seemed to produce the best results. For a while, it felt like the most valuable skill in the AI era was learning how to talk to a machine.
+
+That made perfect sense. The models improved so quickly that most of the conversation focused on getting better answers. Tutorials appeared everywhere, new frameworks emerged, and entire courses were built around prompt engineering. If you could consistently get better results from ChatGPT or Claude, you had a valuable skill.
+
+But while everyone was discussing prompts, something else started happening behind the scenes.
+
+The more I read about people building products with AI, the less I hear about prompts and the more I hear about agents, orchestrators, and loops. At first, I assumed it was just another buzzword that would disappear after a few months. After spending more time working with tools like Codex and watching how these systems evolve, I started to think the shift is real.
+
+The simplest way I can explain it is this: for years we asked AI for answers. Now we’re starting to ask it for outcomes.
+
+That may sound like a small difference, but I think it changes the relationship completely.
+
+## When We Were the Loop
+
+When most of us started using AI tools, the workflow was straightforward. We asked a question, received an answer, reviewed it, and decided what to do next. If something was wrong, we asked for changes. If something was missing, we provided more context. If the result wasn’t good enough, we kept iterating until it was.
+
+The AI performed a task, but we managed the process.
+
+Imagine that you want to add category and tag support to a WordPress Custom Post Type. A traditional interaction might start with a simple question:
+
+```php
+register_post_type(
+	'customer_solutions',
+	[
+		'public' => true,
+	]
+)
+```
+
+The AI generates the code, but then you notice that categories and tags aren’t included. You ask for a revision. Then you test it. Then you discover another issue. Then you make another adjustment. Every step depends on you identifying what is wrong and deciding what should happen next.
+
+The model helps with the implementation, but you’re still responsible for moving the work forward. In a very real sense, you’re the loop. You’re the one evaluating the output, deciding whether it meets the requirements, and determining what happens after each iteration.
+
+That model works surprisingly well, and it’s still how many people use AI today. The interesting part is that we’re starting to see systems that can take ownership of more of that process.
+
+## When the Goal Matters More Than the Prompt
+
+Instead of asking a question, modern agent systems often start with a goal.
+
+```text
+Goal:
+Add category and tag support
+to the customer_solutions CPT.
+```
+
+At first glance, that may not look very different from a prompt. The difference becomes obvious when you think about what happens next. A prompt usually asks for a response. A goal asks for a result.
+
+To achieve that result, the system might inspect the existing codebase, locate where the post type is registered, apply the required changes, run validations, check for errors, and try again if something doesn’t work. Rather than producing a single answer and waiting for instructions, it continues working toward the objective.
+
+That’s essentially what people mean when they talk about loops.
+
+The important idea isn’t that the AI generated code. AI has been generating code for years. The interesting part is that the system can now participate in a cycle of planning, execution, validation, and correction without requiring a human to guide every individual step.
+
+The focus shifts from completing a task to achieving an outcome.
+
+## The Funny Part Is That This Isn’t New
+
+The first time I heard the term agent loop, it sounded far more revolutionary than it actually is. Then I realized that developers have been building loops for decades.
+
+A few weeks ago, I saw a joke online from someone who said he loved watching people debate AI loops because he had been running loops in production for almost thirty years. His example was a cron job that restarted Tomcat every night.
+
+```bash
+0 2 * * * restart-tomcat.sh
+```
+
+The goal was simple: avoid getting a phone call at three in the morning because the server had run out of memory.
+
+Obviously, that isn’t artificial intelligence. But the pattern should feel familiar. The system checks a condition, performs an action, waits, and repeats the cycle again later. Monitoring systems work this way. Deployment pipelines work this way. Automated tests work this way. Software has always been full of loops.
+
+What feels different today is that we’re starting to automate part of the decision-making process inside those loops.
+
+## AI Joins the Cycle
+
+A more modern example might be something as simple as fixing a bug.
+
+A traditional prompt could be:
+
+```text
+Why is the mobile menu broken?
+```
+
+The AI gives you suggestions. You investigate. You test changes. You review the results and decide what to do next.
+
+An agent workflow starts from a different place.
+
+```text
+Goal:
+Make the mobile menu match
+the approved design.
+```
+
+That goal doesn’t prescribe the exact steps required to get there. The system can inspect components, review styles, run the project, compare the output against expectations, identify differences, and continue iterating until it gets closer to the desired result.
+
+What’s interesting is that the developer doesn’t have to describe every individual action. Instead of managing the implementation step by step, they define the destination and allow the system to handle more of the journey.
+
+I’ve noticed this difference myself while working with tools like Codex. Increasingly, I’m not asking for snippets of code. I’m assigning responsibilities. The conversation starts looking less like a search engine and more like a delegation process.
+
+The same thing applies outside of software development. Imagine a website that takes four seconds to load and needs to get down to two.
+
+A traditional prompt might ask:
+
+```text
+Why is my site slow?
+```
+
+An outcome-oriented workflow starts somewhere else.
+
+```text
+Goal:
+Reduce page load time
+from 4 seconds to 2 seconds.
+```
+
+Now the system can measure performance, identify bottlenecks, apply improvements, run another test, and continue iterating until it gets closer to the target. The conversation stops revolving around answers and starts revolving around results.
+
+## From One Agent to a Team
+
+Once you start thinking in terms of goals and loops, it’s easy to see why multi-agent systems are becoming popular.
+
+Instead of one AI doing everything, you can have a coordinator working with several specialized agents. One researches. One writes code. One runs tests. One reviews results. One generates documentation. Each agent has a specific responsibility, and each can operate within its own cycle of improvement.
+
+At that point, the system starts looking less like a chatbot and more like a team.
+
+Of course, not all loops are created equal. Some are highly exploratory and can try many different approaches before reaching a solution. Others operate within strict boundaries, with clearly defined goals and evaluation criteria. My guess is that most practical business value over the next few years will come from the second category. They’re easier to control, easier to maintain, and far less expensive to run.
+
+## What I Think Comes Next
+
+The more I think about it, the more this feels familiar to anyone who has spent time building software. Automated tests are loops. CI/CD pipelines are loops. Monitoring systems are loops. Cron jobs are loops. The concept itself isn’t new.
+
+What is new is that AI can now become an active participant inside those systems.
+
+That’s why I think the conversation is changing. Not because prompts are disappearing, but because they’re no longer the most interesting part. Prompts still matter, just as functions, APIs, and databases still matter. They’re important building blocks. What seems to be changing is the level at which we think about the work.
+
+For the last few years, we’ve been learning how to write better instructions. Over the next few years, I suspect we’ll spend more time designing better processes, defining better goals, and building systems that know how to evaluate their own progress.
+
+The prompts aren’t going away. They’re simply becoming one component inside larger systems designed to achieve outcomes.
+
+And that’s a much more interesting problem to solve.
