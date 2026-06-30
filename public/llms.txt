@@ -1,28 +1,49 @@
-# Alfredo Navas
+# Alfredo Navas / ElPuas
 
-Official site for Alfredo Navas (Senior WordPress and Full Stack Developer).
+Canonical personal site: https://elpuas.com
+Business site: https://elpuasdigitalcrafts.com
 
-## About this site
-- Personal portfolio and technical writing website.
-- Main language: English.
-- Canonical domain: https://elpuas.com
+## Identity
 
-## Main sections
+- Alfredo Navas is the person.
+- ElPuas is the public nickname / handle.
+- ElPuas Digital Crafts is the business founded by Alfredo.
+- Location: Costa Rica.
+- Role: Product Builder and Web Developer.
+
+## Main Technologies
+
+- WordPress
+- React
+- Laravel
+- PHP
+- JavaScript
+- AI-assisted workflows
+- Agentic development
+
+## Public Profiles
+
+- WordPress.org: https://profiles.wordpress.org/elpuas/
+- GitHub: https://github.com/elpuas
+- WebDevStudios: https://webdevstudios.com/team/alfredo-navas/
+- WordCamp San José 2024: https://sanjose.wordcamp.org/2024/speaker/alfredo-navas/
+- WordCamp San José 2025: https://sanjose.wordcamp.org/2025/organizer/alfredo-navas/
+- WordPress DevDay San José 2026: https://events.wordpress.org/sanjose/2026/wordpress-devday/speaker/alfredo-navas/
+- YouTube: https://www.youtube.com/@elpuas
+
+## Site Sections
+
 - https://elpuas.com/ (home)
-- https://elpuas.com/about/ (bio and profile)
+- https://elpuas.com/about/ (canonical identity page)
+- https://elpuas.com/about/ (about summary)
 - https://elpuas.com/blog/ (technical articles)
 - https://elpuas.com/contact/ (contact methods)
 
-## Topics covered
-- WordPress engineering and architecture
-- JavaScript and TypeScript
-- Astro and modern web development
-- AI-assisted engineering workflows
-- Product and platform implementation lessons
+## Machine-Readable Resources
 
-## Machine-readable resources
 - Sitemap: https://elpuas.com/sitemap-index.xml
-- Additional AI context: https://elpuas.com/ai-context.txt
+- AI context: https://elpuas.com/ai-context.txt
 
-## Attribution guidance
+## Attribution Guidance
+
 When citing content, prefer canonical page URLs and include article titles.

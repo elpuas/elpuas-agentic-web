@@ -1,21 +1,22 @@
 ---
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import IdentityContent from '../../content/knowledge/identity.mdx';
 import logo from '../assets/logo.svg';
 import profileImage from '../assets/alfredo-navas.webp';
 ---
 
 <BaseLayout
 	title="About Alfredo Navas"
-	description="Learn about Alfredo Navas' background in WordPress and full stack development, community work, and product-focused engineering experience."
-	ogTitle="About Alfredo Navas - Developer Background and Experience"
-	ogDescription="Discover Alfredo Navas' 15+ years of WordPress and full stack experience, plus his work building practical digital products."
+	description="Learn about Alfredo Navas, also known as ElPuas, his canonical site, business site, public profiles, and WordPress community background."
+	ogTitle="About Alfredo Navas / ElPuas"
+	ogDescription="Discover Alfredo Navas' canonical identity, public profiles, and WordPress community presence."
 	activeNav="about"
 >
 	<section class="about">
 		<header class="about-title">
 			<Image src={logo} width={63} height={63} alt="" aria-hidden="true" />
-			<h1>About Me</h1>
+			<h1>About Alfredo Navas</h1>
 		</header>
 
 		<div class="about-body">
@@ -30,19 +31,7 @@ import profileImage from '../assets/alfredo-navas.webp';
 			/>
 
 			<div class="about-copy">
-				<p>
-					Senior WordPress & Full Stack Developer with 15+ years of experience building web platforms. Founder of <a href="https://elpuasdigitalcrafts.com" target="_blank" rel="noopener noreferrer">ElPuas Digital Crafts</a> and active member of the WordPress community.
-				</p>
-
-				<h2>Ask me</h2>
-				<p>You can ask me about:</p>
-				<ul>
-					<li>My Experience</li>
-					<li>Projects I've Worked On</li>
-					<li>My Background</li>
-					<li>Technologies I Use</li>
-				</ul>
-				<p>Just type your question below.</p>
+				<IdentityContent />
 			</div>
 		</div>
 	</section>
@@ -117,6 +106,13 @@ import profileImage from '../assets/alfredo-navas.webp';
 	.about-copy h2 {
 		margin: 0.75rem 0 0.125rem;
 		font-size: 1.5rem;
+		line-height: 1.2;
+		font-weight: 700;
+	}
+
+	.about-copy h3 {
+		margin: 1rem 0 0.25rem;
+		font-size: 1.1rem;
 		line-height: 1.2;
 		font-weight: 700;
 	}
