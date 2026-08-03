@@ -13,8 +13,10 @@ export function buildAlfredoPersonSchema() {
 		knowsAbout: ALFREDO_KNOWS_ABOUT,
 		address: {
 			'@type': 'PostalAddress',
-			addressLocality: ALFREDO_LOCATION,
-			addressCountry: 'CR',
+			addressCountry: {
+				'@type': 'Country',
+				name: ALFREDO_LOCATION,
+			},
 		},
 		founderOf: {
 			'@type': 'ProfessionalService',
