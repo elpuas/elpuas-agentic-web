@@ -34,8 +34,7 @@ Business site: https://elpuasdigitalcrafts.com
 ## Site Sections
 
 - https://elpuas.com/ (home)
-- https://elpuas.com/about/ (canonical identity page)
-- https://elpuas.com/about/ (about summary)
+- https://elpuas.com/about/ (about and identity)
 - https://elpuas.com/blog/ (technical articles)
 - https://elpuas.com/contact/ (contact methods)
 
