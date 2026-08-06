@@ -1,6 +1,10 @@
+import type { BlogIndexEntry } from './blog-context';
+
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses';
 const MAX_HISTORY_MESSAGES = 6;
 const MAX_HISTORY_MESSAGE_LENGTH = 500;
+const SCOPE_REQUEST_TIMEOUT_MS = 8000;
+const ANSWER_REQUEST_TIMEOUT_MS = 20000;
 
 type ConversationRole = 'user' | 'assistant';
 
@@ -255,7 +259,7 @@ export async function classifyQuestionScope({
 	question: string;
 	conversationHistory?: ConversationMessage[];
 	hasPageContext: boolean;
-	blogIndex: string;
+	blogIndex: BlogIndexEntry[];
 }): Promise<ScopeDecision> {
 	const apiKey = getApiKey();
 	const recentUserMessages = sanitizeConversationHistory(conversationHistory)
@@ -263,40 +267,44 @@ export async function classifyQuestionScope({
 		.slice(-3)
 		.map((message) => message.content);
 
-	const response = await fetch(OPENAI_RESPONSES_URL, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			model: 'gpt-4.1-mini',
-			max_output_tokens: 80,
-			text: {
-				format: {
-					type: 'json_schema',
-					name: 'scope_decision',
-					strict: true,
-					schema: SCOPE_SCHEMA,
-				},
+	const response = await fetchWithTimeout(
+		OPENAI_RESPONSES_URL,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				'Content-Type': 'application/json',
 			},
-			input: [
-				{
-					role: 'system',
-					content: SCOPE_PROMPT,
+			body: JSON.stringify({
+				model: 'gpt-4.1-mini',
+				max_output_tokens: 80,
+				text: {
+					format: {
+						type: 'json_schema',
+						name: 'scope_decision',
+						strict: true,
+						schema: SCOPE_SCHEMA,
+					},
 				},
-				{
-					role: 'user',
-					content: JSON.stringify({
-						question,
-						recentUserMessages,
-						currentPageContextAvailable: hasPageContext,
-						blogIndex,
-					}),
-				},
-			],
-		}),
-	});
+				input: [
+					{
+						role: 'system',
+						content: SCOPE_PROMPT,
+					},
+					{
+						role: 'user',
+						content: JSON.stringify({
+							question,
+							recentUserMessages,
+							currentPageContextAvailable: hasPageContext,
+							blogIndex,
+						}),
+					},
+				],
+			}),
+		},
+		SCOPE_REQUEST_TIMEOUT_MS,
+	);
 
 	const payload = await readJson(response);
 	if (!response.ok) {
@@ -360,21 +368,25 @@ export async function askAI({
 		},
 	] as const;
 
-	const response = await fetch(OPENAI_RESPONSES_URL, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			model: 'gpt-4.1-mini',
-			max_output_tokens: 400,
-			text: {
-				format: { type: 'text' },
+	const response = await fetchWithTimeout(
+		OPENAI_RESPONSES_URL,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+				'Content-Type': 'application/json',
 			},
-			input,
-		}),
-	});
+			body: JSON.stringify({
+				model: 'gpt-4.1-mini',
+				max_output_tokens: 400,
+				text: {
+					format: { type: 'text' },
+				},
+				input,
+			}),
+		},
+		ANSWER_REQUEST_TIMEOUT_MS,
+	);
 
 	const serverHeader = response.headers.get('server') ?? 'unknown';
 	const payload = await readJson(response);
@@ -482,15 +494,53 @@ function isScopeDecision(value: unknown): value is ScopeDecision {
 		return false;
 	}
 
-	return (
-		(value.category === 'in_domain' ||
-			value.category === 'blog_related' ||
-			value.category === 'out_of_domain' ||
-			value.category === 'private') &&
-		(value.language === 'en' || value.language === 'es') &&
-		(typeof value.blogTitle === 'string' || value.blogTitle === null) &&
-		(typeof value.blogUrl === 'string' || value.blogUrl === null)
-	);
+	const hasValidCategory =
+		value.category === 'in_domain' ||
+		value.category === 'blog_related' ||
+		value.category === 'out_of_domain' ||
+		value.category === 'private';
+	const hasValidLanguage = value.language === 'en' || value.language === 'es';
+
+	if (!hasValidCategory || !hasValidLanguage) {
+		return false;
+	}
+
+	if (value.category === 'blog_related') {
+		return isNonEmptyString(value.blogTitle) && isNonEmptyString(value.blogUrl);
+	}
+
+	return value.blogTitle === null && value.blogUrl === null;
+}
+
+function isNonEmptyString(value: unknown): value is string {
+	return typeof value === 'string' && Boolean(value.trim());
+}
+
+/**
+ * Cancels stalled upstream requests so the API route can return a controlled error.
+ */
+async function fetchWithTimeout(
+	url: string,
+	options: RequestInit,
+	timeoutMs: number,
+): Promise<Response> {
+	const controller = new AbortController();
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+	try {
+		return await fetch(url, {
+			...options,
+			signal: controller.signal,
+		});
+	} catch (error) {
+		if (controller.signal.aborted) {
+			throw new Error(`OpenAI request timed out after ${timeoutMs}ms.`);
+		}
+
+		throw error;
+	} finally {
+		clearTimeout(timeoutId);
+	}
 }
 
 /**

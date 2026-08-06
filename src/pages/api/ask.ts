@@ -1,6 +1,10 @@
 import type { APIRoute } from 'astro';
 import { askAI, classifyQuestionScope, type ScopeDecision } from '../../lib/ai';
-import { getBlogIndexContext } from '../../lib/blog-context';
+import {
+	formatBlogIndexContext,
+	getBlogIndexEntries,
+	type BlogIndexEntry,
+} from '../../lib/blog-context';
 import { loadContext } from '../../lib/context';
 import { getDeterministicAnswer } from '../../lib/deterministic/router';
 
@@ -74,14 +78,16 @@ export const POST: APIRoute = async ({ request }) => {
 		}
 
 		let scope: ScopeDecision;
+		let blogIndex: BlogIndexEntry[];
 		let blogIndexContext: string;
 		try {
-			blogIndexContext = await getBlogIndexContext();
+			blogIndex = await getBlogIndexEntries();
+			blogIndexContext = formatBlogIndexContext(blogIndex);
 			scope = await classifyQuestionScope({
 				question: normalizedQuestion,
 				conversationHistory: normalizedConversationHistory,
 				hasPageContext: Boolean(normalizedPageContext),
-				blogIndex: blogIndexContext,
+				blogIndex,
 			});
 		} catch (error) {
 			const message = getErrorMessage(error);
@@ -93,7 +99,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 		if (scope.category === 'blog_related') {
 			return jsonResponse(200, {
-				text: getBlogRecommendation(scope, blogIndexContext),
+				text: getBlogRecommendation(scope, blogIndex),
 			});
 		}
 
@@ -218,15 +224,11 @@ function getScopeFallback(scope: ScopeDecision): string {
 		: 'That’s outside what this site covers. I’m mainly here to talk about my work, projects, articles, and experience.';
 }
 
-function getBlogRecommendation(scope: ScopeDecision, blogIndex: string): string {
+function getBlogRecommendation(scope: ScopeDecision, blogIndex: BlogIndexEntry[]): string {
 	const title = scope.blogTitle?.trim() ?? '';
 	const url = scope.blogUrl?.trim() ?? '';
 	const isPublishedPost = Boolean(
-		title &&
-			url &&
-			blogIndex
-				.split(/\n(?=\d+\. post\n)/)
-				.some((post) => post.includes(`title: ${title}`) && post.includes(`url: ${url}`)),
+		title && url && blogIndex.some((post) => post.title === title && post.url === url),
 	);
 
 	if (!isPublishedPost) {
