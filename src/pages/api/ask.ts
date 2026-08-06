@@ -1,5 +1,10 @@
 import type { APIRoute } from 'astro';
-import { askAI } from '../../lib/ai';
+import { askAI, classifyQuestionScope, type ScopeDecision } from '../../lib/ai';
+import {
+	formatBlogIndexContext,
+	getBlogIndexEntries,
+	type BlogIndexEntry,
+} from '../../lib/blog-context';
 import { loadContext } from '../../lib/context';
 import { getDeterministicAnswer } from '../../lib/deterministic/router';
 
@@ -52,7 +57,10 @@ export const POST: APIRoute = async ({ request }) => {
 
 		const normalizedQuestion = typeof question === 'string' ? question.trim() : '';
 		const normalizedPageContext = typeof pageContext === 'string' ? pageContext.trim() : '';
-		const normalizedConversationHistory = normalizeConversationHistory(conversationHistory);
+		const normalizedConversationHistory = removeCurrentQuestionFromHistory(
+			normalizeConversationHistory(conversationHistory),
+			normalizedQuestion,
+		);
 
 		if (normalizedQuestion.length === 0) {
 			return jsonResponse(400, { error: 'Please enter a question before sending.' });
@@ -69,10 +77,41 @@ export const POST: APIRoute = async ({ request }) => {
 			return jsonResponse(200, { text: deterministicAnswer });
 		}
 
+		let scope: ScopeDecision;
+		let blogIndex: BlogIndexEntry[];
+		let blogIndexContext: string;
+		try {
+			blogIndex = await getBlogIndexEntries();
+			blogIndexContext = formatBlogIndexContext(blogIndex);
+			scope = await classifyQuestionScope({
+				question: normalizedQuestion,
+				conversationHistory: normalizedConversationHistory,
+				hasPageContext: Boolean(normalizedPageContext),
+				blogIndex,
+			});
+		} catch (error) {
+			const message = getErrorMessage(error);
+			console.error('[api/ask] scope classification failure:', message);
+			return jsonResponse(500, {
+				error: 'Something went wrong while checking the question. Please try again.',
+			});
+		}
+
+		if (scope.category === 'blog_related') {
+			return jsonResponse(200, {
+				text: getBlogRecommendation(scope, blogIndex),
+			});
+		}
+
+		if (scope.category !== 'in_domain') {
+			return jsonResponse(200, { text: getScopeFallback(scope) });
+		}
+
 		let context: string;
 		try {
 			context = await loadContext({
 				pageContext: normalizedPageContext || undefined,
+				blogIndexContext,
 			});
 		} catch (error) {
 			const message = getErrorMessage(error);
@@ -153,6 +192,57 @@ function normalizeConversationHistory(value: unknown): ConversationMessage[] {
 	}
 
 	return normalized.slice(-MAX_HISTORY_MESSAGES);
+}
+
+/**
+ * Removes the current question when an older client also included it as the final history item.
+ */
+function removeCurrentQuestionFromHistory(
+	history: ConversationMessage[],
+	question: string,
+): ConversationMessage[] {
+	const lastMessage = history.at(-1);
+	if (
+		lastMessage?.role === 'user' &&
+		lastMessage.content.localeCompare(question, undefined, { sensitivity: 'accent' }) === 0
+	) {
+		return history.slice(0, -1);
+	}
+
+	return history;
+}
+
+function getScopeFallback(scope: ScopeDecision): string {
+	if (scope.category === 'private') {
+		return scope.language === 'es'
+			? 'Mantengo la mayor parte de mi vida personal en privado. Estoy aquí principalmente para hablar de mi trabajo, proyectos y las cosas que construyo.'
+			: 'I keep most of my personal life private. I’m mainly here to talk about my work, projects, and the things I build.';
+	}
+
+	return scope.language === 'es'
+		? 'Eso está fuera de lo que cubre este sitio. Estoy aquí principalmente para hablar de mi trabajo, proyectos, artículos y experiencia.'
+		: 'That’s outside what this site covers. I’m mainly here to talk about my work, projects, articles, and experience.';
+}
+
+function getBlogRecommendation(scope: ScopeDecision, blogIndex: BlogIndexEntry[]): string {
+	const title = scope.blogTitle?.trim() ?? '';
+	const url = scope.blogUrl?.trim() ?? '';
+	const isPublishedPost = Boolean(
+		title && url && blogIndex.some((post) => post.title === title && post.url === url),
+	);
+
+	if (!isPublishedPost) {
+		return getScopeFallback({
+			...scope,
+			category: 'out_of_domain',
+			blogTitle: null,
+			blogUrl: null,
+		});
+	}
+
+	return scope.language === 'es'
+		? `Es un tema relacionado con algo que escribí. Puedes ver “${title}” aquí:\n${url}`
+		: `That’s related to something I wrote about. You can read “${title}” here:\n${url}`;
 }
 
 /**

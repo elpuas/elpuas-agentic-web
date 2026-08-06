@@ -647,6 +647,7 @@ const navigation = [
 							return;
 						}
 
+						const conversationHistoryPayload = getHistoryForRequest();
 						setDockExpanded(true);
 						appendMessage('user', question);
 						addHistoryMessage('user', question);
@@ -656,7 +657,6 @@ const navigation = [
 						submitButton.disabled = true;
 
 						try {
-							const conversationHistoryPayload = getHistoryForRequest();
 							const requestBody = pageContext
 								? { question, page, pageContext, conversationHistory: conversationHistoryPayload }
 								: { question, page, conversationHistory: conversationHistoryPayload };
