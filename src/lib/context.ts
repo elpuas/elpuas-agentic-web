@@ -15,8 +15,10 @@ const KNOWLEDGE_GLOB = import.meta.glob('../../content/knowledge/**/*.mdx', {
  */
 export async function loadContext({
 	pageContext,
+	blogIndexContext,
 }: {
 	pageContext?: string;
+	blogIndexContext?: string;
 } = {}): Promise<string> {
 	const knowledgeEntries = Object.entries(KNOWLEDGE_GLOB).sort(([a], [b]) =>
 		a.localeCompare(b),
@@ -39,13 +41,13 @@ export async function loadContext({
 	);
 
 	const knowledgeContext = sections.join('\n\n');
-	const blogIndexContext = await getBlogIndexContext();
+	const resolvedBlogIndexContext = blogIndexContext ?? (await getBlogIndexContext());
 
 	const normalizedPageContext = pageContext?.trim();
 
 	const contextParts = [
 		`## Global Knowledge Context\n${knowledgeContext}`,
-		`## Blog Discovery Context\n${blogIndexContext}`,
+		`## Blog Discovery Context\n${resolvedBlogIndexContext}`,
 	];
 
 	if (normalizedPageContext) {
