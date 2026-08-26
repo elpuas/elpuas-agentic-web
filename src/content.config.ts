@@ -8,6 +8,7 @@ const blog = defineCollection({
 	loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
 	schema: z.object({
 		title: z.string(),
+		seoTitle: z.string().optional(),
 		slug: z.string(),
 		description: z.string(),
 		excerpt: z.string().optional(),
@@ -19,6 +20,8 @@ const blog = defineCollection({
 		featuredImage: z.string().optional(),
 		heroImage: z.string().optional(),
 		heroAlt: z.string().optional(),
+		heroPosition: z.string().optional(),
+		heroPositionMobile: z.string().optional(),
 		canonicalUrl: z.string().url().optional(),
 		draft: z.boolean().default(false),
 	}).superRefine((value, ctx) => {
