@@ -122,10 +122,16 @@ const pageContext = [
 	'Current Blog Content:',
 	post.body,
 ].join('\n');
+const heroPositionStyle = [
+	post.data.heroPosition ? `--blog-hero-position: ${post.data.heroPosition}` : '',
+	post.data.heroPositionMobile ? `--blog-hero-position-mobile: ${post.data.heroPositionMobile}` : '',
+]
+	.filter(Boolean)
+	.join('; ');
 ---
 
 <BaseLayout
-	title={post.data.title}
+	title={post.data.seoTitle ?? post.data.title}
 	description={excerpt}
 	canonicalUrl={articleUrl}
 	ogType="article"
@@ -143,6 +149,7 @@ const pageContext = [
 					class="blog-hero-media"
 					src={heroImageSrc}
 					alt={post.data.heroAlt || post.data.title}
+					style={heroPositionStyle || undefined}
 					loading="eager"
 					decoding="async"
 				/>
@@ -202,6 +209,7 @@ const pageContext = [
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		object-position: var(--blog-hero-position, center);
 	}
 
 	.blog-hero-media-fallback {
@@ -549,6 +557,10 @@ const pageContext = [
 	}
 
 	@media (max-width: 48rem) {
+		.blog-hero-media {
+			object-position: var(--blog-hero-position-mobile, var(--blog-hero-position, center));
+		}
+
 		.blog-hero {
 			min-height: clamp(12rem, 54vw, 17rem);
 		}
