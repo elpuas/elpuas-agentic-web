@@ -398,6 +398,8 @@ const navigation = [
 					const desktopHeroQuery = window.matchMedia('(max-width: 48rem)');
 					const heroBreathingRoom = 18;
 					const maxHeroLift = 180;
+					const assistantMarkdownLinkPattern =
+						/\[([^\]\n]+)\]\(((?:https?:\/\/|\/)[^\s<>")]+)\)/g;
 					const assistantLinkPattern =
 						/(https?:\/\/[^\s<>"']+)|(\/[a-zA-Z0-9][a-zA-Z0-9/_-]*)/g;
 					const trailingPunctuationPattern = /[.,!?;:)\]]+$/;
@@ -418,19 +420,15 @@ const navigation = [
 
 					const getHistoryForRequest = () => conversationHistory.slice(-MAX_HISTORY_MESSAGES);
 
-					/**
-					 * Renders assistant text into a container and converts URL-like substrings
-					 * to clickable links while preserving trailing punctuation.
-					 */
-					const appendAssistantTextWithLinks = (container, paragraph) => {
+					const appendAutoLinkedText = (container, text) => {
 						let lastIndex = 0;
 
-						for (const match of paragraph.matchAll(assistantLinkPattern)) {
+						for (const match of text.matchAll(assistantLinkPattern)) {
 							const index = match.index ?? 0;
 							const rawLink = match[0];
 
 							if (index > lastIndex) {
-								container.append(document.createTextNode(paragraph.slice(lastIndex, index)));
+								container.append(document.createTextNode(text.slice(lastIndex, index)));
 							}
 
 							let href = rawLink;
@@ -460,8 +458,37 @@ const navigation = [
 							lastIndex = index + rawLink.length;
 						}
 
+						if (lastIndex < text.length) {
+							container.append(document.createTextNode(text.slice(lastIndex)));
+						}
+					};
+
+					/**
+					 * Renders safe Markdown links before auto-linking the remaining plain text.
+					 */
+					const appendAssistantTextWithLinks = (container, paragraph) => {
+						let lastIndex = 0;
+
+						for (const match of paragraph.matchAll(assistantMarkdownLinkPattern)) {
+							const index = match.index ?? 0;
+
+							if (index > lastIndex) {
+								appendAutoLinkedText(container, paragraph.slice(lastIndex, index));
+							}
+
+							const link = document.createElement('a');
+							link.href = match[2];
+							if (match[2].startsWith('http://') || match[2].startsWith('https://')) {
+								link.target = '_blank';
+								link.rel = 'noopener noreferrer';
+							}
+							link.textContent = match[1];
+							container.append(link);
+							lastIndex = index + match[0].length;
+						}
+
 						if (lastIndex < paragraph.length) {
-							container.append(document.createTextNode(paragraph.slice(lastIndex)));
+							appendAutoLinkedText(container, paragraph.slice(lastIndex));
 						}
 					};
 
