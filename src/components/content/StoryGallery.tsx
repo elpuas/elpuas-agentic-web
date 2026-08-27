@@ -22,7 +22,8 @@ const springTransition = {
 	mass: 0.8,
 } as const;
 
-const stackRotation = [-3, 2, -1, 1];
+const thumbnailRotation = [-2.2, 1.4, -1.1, 2, 1.2, -1.8, 2.1, -0.9];
+const thumbnailOffset = [0, 6, -3, 3, 4, -2, 5, 0];
 
 export default function StoryGallery({ items, className = '' }: StoryGalleryProps) {
 	const [order, setOrder] = useState<number[]>(() => items.map((_, index) => index));
@@ -82,6 +83,7 @@ export default function StoryGallery({ items, className = '' }: StoryGalleryProp
 							animate={{ opacity: 1, scale: 1 }}
 							exit={{ opacity: 0, scale: 0.98 }}
 							transition={{ duration: 0.34, ease: 'easeOut' }}
+							aria-label={`Selected photo: ${activeItem.title}`}
 						>
 							<img src={activeItem.src} alt={activeItem.alt} loading="lazy" decoding="async" />
 						</motion.figure>
@@ -97,16 +99,21 @@ export default function StoryGallery({ items, className = '' }: StoryGalleryProp
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: -8 }}
 							transition={{ duration: 0.25, ease: 'easeOut' }}
+							aria-live="polite"
 						>
 							<h3>{activeItem.title}</h3>
 							{activeItem.caption ? <p>{activeItem.caption}</p> : null}
 						</motion.figcaption>
 					</AnimatePresence>
 
-					<div className="story-gallery__stack" role="list" aria-label="Select another photo">
-						{stackItems.map(({ item, itemIndex }, stackIndex) => {
-							const offset = stackIndex * 44;
-							const rotation = stackRotation[stackIndex % stackRotation.length] ?? 0;
+					<div
+						className="story-gallery__stack"
+						role="group"
+						aria-label={`Select another photo. Current photo: ${activeItem.title}`}
+					>
+						{stackItems.map(({ item, itemIndex }, thumbnailIndex) => {
+							const rotation = thumbnailRotation[thumbnailIndex] ?? 0;
+							const offset = thumbnailOffset[thumbnailIndex] ?? 0;
 
 							return (
 								<motion.button
@@ -114,16 +121,11 @@ export default function StoryGallery({ items, className = '' }: StoryGalleryProp
 									type="button"
 									className="story-gallery__stack-card"
 									onClick={() => promoteToActive(itemIndex)}
-									layout
-									initial={{ opacity: 0, x: 24 }}
-									animate={{
-										x: offset,
-										y: stackIndex * 10,
-										rotate: rotation,
-										opacity: 1,
-									}}
-									whileHover={{ y: stackIndex * 10 - 8, scale: 1.02, zIndex: 30 }}
-									whileFocus={{ y: stackIndex * 10 - 8, scale: 1.02, zIndex: 30 }}
+									layout="position"
+									initial={{ opacity: 0, y: offset + 10, rotate: rotation }}
+									animate={{ opacity: 1, y: offset, rotate: rotation }}
+									whileHover={{ y: offset - 5, rotate: 0, scale: 1.03, zIndex: 20 }}
+									whileFocus={{ y: offset - 5, rotate: 0, scale: 1.03, zIndex: 20 }}
 									transition={springTransition}
 									aria-label={`Show image: ${item.title}`}
 								>
