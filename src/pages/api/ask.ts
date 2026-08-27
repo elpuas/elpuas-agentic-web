@@ -215,8 +215,8 @@ function removeCurrentQuestionFromHistory(
 function getScopeFallback(scope: ScopeDecision): string {
 	if (scope.category === 'private') {
 		return scope.language === 'es'
-			? 'Mantengo la mayor parte de mi vida personal en privado. Estoy aquí principalmente para hablar de mi trabajo, proyectos y las cosas que construyo.'
-			: 'I keep most of my personal life private. I’m mainly here to talk about my work, projects, and the things I build.';
+			? 'No comparto detalles personales privados o sensibles aquí, pero puedo hablar de mi trayectoria pública, trabajo, proyectos e intereses.'
+			: 'I don’t share private or sensitive personal details here, but I can talk about my public background, work, projects, and interests.';
 	}
 
 	return scope.language === 'es'
