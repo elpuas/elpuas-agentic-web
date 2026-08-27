@@ -4,6 +4,7 @@ import '../styles/global.css';
 import ProfilePanel from '../components/ProfilePanel.astro';
 import logo from '../assets/logo.svg';
 import { buildSearchIndex } from '../lib/search-index';
+import { buildAlfredoPersonSchema } from '../lib/person-schema';
 import {
 	DEFAULT_DESCRIPTION,
 	DEFAULT_OG_IMAGE,
@@ -48,24 +49,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID?.trim();
 const searchIndex = await buildSearchIndex();
 
 const defaultSchemas: Array<Record<string, unknown>> = [
-	{
-		'@context': 'https://schema.org',
-		'@type': 'Person',
-		name: 'Alfredo Navas',
-		url: siteUrl.toString(),
-		jobTitle: 'Senior WordPress & Full Stack Developer',
-		email: 'mailto:elpuas@gmail.com',
-		description:
-			'Senior WordPress and full stack developer focused on web platforms, AI workflows, and practical product delivery.',
-		knowsAbout: [
-			'WordPress',
-			'JavaScript',
-			'TypeScript',
-			'Astro',
-			'AI Engineering',
-			'Web Performance',
-		],
-	},
+	buildAlfredoPersonSchema(),
 	{
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',

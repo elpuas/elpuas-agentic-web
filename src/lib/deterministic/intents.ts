@@ -1,3 +1,5 @@
+import { ALFREDO_BUSINESS_URL, ALFREDO_SAME_AS } from '../identity';
+
 export type DeterministicIntent = {
 	id: string;
 	answer: string;
@@ -32,7 +34,8 @@ export const DOMAIN_KEYWORDS = [
 	'contact',
 	'email',
 	'github',
-	'linkedin',
+	'wordpress',
+	'youtube',
 ];
 
 export const OUT_OF_DOMAIN_PATTERNS = [
@@ -64,20 +67,24 @@ export const DETERMINISTIC_INTENTS: DeterministicIntent[] = [
 	{
 		id: 'PUBLIC_WORK_INTENT',
 		answer:
-			'You can check some of my public work and profiles here:\n\nGitHub: https://github.com/elpuas\nLinkedIn: https://www.linkedin.com/in/elpuasdev/\nWordPress.org: https://profiles.wordpress.org/elpuas/\nElPuas Digital Crafts: https://elpuasdigitalcrafts.com',
+			`You can check some of my public work and profiles here:\n\n${ALFREDO_SAME_AS
+				.filter((url) => url !== ALFREDO_BUSINESS_URL)
+				.join('\n')}\nElPuas Digital Crafts: ${ALFREDO_BUSINESS_URL}`,
 		aliases: [
 			'where can i see your work',
 			'show me your work',
 			'show me your projects',
 			'github',
-			'linkedin',
 			'portfolio',
 			'project examples',
 			'portfolio examples',
 			'public profile',
 			'work examples',
+			'wordpress',
+			'wordcamp',
+			'youtube',
 		],
-		keywordClusters: [['work', 'portfolio', 'projects'], ['github', 'linkedin', 'wordpress', 'profile']],
+		keywordClusters: [['work', 'portfolio', 'projects'], ['github', 'wordpress', 'youtube', 'profile']],
 	},
 	{
 		id: 'CONTACT_INTENT',
