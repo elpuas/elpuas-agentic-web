@@ -160,6 +160,7 @@ const heroPositionStyle = [
 			<div class="blog-hero-content">
 				<p class="blog-category">{post.data.category}</p>
 				<h1>{post.data.title}</h1>
+				{post.data.subtitle && <p class="blog-hero-deck">{post.data.subtitle}</p>}
 				<p class="blog-date">
 					<time datetime={publishDate.toISOString()}>{formattedDate}</time>
 				</p>
@@ -252,6 +253,14 @@ const heroPositionStyle = [
 		font-weight: 760;
 		color: #fcfcf8;
 		text-wrap: balance;
+	}
+
+	.blog-hero-deck {
+		margin: 0;
+		font-size: clamp(1rem, 1.5vw, 1.2rem);
+		line-height: 1.35;
+		font-weight: 560;
+		color: #f2f6e2;
 	}
 
 	@supports ((-webkit-background-clip: text) or (background-clip: text)) {
@@ -576,6 +585,10 @@ const heroPositionStyle = [
 
 		.blog-date {
 			font-size: 0.96rem;
+		}
+
+		.blog-hero-deck {
+			font-size: 1rem;
 		}
 
 		.post-content {
