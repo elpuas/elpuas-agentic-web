@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  video: string;
+  image: ImageMetadata;
+  alt: string;
+  videoWidth: number;
+  videoHeight: number;
+}
+
+const { video, image, alt, videoWidth, videoHeight } = Astro.props;
+---
+
+<figure class="result-media">
+  <video class="desktop-video" width={videoWidth} height={videoHeight} controls muted loop playsinline preload="metadata" aria-label={alt}>
+    <source src={video} type="video/webm" media="(min-width: 48.001rem)" />
+    <a href={video}>Watch the Café Roble landing page video</a>
+  </video>
+  <Image class="mobile-image" src={image} alt={alt} loading="lazy" />
+</figure>
+
+<script>
+  const desktop = window.matchMedia('(min-width: 48.001rem)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const video = entry.target as HTMLVideoElement;
+      if (entry.isIntersecting && desktop.matches && !reducedMotion.matches) {
+        video.muted = true;
+        void video.play().catch(() => {
+          // Native controls remain available if the browser blocks autoplay.
+        });
+      } else {
+        video.pause();
+      }
+    }
+  }, { threshold: 0.25 });
+
+  document.querySelectorAll<HTMLVideoElement>('.result-media video').forEach((video) => {
+    observer.observe(video);
+  });
+</script>
+
+<style>
+  .desktop-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .mobile-image {
+    display: none;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 48rem) {
+    .desktop-video {
+      display: none;
+    }
+
+    .mobile-image {
+      display: block;
+    }
+  }
+</style>
