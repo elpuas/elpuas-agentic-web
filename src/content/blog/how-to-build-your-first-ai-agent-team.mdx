@@ -1,0 +1,221 @@
+---
+title: "How to Build Your First AI Agent Team"
+slug: "how-to-build-your-first-ai-agent-team"
+description: "How I organized a small AI agent team in Codex to build and review a landing page, with clear roles, TOML configuration, tools, and handoffs."
+excerpt: "How I organized a small AI agent team in Codex to build and review a landing page, with clear roles, TOML configuration, tools, and handoffs."
+publishDate: "2026-10-26T13:23:35-06:00"
+date: "2026-10-26T13:23:35-06:00"
+author: "Alfredo Navas"
+category: "AI Development"
+tags:
+  - ai
+  - agents
+  - codex
+  - developer-workflow
+  - automation
+canonicalUrl: "https://elpuas.com/blog/how-to-build-your-first-ai-agent-team/"
+draft: false
+---
+
+import ArticleFileGrid from '../../components/content/ArticleFileGrid.astro';
+import ArticleResultMedia from '../../components/content/ArticleResultMedia.astro';
+import cafeRobleVideo from '../../assets/blog/how-to-build-your-first-ai-agent-team/cafe-roble-web.webm?url';
+import cafeRobleImage from '../../assets/blog/how-to-build-your-first-ai-agent-team/cafe-roble-landing-page.jpg';
+
+[Leer en español](https://elpuas.notion.site/C-mo-construir-tu-primer-equipo-de-agentes-de-IA-405c1bfb06c381dd9a9bcb821576146e)
+
+After a recent interview that included a coding test, I found myself thinking about another question I would have liked to answer:
+
+**How would you organize a team of AI agents to complete a task and verify the result?**
+
+Reading, writing, and reviewing code still matter. Working with agents adds another set of skills: breaking down a problem, providing context, connecting tools, and evaluating the output.
+
+To explore this, I put together a small team in Codex and asked it to build a landing page. Here is how we organized the work.
+
+## Start with a small, testable assignment
+
+Our example was Café Roble, a fictional coffee shop. The page needed to introduce the business, feature three products, and display its location and opening hours.
+
+We prepared a visual mockup, then a reference design in Figma. The implementation stayed simple: HTML and CSS, without a backend, reservations, or payments.
+
+The coffee shop was the team's first assignment. Its core instructions needed to work for other businesses too.
+
+## Write three documents before building
+
+We separated the instructions into three files:
+
+<ArticleFileGrid entries={[
+  { file: 'AGENTS.md', purpose: 'Explains how Codex should work in the project.' },
+  { file: 'docs/team-spec.md', purpose: 'Defines the roles, handoffs, tools, and execution limits.' },
+  { file: 'docs/brief.md', purpose: 'Describes the specific assignment, design reference, and acceptance criteria.' },
+]} />
+
+Prices and opening hours belong in the brief. Delegation and review rules belong in the team specification.
+
+That separation lets you change the assignment without rebuilding the team.
+
+## Define an orchestrator and three agents
+
+We used the main Codex session as the **orchestrator**. It delegated tasks, checked handoffs, maintained run state, and decided when to continue or stop.
+
+We configured three agents:
+
+- **Content:** organizes supplied copy and identifies missing information without inventing business facts.
+- **Development:** receives the content and design, implements the page, and handles requested adjustments.
+- **Review:** checks the requirements in a browser and returns findings with evidence.
+
+The workflow was:
+
+**Content → development → review → bounded revision.**
+
+The stages ran sequentially because each depended on the previous output. Having multiple agents does not mean every task should run in parallel.
+
+## Create a custom agent in Codex
+
+In our project, custom agents were defined in TOML files. This was the main directory structure:
+
+```txt
+first-agent-team/
+├── AGENTS.md
+├── README.md
+├── .codex/
+│   ├── config.toml
+│   └── agents/
+│       ├── content-agent.toml
+│       ├── development-agent.toml
+│       └── review-agent.toml
+├── docs/
+│   ├── team-spec.md
+│   ├── brief.md
+│   └── experiment-log.md
+└── runs/
+    └── <run-id>/
+        ├── content.json
+        ├── development.json
+        ├── state.json
+        ├── final.json
+        ├── output/
+        ├── reviews/
+        └── screenshots/
+```
+
+TOML is a configuration format. This shortened example shows how we defined the content agent:
+
+```toml
+name = "content_agent"
+description = "Organizes supplied copy and identifies missing information."
+
+developer_instructions = """
+You are the content-preparation role.
+
+Organize the supplied copy into sections.
+Preserve business facts and required wording.
+Report missing or contradictory information.
+Do not invent facts.
+Return the structured JSON handoff.
+"""
+
+[features]
+shell_tool = false
+apps = false
+plugins = false
+memories = false
+```
+
+The full instructions also specified the required inputs, response structure, and completion conditions. The triple quotes keep the multiline instructions inside one configuration value.
+
+We then registered the agent in `.codex/config.toml`:
+
+```toml
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 3
+
+[agents.content_agent]
+description = "Prepares supplied content and reports gaps."
+config_file = "agents/content-agent.toml"
+```
+
+We repeated that registration for development and review.
+
+These files configure the agents. The main session invokes them according to the project instructions and coordinates their work.
+
+## Connect tools to responsibilities
+
+The development agent used **Figma MCP** to inspect the design. The review agent used **Playwright MCP** to inspect the implementation in a browser.
+
+MCP, short for Model Context Protocol, provides a common interface for agents to access tools and context.
+
+Figma was already connected to our Codex session. Playwright was configured in the project through its local package. Credentials were kept out of the repository.
+
+We also distinguished configuration controls from written instructions. Disabling shell access is a configuration setting. Telling an agent not to edit implementation files is a behavioral instruction. They serve different purposes.
+
+## Test the team before assigning the page
+
+We started with a small smoke test.
+
+The content agent received a brief with a missing address. It identified the missing information without inventing an answer.
+
+The development agent completed a read-only Figma connection check. The review agent used Playwright to list browser tabs.
+
+Those checks confirmed that the roles could respond and access their required tools before starting the assignment.
+
+## Define handoffs and limits
+
+We requested structured JSON responses so the orchestrator could check and pass information between stages.
+
+Content returned organized sections and missing information. Development reported changed files and checks performed. Review returned acceptance results, findings, and evidence.
+
+Each agent's instructions defined its response format. The orchestrator checked those handoffs before proceeding.
+
+We also set a maximum of two revision rounds and a fifteen-minute execution window. These boundaries kept the exercise focused and its output manageable to review.
+
+## The result: Café Roble
+
+The team built the page, opened a local preview, and reviewed it at desktop and mobile sizes. It then completed one round of adjustments.
+
+I was happy with the visual result: the landing page translated the design reference into a working page with the brief's copy, products, and sections.
+
+The review also recorded a small layout adjustment for a future iteration.
+
+We retained intermediate outputs, review records, and screenshots. This made it possible to follow the handoffs and compare the implementation with the original assignment.
+
+<ArticleResultMedia
+  video={cafeRobleVideo}
+  videoWidth={2810}
+  videoHeight={1662}
+  image={cafeRobleImage}
+  alt="Café Roble landing page with coffee and pastry products, café interiors, location, and opening hours."
+/>
+
+## Apply the pattern in another environment
+
+This example uses Codex configuration. Other agent environments have their own files, permissions, and delegation mechanisms.
+
+The underlying approach is transferable: define a coordinator, clear responsibilities, sufficient context, inspectable handoffs, and explicit limits.
+
+We chose a small landing page so we could focus on coordination: dividing responsibilities, sharing context, and reviewing a concrete deliverable.
+
+If you are getting started, choose a task you can evaluate yourself. You should be able to explain what you delegated, how you checked the result, and which decisions remain yours.
+
+## Get the project
+
+The project is available in a [public GitHub repository](https://github.com/elpuas/first-agent-team). Download it, inspect the configuration, and adapt it to your own assignment.
+
+To clone it:
+
+```bash
+git clone https://github.com/elpuas/first-agent-team.git
+cd first-agent-team
+```
+
+Read the README to prepare your environment. MCP connections and authentication must be configured in your own installation; cloning the repository does not transfer them.
+
+## Part two: from local preview to a published site
+
+We now have a team that receives an assignment, builds the page, and reviews the result. Next, we will take that landing page online.
+
+[SpaceFast](https://spacefast.com/docs/) is a platform for hosting and publishing websites, including sites built with AI agents. It accepts your project files and serves the site at a URL. You can publish through its dashboard, CLI, API, or MCP server, allowing an agent with the appropriate permissions to handle deployment.
+
+In the next post, we will connect our agent to SpaceFast and publish the landing page from the same workflow. We will cover setup, permissions, and checking the published page.
+
