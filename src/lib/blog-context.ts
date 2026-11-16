@@ -12,6 +12,27 @@ export type BlogIndexEntry = {
 };
 
 /**
+ * Loads one published article from a local blog path, never from a remote URL.
+ */
+export async function getPublishedBlogContext(path: string): Promise<string | undefined> {
+	const post = (await getCollection('blog')).find(
+		(entry) => !entry.data.draft && `/blog/${entry.data.slug}` === path.replace(/\/$/, ''),
+	);
+	if (!post) {
+		return undefined;
+	}
+
+	return [
+		'Current Page Type: Blog Post',
+		`Current Blog Title: ${post.data.title}`,
+		`Current Blog URL: /blog/${post.data.slug}`,
+		`Current Blog Description: ${post.data.description}`,
+		'Current Blog Content:',
+		post.body,
+	].join('\n');
+}
+
+/**
  * Returns published blog metadata as structured records, newest first.
  */
 export async function getBlogIndexEntries(): Promise<BlogIndexEntry[]> {

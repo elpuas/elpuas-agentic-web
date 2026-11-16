@@ -27,6 +27,10 @@ export function getDeterministicAnswer(question: string): string | null {
 	if (!normalized) {
 		return null;
 	}
+	// Summaries and explanations need factual context rather than a canned answer.
+	if (/\b(summarize|summarise|summary|resume|resumen|resumir|explain|explica|explicame|describe)\b/.test(normalized)) {
+		return null;
+	}
 	const questionTokens = tokenize(normalized);
 	const hasDomainSignal = hasDomainKeywords(questionTokens);
 	const hasOutOfDomainSignal = hasOutOfDomainMarkers(normalized);
@@ -37,7 +41,7 @@ export function getDeterministicAnswer(question: string): string | null {
 	}
 
 	const strongIntentMatches = DETERMINISTIC_INTENTS.filter((intent) => {
-		if (intent.id === 'PUBLIC_WORK_INTENT' && isBroadDescriptivePrompt(normalized)) {
+		if (intent.id === 'PUBLIC_WORK_INTENT' && !isPublicWorkLookup(normalized, intent.aliases)) {
 			return false;
 		}
 
@@ -64,13 +68,19 @@ export function getDeterministicAnswer(question: string): string | null {
 	return null;
 }
 
-function isBroadDescriptivePrompt(normalizedQuestion: string): boolean {
-	return PUBLIC_WORK_DESCRIPTIVE_PHRASES.some((phrase) => normalizedQuestion.includes(phrase));
+function isPublicWorkLookup(normalizedQuestion: string, aliases: string[]): boolean {
+	if (PUBLIC_WORK_DESCRIPTIVE_PHRASES.some((phrase) => normalizedQuestion.includes(phrase))) {
+		return false;
+	}
+	return aliases.some((alias) => normalizedQuestion === normalizeQuestion(alias)) ||
+		/\b(where can i (see|find)|show me|links? to|public profiles?|portfolio examples?|project examples?|work examples?)\b/.test(normalizedQuestion);
 }
 
 export function normalizeQuestion(input: string): string {
 	return input
 		.toLowerCase()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
 		.trim()
 		.replace(/['’`"]/g, '')
 		.replace(/[^a-z0-9\s]/g, ' ')
@@ -92,6 +102,9 @@ function tokenize(input: string): string[] {
 function matchesAlias(normalizedQuestion: string, questionTokens: string[], aliases: string[]): boolean {
 	return aliases.some((alias) => {
 		const normalizedAlias = normalizeQuestion(alias);
+		if (!normalizedAlias.includes(' ')) {
+			return normalizedQuestion === normalizedAlias;
+		}
 		if (normalizedQuestion.includes(normalizedAlias)) {
 			return true;
 		}

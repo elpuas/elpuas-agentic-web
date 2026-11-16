@@ -3,6 +3,7 @@ import { askAI, classifyQuestionScope, type ScopeDecision } from '../../lib/ai';
 import {
 	formatBlogIndexContext,
 	getBlogIndexEntries,
+	getPublishedBlogContext,
 	type BlogIndexEntry,
 } from '../../lib/blog-context';
 import { loadContext } from '../../lib/context';
@@ -49,14 +50,14 @@ export const POST: APIRoute = async ({ request }) => {
 			return jsonResponse(400, { error: 'Please send a valid JSON request body.' });
 		}
 
-		const { question, pageContext, conversationHistory } = (payload ?? {}) as {
+		const { question, page, conversationHistory } = (payload ?? {}) as {
 			question?: unknown;
-			pageContext?: unknown;
+			page?: unknown;
 			conversationHistory?: unknown;
 		};
 
 		const normalizedQuestion = typeof question === 'string' ? question.trim() : '';
-		const normalizedPageContext = typeof pageContext === 'string' ? pageContext.trim() : '';
+		const normalizedPage = typeof page === 'string' ? page.trim().replace(/\/$/, '') : '';
 		const normalizedConversationHistory = removeCurrentQuestionFromHistory(
 			normalizeConversationHistory(conversationHistory),
 			normalizedQuestion,
@@ -72,7 +73,10 @@ export const POST: APIRoute = async ({ request }) => {
 			});
 		}
 
-		const deterministicAnswer = getDeterministicAnswer(normalizedQuestion);
+		// Article questions and conversational follow-ups need the scope-aware path.
+		const deterministicAnswer = normalizedPage.startsWith('/blog/') || normalizedConversationHistory.length
+			? null
+			: getDeterministicAnswer(normalizedQuestion);
 		if (deterministicAnswer) {
 			return jsonResponse(200, { text: deterministicAnswer });
 		}
@@ -80,13 +84,16 @@ export const POST: APIRoute = async ({ request }) => {
 		let scope: ScopeDecision;
 		let blogIndex: BlogIndexEntry[];
 		let blogIndexContext: string;
+		let articleContext: string | undefined;
 		try {
 			blogIndex = await getBlogIndexEntries();
 			blogIndexContext = formatBlogIndexContext(blogIndex);
+			const currentPage = blogIndex.find((post) => post.url === normalizedPage);
+			articleContext = currentPage ? await getPublishedBlogContext(currentPage.url) : undefined;
 			scope = await classifyQuestionScope({
 				question: normalizedQuestion,
 				conversationHistory: normalizedConversationHistory,
-				hasPageContext: Boolean(normalizedPageContext),
+				currentPage,
 				blogIndex,
 			});
 		} catch (error) {
@@ -98,21 +105,27 @@ export const POST: APIRoute = async ({ request }) => {
 		}
 
 		if (scope.category === 'blog_related') {
-			return jsonResponse(200, {
-				text: getBlogRecommendation(scope, blogIndex),
-			});
+			const selectedPost = blogIndex.find(
+				(post) => post.title === scope.blogTitle && post.url === scope.blogUrl,
+			);
+			articleContext = selectedPost ? await getPublishedBlogContext(selectedPost.url) : undefined;
+			if (!articleContext) {
+				return jsonResponse(200, { text: getScopeFallback({ ...scope, category: 'out_of_domain' }) });
+			}
 		}
 
-		if (scope.category !== 'in_domain') {
+		if (scope.category !== 'in_domain' && scope.category !== 'blog_related') {
 			return jsonResponse(200, { text: getScopeFallback(scope) });
 		}
 
 		let context: string;
 		try {
-			context = await loadContext({
-				pageContext: normalizedPageContext || undefined,
-				blogIndexContext,
-			});
+			context = scope.category === 'blog_related'
+				? `## Current Page Context\n${articleContext}`
+				: await loadContext({
+					pageContext: articleContext,
+					blogIndexContext,
+				});
 		} catch (error) {
 			const message = getErrorMessage(error);
 			console.error('[api/ask] context loading failure:', message);
@@ -222,27 +235,6 @@ function getScopeFallback(scope: ScopeDecision): string {
 	return scope.language === 'es'
 		? 'Eso está fuera de lo que cubre este sitio. Estoy aquí principalmente para hablar de mi trabajo, proyectos, artículos y experiencia.'
 		: 'That’s outside what this site covers. I’m mainly here to talk about my work, projects, articles, and experience.';
-}
-
-function getBlogRecommendation(scope: ScopeDecision, blogIndex: BlogIndexEntry[]): string {
-	const title = scope.blogTitle?.trim() ?? '';
-	const url = scope.blogUrl?.trim() ?? '';
-	const isPublishedPost = Boolean(
-		title && url && blogIndex.some((post) => post.title === title && post.url === url),
-	);
-
-	if (!isPublishedPost) {
-		return getScopeFallback({
-			...scope,
-			category: 'out_of_domain',
-			blogTitle: null,
-			blogUrl: null,
-		});
-	}
-
-	return scope.language === 'es'
-		? `Es un tema relacionado con algo que escribí. Puedes ver “${title}” aquí:\n${url}`
-		: `That’s related to something I wrote about. You can read “${title}” here:\n${url}`;
 }
 
 /**

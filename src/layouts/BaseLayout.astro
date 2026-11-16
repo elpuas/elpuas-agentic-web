@@ -21,7 +21,6 @@ const {
 	ogTitle,
 	ogDescription,
 	activeNav = 'home',
-	pageContext = '',
 	contentLayout = 'default',
 	floatingCliDesktop = true,
 	showCli = true,
@@ -221,7 +220,6 @@ const navigation = [
 								class="cli"
 								aria-label="Command line interface"
 								data-page={currentPage}
-								data-page-context={encodeURIComponent(pageContext)}
 							>
 								<div class="cli-panel">
 									<div class="cli-box">
@@ -376,17 +374,6 @@ const navigation = [
 				const shellRoot = document.querySelector('[data-sidebar-shell]');
 				const dismissButton = document.querySelector('#cli-dismiss');
 				const page = cliRoot?.dataset.page ?? '/';
-				const encodedPageContext = cliRoot?.dataset.pageContext ?? '';
-				let pageContext = '';
-
-				if (encodedPageContext) {
-					try {
-						pageContext = decodeURIComponent(encodedPageContext);
-					} catch {
-						pageContext = '';
-					}
-				}
-
 				const submitButton = form?.querySelector('.cli-btn-send');
 
 				if (form && input && messages && submitButton) {
@@ -668,14 +655,11 @@ const navigation = [
 						submitButton.disabled = true;
 
 						try {
-							const requestBody = pageContext
-								? { question, page, pageContext, conversationHistory: conversationHistoryPayload }
-								: { question, page, conversationHistory: conversationHistoryPayload };
+							const requestBody = { question, page, conversationHistory: conversationHistoryPayload };
 							if (import.meta.env.DEV) {
 								console.debug('[cli] /api/ask payload', {
 									question,
 									page,
-									pageContextPreview: pageContext.slice(0, 240),
 									historyCount: conversationHistoryPayload.length,
 								});
 							}

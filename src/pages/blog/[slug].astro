@@ -112,16 +112,6 @@ const relatedPosts = allPublishedPosts
 	})
 	.sort((a, b) => b.score - a.score || getBlogPublishDate(b.entry.data).getTime() - getBlogPublishDate(a.entry.data).getTime())
 	.slice(0, 3);
-const pageContext = [
-	'Current Page Type: Blog Post',
-	`Current Blog Title: ${post.data.title}`,
-	`Current Blog Slug: ${post.data.slug}`,
-	`Current Blog Description: ${excerpt}`,
-	`Current Blog Category: ${post.data.category}`,
-	`Current Blog Tags: ${post.data.tags.join(', ') || 'None'}`,
-	'Current Blog Content:',
-	post.body,
-].join('\n');
 const heroPositionStyle = [
 	post.data.heroPosition ? `--blog-hero-position: ${post.data.heroPosition}` : '',
 	post.data.heroPositionMobile ? `--blog-hero-position-mobile: ${post.data.heroPositionMobile}` : '',
@@ -137,7 +127,6 @@ const heroPositionStyle = [
 	ogType="article"
 	ogImage={heroImageSrc}
 	activeNav="blog"
-	pageContext={pageContext}
 	contentLayout="edge"
 	floatingCliDesktop={true}
 	schema={articleSchema}
