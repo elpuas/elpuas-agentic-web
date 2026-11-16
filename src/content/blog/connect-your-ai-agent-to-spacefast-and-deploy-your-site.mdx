@@ -1,0 +1,214 @@
+---
+title: "Connect Your AI Agent to SpaceFast and Deploy Your Site"
+slug: "connect-your-ai-agent-to-spacefast-and-deploy-your-site"
+description: "Part two: connect Codex to SpaceFast, add a deployment agent, publish the Café Roble landing page, and verify the live site."
+excerpt: "Connect Codex to SpaceFast and extend your AI agent team with deployment, platform verification, and live browser review."
+publishDate: "2026-11-16T07:20:46-06:00"
+date: "2026-11-16T07:20:46-06:00"
+author: "Alfredo Navas"
+category: "AI Development"
+tags:
+  - ai
+  - agents
+  - codex
+  - spacefast
+  - developer-workflow
+  - automation
+canonicalUrl: "https://elpuas.com/blog/connect-your-ai-agent-to-spacefast-and-deploy-your-site/"
+draft: false
+---
+
+[Leer en español](https://elpuas.notion.site/Conecta-tu-agente-de-IA-a-SpaceFast-y-publica-tu-sitio-406c1bfb06c381a49517dc42da2d3624)
+
+In [the first part](/blog/how-to-build-your-first-ai-agent-team/), I configured a small agent team in Codex to build and review a landing page for Café Roble, a fictional coffee shop.
+
+This second part takes that page online: connecting Codex to SpaceFast, adding a deployment agent, and checking the published result in a browser.
+
+You can see the [published Café Roble demo here](https://cafe-roble.space.fast/).
+
+## Why SpaceFast?
+
+This was a personal choice. SpaceFast is a new product I wanted to try, and this project gave me a practical reason to explore it.
+
+[SpaceFast](https://spacefast.com/docs/) hosts and publishes websites, including projects built with AI agents. It provides a dashboard, CLI, API, and MCP integration.
+
+What I like about SpaceFast is how naturally publishing fits into a conversation with an agent. Once the plugin is installed, browser sign-in is complete, and the connection is checked, a deployment can start with a plain-English request:
+
+> Publish the Café Roble output folder as a public site on SpaceFast. Verify that the page loads and send me the live URL.
+
+The request specifies what to publish, where it should go, and who can see it. The agent handles the tools and returns the link. For Café Roble, Codex ran the SpaceFast CLI to upload the files, and the deployment agent used MCP to confirm the result.
+
+## 1. Start with the page you already built
+
+The starting point was the existing static output from part one:
+
+```txt
+runs/2026-10-26-cafe-roble-001/output/
+├── index.html
+├── styles.css
+└── assets/
+```
+
+The folder contained everything needed for publication: the HTML page, its stylesheet, and eight image assets. The landing page needed no rebuild or redesign.
+
+Work on this stage started in a separate branch:
+
+```bash
+git switch -c feature/spacefast-deployment
+```
+
+That kept the second part's work separate from the first tutorial. Publishing the demo was also separate from committing or pushing repository changes.
+
+## 2. Connect Codex to SpaceFast
+
+Setup began with the official SpaceFast plugin and authentication for its MCP connection:
+
+```bash
+codex plugin marketplace add spacefast/plugins
+codex plugin add spacefast@spacefast
+codex mcp login spacefast
+```
+
+The last command started the browser-based OAuth flow.
+
+Plugin version `0.8.1`, used for this exercise, supplied SpaceFast skills and the hosted MCP connection.
+
+A read-only account query through SpaceFast MCP in a fresh Codex session confirmed that the connection was authenticated and usable before publication.
+
+You can inspect the installed setup with:
+
+```bash
+codex plugin list
+codex mcp get spacefast
+```
+
+Follow the [current SpaceFast instructions for Codex](https://spacefast.com/docs/agents/codex/) when reproducing the setup, since installation details may change.
+
+## 3. Add a deployment agent
+
+The existing team gained one more role: a deployment agent.
+
+```txt
+.codex/
+├── config.toml
+└── agents/
+    ├── content-agent.toml
+    ├── development-agent.toml
+    ├── review-agent.toml
+    └── deployment-agent.toml
+```
+
+The deployment agent receives an explicit folder, the review handoff, a target Space, an access level, and publication authorization.
+
+Its job is to check the delivery files, handle the authorized publication work, and return evidence of the resulting deployment. It does not redesign the page or take over browser review.
+
+This shortened excerpt shows the role's structure:
+
+```toml
+name = "deployment_agent"
+description = "Publishes one explicitly authorized static output directory through SpaceFast, verifies platform status, and never edits implementation files."
+model_reasoning_effort = "high"
+
+developer_instructions = """
+You are the publication role in an explicitly orchestrated workflow.
+
+Inputs:
+- An explicit local deployment directory.
+- The validated review-agent handoff.
+- An explicit target Space or instruction to create one.
+- The authorized access level.
+- Explicit publication authorization from the orchestrator.
+
+Confirm the required inputs before publication.
+Use only the authenticated SpaceFast MCP connection for publication.
+Do not edit the implementation.
+Verify SpaceFast deployment status before reporting success.
+Leave browser verification to review_agent.
+Return the documented JSON handoff.
+"""
+
+[features]
+shell_tool = true
+apps = true
+plugins = true
+memories = false
+request_permissions_tool = false
+```
+
+The role also needs an entry in `.codex/config.toml`:
+
+```toml
+[agents.deployment_agent]
+description = "Publishes an authorized static delivery and verifies SpaceFast status."
+config_file = "agents/deployment-agent.toml"
+```
+
+As in part one, some boundaries are written instructions rather than separately enforced tool permissions.
+
+Before publishing, the new agent completed a read-only connection check. It returned a structured handoff with `publication_status: "not_requested"`, confirming that it could use SpaceFast without performing a deployment.
+
+## 4. Give the team a specific publication request
+
+The orchestrator needed more than “deploy it.”
+
+The publication request identified:
+
+- The exact existing output folder.
+- A new SpaceFast Space.
+- Public access.
+- Authorization to publish the demo.
+- A requirement to preserve the landing-page files.
+
+Domains, DNS, and billing remained outside the assignment.
+
+The extended workflow became:
+
+**Local review → authorized deployment → platform verification → live browser review.**
+
+The main Codex session continued to coordinate the handoffs.
+
+## 5. Publish the files with the CLI
+
+For this run, I authorized the primary Codex session, acting as the orchestrator, to transfer the files through the SpaceFast CLI. The deployment agent kept its MCP-only role and handled the subsequent platform verification, with no permission to publish through the CLI.
+
+These were separate authentication contexts. Completing MCP OAuth did not authenticate the local CLI.
+
+The orchestrator ran the following command, and I completed the CLI's device-login flow in the browser:
+
+```bash
+npx spacefast login
+```
+
+Then the orchestrator ran the publish command from the existing output directory, targeting the Space allocated during the workflow:
+
+```bash
+cd runs/2026-10-26-cafe-roble-001/output
+npx spacefast publish --space cafe-roble.space.fast
+```
+
+That hostname belongs to this example. For your own project, use the target Space assigned to you.
+
+The transfer used CLI version `0.5.0`, uploaded the ten files, and produced the version used by the live demo.
+
+No credentials or temporary authentication links belong in the tutorial, repository, or agent handoffs.
+
+## 6. Verify the deployment and the live page
+
+After the CLI publication, the orchestrator invoked the deployment agent again for read-only verification through SpaceFast MCP. Its checks used `show_space_deployments`, `getSpaceVersion`, and `getSpace` to confirm that the intended version was ready, current, and public.
+
+The review agent then used Playwright against the live URL to check:
+
+- The page response and required Spanish content.
+- The stylesheet and all eight assets.
+- Navigation anchors.
+- Desktop and mobile presentation.
+- Browser console and network behavior.
+
+This kept the responsibilities clear: SpaceFast checks established deployment state, and browser checks established how the published page behaved.
+
+You can visit the [live Café Roble site](https://cafe-roble.space.fast/).
+
+The review retained a small layout note for a future iteration.
+
+The base agent team is available in the [first-agent-team repository](https://github.com/elpuas/first-agent-team). Use it as a starting point and add the deployment agent with the configuration shown above.
+
