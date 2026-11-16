@@ -18,7 +18,7 @@ The site is optimized for fast rendering, predictable content loading, and maint
 - [MDX](https://docs.astro.build/en/guides/markdown-content/) for long-form content
 - Astro Content Collections for typed blog content
 - Netlify adapter for server output and API runtime
-- OpenAI Responses API for AI answers (`gpt-4.1-mini`)
+- OpenAI Responses API for scope classification and AI answers (`gpt-6-luna`)
 
 ## AI Chatbot Architecture
 
@@ -26,12 +26,17 @@ The chat flow is intentionally minimal and page-aware:
 
 1. The CLI form in `BaseLayout` sends a POST request to `src/pages/api/ask.ts`.
 2. The API validates input, applies a short per-IP cooldown, and normalizes payloads.
-3. `loadContext` (`src/lib/context.ts`) builds context from:
+3. Standalone deterministic questions receive local answers without an API call. Blog-page questions and conversational follow-ups pass through `classifyQuestionScope` (`src/lib/ai.ts`), along with other free-form questions. Private or unrelated requests receive a local redirect.
+4. For in-domain questions, `loadContext` (`src/lib/context.ts`) builds context from:
    - `/content/knowledge/*.mdx` global knowledge files
    - a generated blog discovery index (`src/lib/blog-context.ts`)
-   - optional current-page context (when provided by the route)
-4. `askAI` (`src/lib/ai.ts`) sends the constrained prompt and context to the OpenAI Responses API.
-5. The API returns concise text for direct rendering in the CLI message thread.
+   - one published article's full text, resolved server-side from the current local blog path or a classifier-selected title/URL validated against the published index
+5. `askAI` (`src/lib/ai.ts`) sends the constrained prompt and context to the OpenAI Responses API.
+6. The API returns concise text for direct rendering in the CLI message thread.
+
+Both model calls use `reasoning.effort: 'none'` to keep this focused workload fast and economical. Scope classification uses strict JSON output with a 256-token budget; answers use low verbosity with a 400-token budget. Incomplete or empty responses are rejected rather than displayed as partial answers. The model is defined once in `src/lib/ai.ts`.
+
+The browser sends the current path, question, and bounded conversation history. Article text comes from Astro's published content collection, not client-supplied text or external URLs. The classifier receives current-article metadata so references such as “this post” resolve to the open article. Blog summaries and explanations use the selected article body rather than returning a recommendation link. Questions classified as blog-related receive only that article's context; profile questions retain the global knowledge context.
 
 ### Design Principles
 
